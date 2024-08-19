@@ -108,7 +108,7 @@ namespace AttendanceManagementSystem.Views
                 int employeeId = (int)dgvEmployees.SelectedRows[0].Cells["EmployeeId"].Value;
 
                 // IDで従業員を検索
-                var employee = _context.Employees.Find(employeeId);
+                var employee = _context.Employees.Single(n => n.EmployeeId == employeeId);
 
                 if (employee != null)
                 {

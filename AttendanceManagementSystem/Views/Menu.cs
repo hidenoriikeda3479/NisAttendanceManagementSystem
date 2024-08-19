@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AttendanceManagementSystem.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,9 +13,15 @@ namespace AttendanceManagementSystem.Views
 {
     public partial class Menu : Form
     {
-        public Menu()
+        /// <summary>
+        /// DBコンテキスト
+        /// </summary>
+        private readonly AttendanceManagementDbContext _context;
+
+        public Menu(AttendanceManagementDbContext context)
         {
             InitializeComponent();
+            _context = context;
         }
 
         private void btnShiftManagement_Click(object sender, EventArgs e)
@@ -34,7 +41,7 @@ namespace AttendanceManagementSystem.Views
 
         private void btnAdminMenu_Click(object sender, EventArgs e)
         {
-            var managementMenu = new ManagementMenu();
+            var managementMenu = new ManagementMenu(_context);
             managementMenu.Show();
             Hide();
         }

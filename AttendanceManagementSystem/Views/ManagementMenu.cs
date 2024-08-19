@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AttendanceManagementSystem.Data;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,9 +13,15 @@ namespace AttendanceManagementSystem.Views
 {
     public partial class ManagementMenu : Form
     {
-        public ManagementMenu()
+        /// <summary>
+        /// DBコンテキスト
+        /// </summary>
+        private readonly AttendanceManagementDbContext _context;
+
+        public ManagementMenu(AttendanceManagementDbContext context)
         {
             InitializeComponent();
+            _context = context;
         }
 
         private void btnEmployeeRegistration_Click(object sender, EventArgs e)

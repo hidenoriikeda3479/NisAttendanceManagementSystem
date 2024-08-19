@@ -23,7 +23,7 @@ namespace AttendanceManagementSystem
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var menu = new Menu();
+            var menu = new Menu(_context);
             menu.Show();
             Hide();
         }
