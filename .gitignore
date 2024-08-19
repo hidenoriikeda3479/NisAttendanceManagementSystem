@@ -50,3 +50,6 @@ packages/
 *.vsdisco
 *.docstates
 *Thumbs.db
+
+# EF Core マイグレーションファイル
+Migrations/
