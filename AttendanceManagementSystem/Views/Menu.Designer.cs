@@ -33,6 +33,7 @@
             btnAttendanceManagement = new Button();
             btnAdminMenu = new Button();
             btnAttendanceDeparture = new Button();
+            btnAdmin = new Button();
             SuspendLayout();
             // 
             // btnShiftManagement
@@ -85,11 +86,22 @@
             btnAttendanceDeparture.UseVisualStyleBackColor = true;
             btnAttendanceDeparture.Click += btnAttendanceDeparture_Click;
             // 
+            // btnAdmin
+            // 
+            btnAdmin.Location = new Point(352, 12);
+            btnAdmin.Name = "btnAdmin";
+            btnAdmin.Size = new Size(121, 23);
+            btnAdmin.TabIndex = 5;
+            btnAdmin.Text = "管理者シフト";
+            btnAdmin.UseVisualStyleBackColor = true;
+            btnAdmin.Click += btnAdmin_Click;
+            // 
             // Menu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(btnAdmin);
             Controls.Add(btnAttendanceDeparture);
             Controls.Add(btnAdminMenu);
             Controls.Add(btnAttendanceManagement);
@@ -107,5 +119,6 @@
         private Button btnAttendanceManagement;
         private Button btnAdminMenu;
         private Button btnAttendanceDeparture;
+        private Button btnAdmin;
     }
 }
