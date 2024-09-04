@@ -28,12 +28,12 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// 権限IDのグローバル変数
         /// </summary>
-        private string _adminId;
+        private int _adminId;
 
         /// <summary>
         /// 現在の年月日を取得
         /// </summary>
-        private DateTime nowTarget = DateTime.Now;
+        private DateTime _nowTarget = DateTime.Now;
 
         /// <summary>
         /// シフト画面の表示
@@ -44,43 +44,45 @@ namespace AttendanceManagementSystem.Views
             InitializeComponent();
 
             _context = context;
-            _adminId = adminId;
+            _adminId = int.Parse(adminId);
 
             // カラム数を動的にする
             shiftDataGridView.AutoGenerateColumns = false;
 
             // 初期表示時にヘッダーに今現在の年月日を表示
-            targetMonth();
-            // 社員の名前とシフトを表示
-            disprayShit();
+            TargetMonth();
 
-            shiftDataGridView.Enabled = true;
+            // 社員の名前とシフトを表示
+            DisprayShift();
         }
 
         #region ボタンイベント
-        /// <summary>
-        /// 先月ボタンクリックイベント
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnPastMonth_Click(object sender, EventArgs e)
-        {
-            // 現在表示している月より前の年月日をヘッダーに表示
-            targetMonth(-1);
-            disprayShit();
-        }
 
         /// <summary>
-        /// 来月ボタンクリックイベント
+        /// 先月/来月ボタンクリックイベント
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void btnNextMonth_Click(object sender, EventArgs e)
+        /// <param name="sender">コントロール情報</param>
+        /// <param name="e">イベント情報</param>
+        private void btnChangeMonth_Click(object sender, EventArgs e)
         {
-            // 現在表示している月より後の年月日をヘッダーに表示
-            targetMonth(1);
-            disprayShit();
+            Button btn = (Button)sender;
+            int n = 0;
+            if(btn.Name == "btnNextMonth")
+            {
+                n++;
+            }
+            else
+            {
+                n--;
+            }
+
+            // 現在表示している月よりnの分変更して年月日をヘッダーに表示
+            TargetMonth(n);
+
+            // 社員の名前とシフトを表示
+            DisprayShift();
         }
+        
         #endregion
 
         #region データグリッドビューの処理
@@ -88,18 +90,19 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// DateGridViewのヘッダーに対象年月日を表示
         /// </summary>
-        private void targetMonth(int monthFlg = 0)
+        private void TargetMonth(int monthFlg = 0)
         {
             // データグリッドビューの中身をクリア
             shiftDataGridView.Columns.Clear();
-            // 来月、先月ボタンを押した際月が切り替わるようにする
-            nowTarget = nowTarget.AddMonths(monthFlg);
 
-            int year = nowTarget.Year;
-            int month = nowTarget.Month;
+            // 来月、先月ボタンを押した際月が切り替わるようにする
+            _nowTarget = _nowTarget.AddMonths(monthFlg);
+
+            int year = _nowTarget.Year;
+            int month = _nowTarget.Month;
 
             // 対象の月が何日あるのか取得
-            int days = DateTime.DaysInMonth(nowTarget.Year, nowTarget.Month);
+            int days = DateTime.DaysInMonth(_nowTarget.Year, _nowTarget.Month);
 
             // ヘッダーの最初に年月を表示
             DataGridViewTextBoxColumn headColumn = new DataGridViewTextBoxColumn();
@@ -122,25 +125,21 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// シフト登録イベント
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">コントロール情報</param>
+        /// <param name="e">イベント情報</param>
         private void shiftDaraGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             // 現在の日付を取得
-            DateTime thisDay = DateTime.Now;
-
-            var adId = _context.Permissions.Where(n => n.PermissionId == int.Parse(_adminId))
-                                           .Select(n => n.PermissionName).ToList();
-            string adminName = adId.First();
+            DateTime today = DateTime.Now;
 
             // 管理者権限の場合の処理
-            if (e.ColumnIndex >= 1 && e.RowIndex >= 0 && int.Parse(_adminId) == 1 && thisDay.Day <= e.ColumnIndex )
+            if (e.ColumnIndex >= 1 && e.RowIndex >= 0 && _adminId == 1 && 
+               (today.ToString("yyyy/MM/dd") == _nowTarget.ToString("yyyy/MM/dd") && today.Day <= e.ColumnIndex || today < _nowTarget))
             {
                 var color = shiftDataGridView[e.ColumnIndex, e.RowIndex].Style;
-                // 
                 int targetRow = e.RowIndex;
                 int targetColumn = e.ColumnIndex;
-                int dayCount = DateTime.DaysInMonth(nowTarget.Year, nowTarget.Month) + 1;
+                int dayCount = DateTime.DaysInMonth(_nowTarget.Year, _nowTarget.Month) + 1;
                 int targetCell = int.Parse(shiftDataGridView[dayCount, targetRow].Value.ToString());
 
                 // 社員テーブルにシフトテーブルを結合してシフト名を取得
@@ -157,83 +156,82 @@ namespace AttendanceManagementSystem.Views
                 // 取得したシフト名をリスト型から文字列に直す
                 string shiftType = result.First();
 
-                // 対象日付にシフトが登録されていない場合
-                if (color.BackColor == Color.Empty)
+                if (color.BackColor == Color.Empty) // 対象日付にシフトが登録されていない場合
                 {
                     // セルの背景色を変更
-                    color.BackColor = DhangeColor(shiftType, color);
+                    color.BackColor = ChangeColor(shiftType, color);
 
                     // シフト登録(INSERT)
                     var newShiftManagement = new ShiftManagementModel
                     {
                         EmployeeId = targetCell,
-                        Year = nowTarget.Year,
-                        Month = nowTarget.Month,
+                        Year = _nowTarget.Year,
+                        Month = _nowTarget.Month,
                         Day = targetColumn,
                         CreatedAt = DateTime.Now,
                     };
 
                     // 新しい従業員データを追加
                     _context.ShiftManagements.Add(newShiftManagement);
-
-                    // 追加したデータをコミット
-                    _context.SaveChanges();
                 }
-                // 対象日付にシフトが既に登録されている場合
-                else
+                else // 対象日付にシフトが既に登録されている場合
                 {
                     // セルの背景色を初期状態に変更
                     color.BackColor = Color.Empty;
+
                     // シフト削除対象のデータを取得
                     var targetRecord = _context.ShiftManagements
                                        .Single(n => n.EmployeeId == targetCell &&
-                                                    n.Year == nowTarget.Year &&
-                                                    n.Month == nowTarget.Month &&
+                                                    n.Year == _nowTarget.Year &&
+                                                    n.Month == _nowTarget.Month &&
                                                     n.Day == targetColumn);
 
                     // 取得データを削除
                     _context.ShiftManagements.Remove(targetRecord);
-
-                    // 追加したデータをコミット
-                    _context.SaveChanges();
                 }
+
+                // 追加したデータをコミット
+                _context.SaveChanges();
             }
+
             // 選択している状態の背景色を対象の色に合わせる
             shiftDataGridView.ClearSelection();
         }
+
         /// <summary>
         /// 社員名、出勤予定日を表示
         /// </summary>
-        private void disprayShit()
+        private void DisprayShift()
         {
             // 社員テーブル、シフト管理テーブル、シフトテーブルを結合して対象月のシフト情報を取得
-            var result = _context.Employees.Where(n => (n.HireDate.Year <= nowTarget.Year && n.HireDate.Month <= nowTarget.Month) &&
-                                           (!n.ResignDate.HasValue || (n.ResignDate.Value.Year >= nowTarget.Year && n.ResignDate.Value.Month >= nowTarget.Month)))
+            var result = _context.Employees.Where(n => (n.HireDate.Year <= _nowTarget.Year && n.HireDate.Month <= _nowTarget.Month) &&
+                                           (!n.ResignDate.HasValue || (n.ResignDate.Value.Year >= _nowTarget.Year && n.ResignDate.Value.Month >= _nowTarget.Month)))
                                            .GroupJoin(_context.ShiftManagements
-                                           .Where(n => n.Year == nowTarget.Year && n.Month == nowTarget.Month), // 対象月分のシフトだけ取得
+                                           .Where(n => n.Year == _nowTarget.Year && n.Month == _nowTarget.Month), // 対象月分のシフトだけ取得
                                            em => em.EmployeeId,
                                            s => s.EmployeeId,
                                            (Emp, Sft) => new
                                            {
                                                EmpID = Emp.EmployeeId, // 社員ID
                                                EmpNm = Emp.EmployeeName, // 社員名
-                                               EmpSftId =Emp.ShiftId, // シフトID
+                                               EmpSftId = Emp.ShiftId, // シフトID
                                                SftMg = Sft // シフト管理テーブル情報
                                            }).Join(_context.Shifts,
                                                em => em.EmpSftId,
                                                s => s.ShiftId,
                                                (empSft, sSft) => new
                                                {
-                                                EmpSft = empSft, // 結合したテーブル情報
-                                                SftTypeName = sSft.ShiftTypeName // シフト名
-                                                }).ToList();
+                                                   EmpSft = empSft, // 結合したテーブル情報
+                                                   SftTypeName = sSft.ShiftTypeName // シフト名
+                                               }).ToList();
             // 取得した情報分行を追加
             int namecount = result.Count;
             shiftDataGridView.RowCount = namecount;
 
             // 社員IDを保持するために日数+1の列を作成
-            int dayCount = DateTime.DaysInMonth(nowTarget.Year, nowTarget.Month) + 1;
+            int dayCount = DateTime.DaysInMonth(_nowTarget.Year, _nowTarget.Month) + 1;
             int i = 0;
+
             // データグリッドビューにデータ表示
             foreach (var name in result)
             {
@@ -247,13 +245,21 @@ namespace AttendanceManagementSystem.Views
                 {
                     // シフトの色を変更するための入れ子
                     var shiftColor = shiftDataGridView[workDate.Day, i].Style;
+
                     // セルの背景色をシフトに対応した色に変更
-                    shiftColor.BackColor = DhangeColor(typeName, shiftColor);
+                    shiftColor.BackColor = ChangeColor(typeName, shiftColor);
                 }
                 i++;
             }
+
             // データグリッドビューの最後の列を非表示
             shiftDataGridView.Columns[dayCount].Visible = false;
+
+            // shiftDataGridView の すべてのカラムで ソート を 無効化
+            foreach (DataGridViewColumn column in this.shiftDataGridView.Columns)
+            {
+                column.SortMode = DataGridViewColumnSortMode.NotSortable;
+            }
         }
 
         /// <summary>
@@ -261,7 +267,7 @@ namespace AttendanceManagementSystem.Views
         /// </summary>
         /// <param name="typeName">シフトの種類</param>
         /// <param name="color">セルの背景色</param>
-        private Color DhangeColor(string typeName ,DataGridViewCellStyle color)
+        private Color ChangeColor(string typeName, DataGridViewCellStyle color)
         {
             switch (typeName)
             {
@@ -283,5 +289,7 @@ namespace AttendanceManagementSystem.Views
             }
         }
         #endregion
+
+        
     }
 }

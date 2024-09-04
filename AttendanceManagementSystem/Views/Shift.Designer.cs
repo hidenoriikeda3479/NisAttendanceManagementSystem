@@ -53,7 +53,6 @@
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.ControlText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.False;
             shiftDataGridView.DefaultCellStyle = dataGridViewCellStyle1;
-            shiftDataGridView.Enabled = false;
             shiftDataGridView.Location = new Point(12, 99);
             shiftDataGridView.Name = "shiftDataGridView";
             shiftDataGridView.ReadOnly = true;
@@ -81,7 +80,7 @@
             btnPastMonth.TabIndex = 2;
             btnPastMonth.Text = "◀先月";
             btnPastMonth.UseVisualStyleBackColor = true;
-            btnPastMonth.Click += btnPastMonth_Click;
+            btnPastMonth.Click += btnChangeMonth_Click;
             // 
             // btnNextMonth
             // 
@@ -92,7 +91,7 @@
             btnNextMonth.TabIndex = 3;
             btnNextMonth.Text = "来月▶";
             btnNextMonth.UseVisualStyleBackColor = true;
-            btnNextMonth.Click += btnNextMonth_Click;
+            btnNextMonth.Click += btnChangeMonth_Click;
             // 
             // labelMorning
             // 
