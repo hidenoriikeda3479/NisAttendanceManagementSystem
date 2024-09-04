@@ -18,7 +18,7 @@ namespace AttendanceManagementSystem.Views
         /// </summary>
         private readonly AttendanceManagementDbContext _context;
 
-        public Menu(AttendanceManagementDbContext context)
+        public Menu(AttendanceManagementDbContext context , int Id)
         {
             InitializeComponent();
             _context = context;
