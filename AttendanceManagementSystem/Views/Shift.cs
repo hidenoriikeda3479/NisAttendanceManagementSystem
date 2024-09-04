@@ -39,12 +39,12 @@ namespace AttendanceManagementSystem.Views
         /// シフト画面の表示
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
-        public Shift(AttendanceManagementDbContext context, string adminId)
+        public Shift(AttendanceManagementDbContext context, int adminId)
         {
             InitializeComponent();
 
             _context = context;
-            _adminId = int.Parse(adminId);
+            _adminId = adminId;
 
             // カラム数を動的にする
             shiftDataGridView.AutoGenerateColumns = false;

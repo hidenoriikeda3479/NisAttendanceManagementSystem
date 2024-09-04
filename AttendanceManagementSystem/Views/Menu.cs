@@ -28,7 +28,7 @@ namespace AttendanceManagementSystem.Views
         {
 
             int adminId = 1;
-            var shift = new Shift(_context, adminId.ToString());
+            var shift = new Shift(_context, adminId);
             shift.Show();
         }
 
@@ -57,7 +57,7 @@ namespace AttendanceManagementSystem.Views
         private void btnAdmin_Click(object sender, EventArgs e)
         {
             int adminId = 2;
-            var shift = new Shift(_context, adminId.ToString());
+            var shift = new Shift(_context, adminId);
             shift.Show();
         }
     }
