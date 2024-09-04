@@ -115,9 +115,9 @@
             Controls.Add(btnAttendanceManagement);
             Controls.Add(btnSalaryManagement);
             Controls.Add(btnShiftManagement);
+            FormBorderStyle = FormBorderStyle.FixedSingle;
             Name = "Menu";
             Text = "Menu";
-            Load += Menu_Load;
             ResumeLayout(false);
         }
 
