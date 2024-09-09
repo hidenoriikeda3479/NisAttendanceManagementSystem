@@ -21,18 +21,22 @@ namespace AttendanceManagementSystem.Views
         private int targetYear;
 
         /// <summary>
+        /// ユーザー閲覧
+        /// </summary>
+        private int targetId;
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
         /// <param name="visibleflag">画面表記フラグ</param>
-        public TotalAmountPaid(AttendanceManagementDbContext context,int visibleflag)
+        public TotalAmountPaid(AttendanceManagementDbContext context,int id)
         {
             InitializeComponent();
             _context = context;
             targetYear = DateTime.Now.Year;
+            targetId = id;
 
-            // 押下時、画面表記変更イベント
-            VisileEvent(visibleflag);
         }
 
         /// <summary>
@@ -42,11 +46,25 @@ namespace AttendanceManagementSystem.Views
         /// <param name="e"></param>
         private void TotalAmountPaid_Load(object sender, EventArgs e)
         {
-            // ラベル初期表示（今年の西暦）
-            UpdateYearLabel();
 
-            // dataGridView の初期表示（今年の西暦）
-            DateList(targetYear);
+            // 押下時、画面表記変更イベント
+            bool visibleflag = VisileEvent(targetId);
+
+            //画面表記変更イベントを実行し、表示状態を取得
+            if (visibleflag) 
+            {
+                //給料画面表示
+                SalaryConfirmation();
+            }
+            else
+            {
+                // ラベル初期表示（今年の西暦）
+                UpdateYearLabel();
+
+                // dataGridView の初期表示（今年の西暦）
+                DateList(targetYear);
+            }
+
         }
 
         #region ボタンイベント
@@ -116,13 +134,19 @@ namespace AttendanceManagementSystem.Views
         /// 画面表記変更イベント
         /// </summary>
         /// <param name="visibleUpdate">フラグ固定値</param>
-        private void VisileEvent(int visibleUpdate)
+        private bool VisileEvent(int visibleUpdate)
         {
+            //画面表記フラグ
+            bool visibleflag;
+
             // 画面表記変更フラグ分岐
-            if (visibleUpdate == 1)
+            if (visibleUpdate == 0)
             {
                 // 総支給額集計ボタン押下時、総合集計表非表示
                 salaryConfirmationLabel.Visible = false;
+
+                visibleflag = false;
+                return visibleflag;
             }
             else
             {
@@ -130,11 +154,14 @@ namespace AttendanceManagementSystem.Views
                 totallingLabel.Visible = false;
                 totalSalaryDgv.Visible = false;
                 monthlyTotalLabel.Visible = false;
+                
 
                 // foamサイズ変更
                 this.Size = new Size(1100, 274);
+                visibleflag = true;
+                return visibleflag;
             }
-            return;
+
         }
 
         /// <summary>
@@ -145,6 +172,8 @@ namespace AttendanceManagementSystem.Views
             // 選択した年を表示
             labelyear.Text = dateTimePicker1.Value.ToString("yyyy年");
         }
+
+        
 
         #endregion
 
@@ -320,6 +349,28 @@ namespace AttendanceManagementSystem.Views
                     column.DefaultCellStyle.Format = "c";
                 }
             }
+        }
+
+        /// <summary>
+        /// 個人給料表示
+        /// </summary>
+        private void SalaryConfirmation()
+        {
+            //DateListメソッドを呼び出し、結果を取得
+            List<TotalAmountPaidViewModel> result = DateList(targetYear);
+
+            //ログインIDから従業員名を取得
+            var searchname = _context.Employees.Where(n => n.EmployeeId == targetId).Select(n => n.EmployeeName).ToList();
+
+            //対象社員名を取得
+            var targetname = searchname.First();
+
+            //対象社員の照合
+            var matchrecord = result.Where(n => n.EmployeeName == targetname).ToList();
+
+            //給与 dataGridView を表示
+            salaryDgv.DataSource = matchrecord;
+
         }
 
         #endregion
