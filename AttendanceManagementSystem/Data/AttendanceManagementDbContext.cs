@@ -61,6 +61,8 @@ namespace AttendanceManagementSystem.Data
             // 複合キーの設定
             modelBuilder.Entity<ShiftManagementModel>()
                 .HasKey(sm => new { sm.EmployeeId, sm.Year, sm.Month, sm.Day });
+            modelBuilder.Entity<AttendanceModel>()
+                .HasKey(sm => new { sm.EmployeeId, sm.Year, sm.Month, sm.Day });
 
             // 権限マスタの初期データ
             modelBuilder.Entity<PermissionModel>().HasData(
