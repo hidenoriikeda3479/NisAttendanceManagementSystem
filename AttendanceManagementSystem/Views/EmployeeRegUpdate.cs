@@ -18,7 +18,9 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
 using System.Reflection;
 using Microsoft.IdentityModel.Tokens;
 using AttendanceManagementSystem.Models;
+using AttendanceManagementSystem.Common;
 using System.Reflection.Metadata;
+using System.Security.Cryptography;
 
 namespace AttendanceManagementSystem.Views
 {
@@ -213,7 +215,7 @@ namespace AttendanceManagementSystem.Views
             {
                 EmployeeName = txtName.Text,
                 Gender = menRadio.Checked ? 1 : 2,
-                Password = txtPswrd.Text,
+                Password = HashHelper.Sha512(txtPswrd.Text),
                 PhoneNumber = txtPhone.Text,
                 PostCode = txtPost.Text,
                 Address = txtAddress.Text,
@@ -245,7 +247,7 @@ namespace AttendanceManagementSystem.Views
             // TODO
             employee.EmployeeName = txtName.Text;
             employee.Gender = menRadio.Checked ? 1 : 2;
-            employee.Password = txtPswrd.Text;
+            employee.Password = HashHelper.Sha512(txtPswrd.Text);
             employee.PhoneNumber = txtPhone.Text;
             employee.PostCode = txtPost.Text;
             employee.Address = txtAddress.Text;
