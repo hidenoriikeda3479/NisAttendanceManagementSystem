@@ -18,11 +18,6 @@ namespace AttendanceManagementSystem
         private readonly AttendanceManagementDbContext _context;
 
         /// <summary>
-        /// ログイン成功のフラグ
-        /// </summary>
-        private bool _success;
-
-        /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
@@ -39,34 +34,35 @@ namespace AttendanceManagementSystem
         /// <param name="e">イベント情報</param>
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            //入力状態チェック
-            TextInputCheck();
+            //結果を取得
+            bool success = TextInputCheck(employeeIdTextBox1.Text , passwordTextBox2.Text);
 
             //ログイン成功時、メニュー画面へ遷移
-            if (_success) 
+            if (success) 
             {
                 var menu = new Menu(_context, int.Parse(employeeIdTextBox1.Text));
                 menu.Show();
                 Hide();
             }
 
-
         }
 
         /// <summary>
         /// 入力状態チェック
         /// </summary>
-        private bool TextInputCheck()
+        private bool TextInputCheck(string id , string password)
         {
+            //ログイン成功のフラグ
+            bool success = false;
 
             //ID、パスワード入力チェック
-            if (string.IsNullOrEmpty(employeeIdTextBox1.Text) ||
-                string.IsNullOrEmpty(passwordTextBox2.Text))
+            if (string.IsNullOrEmpty(id) ||
+                string.IsNullOrEmpty(password))
             {
                 //ボックス内容にエラーメッセージ表示
                 MessageBox.Show("必須項目が未入力です");
-                _success = false;
-                return _success;
+                success = false;
+                return success;
             }
 
 
@@ -81,8 +77,8 @@ namespace AttendanceManagementSystem
             if (hash == searchpassword.FirstOrDefault())
             {
                 //ログイン成功
-                _success = true;
-                return _success;
+                success = true;
+                return success;
 
             }
             else
@@ -91,8 +87,8 @@ namespace AttendanceManagementSystem
                 MessageBox.Show("IDもしくはパスワードが間違っています");
                 
                 //ログイン失敗
-                _success = false;
-                return _success;
+                success = false;
+                return success;
             };
 
         }
