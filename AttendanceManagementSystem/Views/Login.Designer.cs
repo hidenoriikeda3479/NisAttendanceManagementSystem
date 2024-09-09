@@ -31,7 +31,7 @@
             btnLogin = new Button();
             label1 = new Label();
             label2 = new Label();
-            employeenameTextBox1 = new TextBox();
+            employeeIdTextBox1 = new TextBox();
             passwordTextBox2 = new TextBox();
             SuspendLayout();
             // 
@@ -49,11 +49,11 @@
             // 
             label1.AutoSize = true;
             label1.Font = new Font("Yu Gothic UI", 14F);
-            label1.Location = new Point(12, 55);
+            label1.Location = new Point(62, 55);
             label1.Name = "label1";
-            label1.Size = new Size(88, 25);
+            label1.Size = new Size(30, 25);
             label1.TabIndex = 2;
-            label1.Text = "従業員名";
+            label1.Text = "ID";
             // 
             // label2
             // 
@@ -65,16 +65,21 @@
             label2.TabIndex = 2;
             label2.Text = "パスワード";
             // 
-            // employeenameTextBox1
+            // employeeIdTextBox1
             // 
-            employeenameTextBox1.Location = new Point(106, 57);
-            employeenameTextBox1.Name = "employeenameTextBox1";
-            employeenameTextBox1.Size = new Size(221, 23);
-            employeenameTextBox1.TabIndex = 3;
+            employeeIdTextBox1.ImeMode = ImeMode.Disable;
+            employeeIdTextBox1.Location = new Point(106, 57);
+            employeeIdTextBox1.MaxLength = 2;
+            employeeIdTextBox1.Name = "employeeIdTextBox1";
+            employeeIdTextBox1.ShortcutsEnabled = false;
+            employeeIdTextBox1.Size = new Size(221, 23);
+            employeeIdTextBox1.TabIndex = 3;
+            employeeIdTextBox1.KeyPress += employeeIdTextBox1_KeyPress;
             // 
             // passwordTextBox2
             // 
             passwordTextBox2.Location = new Point(106, 113);
+            passwordTextBox2.MaxLength = 12;
             passwordTextBox2.Name = "passwordTextBox2";
             passwordTextBox2.PasswordChar = '*';
             passwordTextBox2.Size = new Size(221, 23);
@@ -86,7 +91,7 @@
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(336, 208);
             Controls.Add(passwordTextBox2);
-            Controls.Add(employeenameTextBox1);
+            Controls.Add(employeeIdTextBox1);
             Controls.Add(label2);
             Controls.Add(label1);
             Controls.Add(btnLogin);
@@ -101,7 +106,7 @@
         private Button btnLogin;
         private Label label1;
         private Label label2;
-        private TextBox employeenameTextBox1;
+        private TextBox employeeIdTextBox1;
         private TextBox passwordTextBox2;
     }
 }

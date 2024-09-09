@@ -1,5 +1,6 @@
-using AttendanceManagementSystem.Common;
+ï»¿using AttendanceManagementSystem.Common;
 using AttendanceManagementSystem.Data;
+using AttendanceManagementSystem.Models;
 using AttendanceManagementSystem.Views;
 using System.Security.Cryptography;
 using System.Windows.Forms;
@@ -7,24 +8,24 @@ using System.Windows.Forms;
 namespace AttendanceManagementSystem
 {
     /// <summary>
-    /// ƒƒOƒCƒ“‰æ–Ê
+    /// ãƒ­ã‚°ã‚¤ãƒ³ç”»é¢
     /// </summary>
     public partial class Login : Form
     {
         /// <summary>
-        /// DBƒRƒ“ƒeƒLƒXƒg
+        /// DBã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆ
         /// </summary>
         private readonly AttendanceManagementDbContext _context;
 
         /// <summary>
-        /// ƒƒOƒCƒ““o˜^‚µ‚½ĞˆõID
+        /// ãƒ­ã‚°ã‚¤ãƒ³æˆåŠŸã®ãƒ•ãƒ©ã‚°
         /// </summary>
-        private int Id;
+        private bool _success;
 
         /// <summary>
-        /// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+        /// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
         /// </summary>
-        /// <param name="context">DBƒRƒ“ƒeƒLƒXƒg</param>
+        /// <param name="context">DBã‚³ãƒ³ãƒ†ã‚­ã‚¹ãƒˆ</param>
         public Login(AttendanceManagementDbContext context)
         {
             InitializeComponent();
@@ -32,57 +33,88 @@ namespace AttendanceManagementSystem
         }
 
         /// <summary>
-        /// ƒƒOƒCƒ“ƒ{ƒ^ƒ“ƒNƒŠƒbƒN
+        /// ãƒ­ã‚°ã‚¤ãƒ³ãƒœã‚¿ãƒ³ã‚¯ãƒªãƒƒã‚¯
         /// </summary>
-        /// <param name="sender">ƒRƒ“ƒgƒ[ƒ‹î•ñ</param>
-        /// <param name="e">ƒCƒxƒ“ƒgî•ñ</param>
+        /// <param name="sender">ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«æƒ…å ±</param>
+        /// <param name="e">ã‚¤ãƒ™ãƒ³ãƒˆæƒ…å ±</param>
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            //“ü—Íó‘Ôƒ`ƒFƒbƒN
+            //å…¥åŠ›çŠ¶æ…‹ãƒã‚§ãƒƒã‚¯
             TextInputCheck();
+
+            //ãƒ­ã‚°ã‚¤ãƒ³æˆåŠŸæ™‚ã€ãƒ¡ãƒ‹ãƒ¥ãƒ¼ç”»é¢ã¸é·ç§»
+            if (_success) 
+            {
+                var menu = new Menu(_context, int.Parse(employeeIdTextBox1.Text));
+                menu.Show();
+                Hide();
+            }
+
+
         }
 
         /// <summary>
-        /// “ü—Íó‘Ôƒ`ƒFƒbƒN
+        /// å…¥åŠ›çŠ¶æ…‹ãƒã‚§ãƒƒã‚¯
         /// </summary>
-        private void TextInputCheck()
+        private bool TextInputCheck()
         {
 
-            //]‹Æˆõ–¼AƒpƒXƒ[ƒh“ü—Íƒ`ƒFƒbƒN
-            if (string.IsNullOrEmpty(employeenameTextBox1.Text) ||
+            //IDã€ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰å…¥åŠ›ãƒã‚§ãƒƒã‚¯
+            if (string.IsNullOrEmpty(employeeIdTextBox1.Text) ||
                 string.IsNullOrEmpty(passwordTextBox2.Text))
             {
-                //ƒ{ƒbƒNƒX“à—e‚É–¢“ü—Í•\¦
-                MessageBox.Show("•K{€–Ú‚ª–¢“ü—Í‚Å‚·");
-                return;
+                //ãƒœãƒƒã‚¯ã‚¹å†…å®¹ã«ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤º
+                MessageBox.Show("å¿…é ˆé …ç›®ãŒæœªå…¥åŠ›ã§ã™");
+                _success = false;
+                return _success;
             }
 
-            //“ü—Í‚³‚ê‚½ƒpƒXƒ[ƒh‚ÌƒnƒbƒVƒ…‰»
+
+            //å…¥åŠ›ã•ã‚ŒãŸãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã®ãƒãƒƒã‚·ãƒ¥åŒ–
             string hash = HashHelper.sha512(passwordTextBox2.Text);
 
-            //]‹Æˆõ–¼‚ÆƒpƒXƒ[ƒh‚ğÆ‡Aˆê’v‚·‚éĞˆõ‚ğæ“¾
-            var matchrecord = _context.Employees.SingleOrDefault(n => n.EmployeeName == employeenameTextBox1.Text &&
-                                                                 n.Password == hash);
+            //IDã¨ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ç…§åˆ
+            var searchpassword = _context.Employees.Where(n => n.EmployeeId == int.Parse(employeeIdTextBox1.Text)).Select(n => n.Password).ToList();
 
-            //“ü—Íî•ñ‚ªŠÔˆá‚Á‚Ä‚¢‚½ê‡
-            if (matchrecord == null)
+
+            //ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ä¸€è‡´ã—ã¦ã„ã‚‹å ´åˆ
+            if (hash == searchpassword.FirstOrDefault())
             {
-                //ƒ{ƒbƒNƒX“à—e‚ÉƒGƒ‰[•\¦
-                MessageBox.Show("]‹Æˆõ–¼‚Ü‚½‚ÍƒpƒXƒ[ƒh‚ªŠÔˆá‚Á‚Ä‚¢‚Ü‚·");
-                return;
+                //ãƒ­ã‚°ã‚¤ãƒ³æˆåŠŸ
+                _success = true;
+                return _success;
+
             }
             else
             {
-                //ˆê’v‚µ‚½Ğˆõ‚ÌID‚ğæ“¾
-                Id = matchrecord.EmployeeId;
+                //ãƒœãƒƒã‚¯ã‚¹å†…å®¹ã«ã‚¨ãƒ©ãƒ¼ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸è¡¨ç¤º
+                MessageBox.Show("IDã‚‚ã—ãã¯ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãŒé–“é•ã£ã¦ã„ã¾ã™");
+                
+                //ãƒ­ã‚°ã‚¤ãƒ³å¤±æ•—
+                _success = false;
+                return _success;
+            };
+
+        }
+
+        /// <summary>
+        /// IDå…¥åŠ›åˆ¶é™
+        /// </summary>
+        /// <param name="sender">ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆæƒ…å ±</param>
+        /// <param name="e">ã‚¤ãƒ™ãƒ³ãƒˆæƒ…å ±</param>
+        private void employeeIdTextBox1_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            // ãƒãƒƒã‚¯ã‚¹ãƒšãƒ¼ã‚¹ãŒæŠ¼ã•ã‚ŒãŸæ™‚ã¯æœ‰åŠ¹ï¼ˆDeleteã‚­ãƒ¼ã‚‚æœ‰åŠ¹ï¼‰
+            if (e.KeyChar == '\b')
+            {
+                return;
             }
 
-            //ƒƒOƒCƒ“‚µ‚½ĞˆõID‚ğæ“¾‚µ‚ÄAƒƒjƒ…[‰æ–Ê‚Ö‘JˆÚ
-            var menu = new Menu(_context, Id);
-
-            menu.Show();
-
-            Hide();
+            //æ•°å€¤0ï½9ä»¥å¤–ãŒæŠ¼ã•ã‚ŒãŸæ™‚ã¯ã‚¤ãƒ™ãƒ³ãƒˆã‚’ã‚­ãƒ£ãƒ³ã‚»ãƒ«ã™ã‚‹
+            if ((e.KeyChar < '0' || '9' < e.KeyChar))
+            {
+                e.Handled = true;
+            }
 
         }
 
