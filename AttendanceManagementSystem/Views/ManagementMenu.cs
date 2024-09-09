@@ -31,9 +31,7 @@ namespace AttendanceManagementSystem.Views
 
         private void btnEmployeeList_Click(object sender, EventArgs e)
         {
-            var employeeinformation = new EmployeeInformation(_context);
-            employeeinformation.Show();
-            Hide();
+
         }
 
         private void btnSalaryList_Click(object sender, EventArgs e)
