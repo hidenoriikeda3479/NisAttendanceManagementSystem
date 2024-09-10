@@ -30,7 +30,7 @@ namespace AttendanceManagementSystem.Views
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
         /// <param name="id">ユーザー閲覧</param>
-        public TotalAmountPaid(AttendanceManagementDbContext context,int id)
+        public TotalAmountPaid(AttendanceManagementDbContext context,int id = 0)
         {
             InitializeComponent();
             _context = context;
@@ -161,7 +161,6 @@ namespace AttendanceManagementSystem.Views
         #endregion
 
         #region dataGridView 反映
-
         /// <summary>
         /// 給与 dataGridView 反映イベント
         /// </summary>
@@ -182,16 +181,17 @@ namespace AttendanceManagementSystem.Views
                     e.e.EmployeeName,
                     e.e.EmployeeId,
                     e.e.RankId,
-                    a.Year,
-                    a.Month,
-                    a.Day,
-                    a.WorkStartTime,
-                    a.WorkEndTime,
-                    a.BreakTime,
+                    Year = a != null ? a.Year : (int?)null,
+                    Month = a != null ? a.Month : (int?)null,
+                    Day = a != null ? a.Day : (int?)null,
+                    WorkStartTime = a != null ? a.WorkStartTime : null,
+                    WorkEndTime = a != null ? a.WorkEndTime : null,
+                    BreakTime = a != null ? a.BreakTime : null,
                 })
                 .GroupJoin(
                 _context.Ranks,
-                ea => ea.RankId, r => r.RankId,
+                ea => ea.RankId,
+                r => r.RankId,
                 (ea, r) => new { ea, r })
                 .SelectMany(
                 x => x.r.DefaultIfEmpty(),

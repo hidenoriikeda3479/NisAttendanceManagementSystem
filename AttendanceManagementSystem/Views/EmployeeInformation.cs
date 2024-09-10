@@ -83,10 +83,10 @@ namespace AttendanceManagementSystem.Views
             // 選択された行があるか確認
             if (Employeedgv.SelectedRows.Count > 0)
             {
-                //// 選択された従業員のIDを取得 TODO:更新画面に遷移後
-                //int employeeId = (int)dataGridView1.SelectedRows[0].Cells["EmployeeId"].Value;
-                //var EmployeeUpdate = new EmployeeUpdate(employeeId.ToString());
-                //EmployeeUpdate.Show();
+                // 選択された従業員のIDを取得 TODO:更新画面に遷移後
+                int employeeId = (int)Employeedgv.SelectedRows[0].Cells["EmployeeId"].Value;
+                var EmployeeRegUpdate = new EmployeeRegUpdate(_context, employeeId);
+                EmployeeRegUpdate.Show();
             }
             else
             {

@@ -24,30 +24,25 @@ namespace AttendanceManagementSystem.Views
         /// <param name="context">DBコンテキスト</param>
         /// <param name="visibleflag">画面変更フラグ</param>
         /// <param name="employeeid">従業員ID</param>
-        /// <param name="employeename">従業員名</param>
-        /// <param name="gender">性別</param>
-        /// <param name="password">パスワード</param>
-        /// <param name="phonenumber">電話番号</param>
-        /// <param name="postcode">郵便番号</param>
-        /// <param name="address">住所</param>
-        /// <param name="buildingname">建物名</param>
-        public EmployeeRegUpdate(AttendanceManagementDbContext context, int visibleflag, int employeeid, string employeename,
-            int gender, string password, string phonenumber, string postcode, string address, string buildingname)
+        public EmployeeRegUpdate(AttendanceManagementDbContext context, int employeeid = 0)
         {
             InitializeComponent();
             _context = context; // DBコンテキスト
+            _employeeid = employeeid;
 
-            // 更新時のテキスト表記
-            _employeeid = employeeid; // 従業員IDを保存
-            txtName.Text = employeename;　// 従業員名
-            txtPswrd.Text = password; // パスワード
-            txtPhone.Text = phonenumber; // 電話番号
-            txtPost.Text = postcode; // 郵便番号
-            txtAddress.Text = address; // 住所
-            txtBuilding.Text = buildingname; // 建物名
+            if (employeeid > 0) {
+                var result = _context.Employees.Single(e => e.EmployeeId == employeeid);
 
+                // 更新時のテキスト表記
+                _employeeid = employeeid; // 従業員IDを保存
+                txtName.Text = result.EmployeeName; // 従業員名
+                txtPhone.Text = result.PhoneNumber; // 電話番号
+                txtPost.Text = result.PostCode; // 郵便番号
+                txtAddress.Text = result.Address; // 住所
+                txtBuilding.Text = result.Address; // 建物名
+            }
             // 押下時、画面表記変更イベント
-            VisileEvent(visibleflag);
+            VisileEvent(employeeid);
         }
 
         /// <summary>
@@ -174,7 +169,7 @@ namespace AttendanceManagementSystem.Views
         private void VisileEvent(int visibleflag)
         {
             // 登録ボタン押下時、更新画面表記非表示
-            if (visibleflag == 1)
+            if (visibleflag == 0)
             {
                 labelUpdate.Visible = false;
                 btnUpdate.Visible = false;

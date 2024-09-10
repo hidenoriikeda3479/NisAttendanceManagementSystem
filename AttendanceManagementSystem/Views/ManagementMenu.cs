@@ -35,9 +35,9 @@ namespace AttendanceManagementSystem.Views
         private void btnEmployeeRegUpdate_Click(object sender, EventArgs e)
         {
             //従業員登録・更新画面遷移
-            //var employeeRegUpdate = new EmployeeRegUpdate(_context);
-            //employeeRegUpdate.Show();
-            //Hide();
+            var employeeRegUpdate = new EmployeeRegUpdate(_context);
+            employeeRegUpdate.Show();
+            Hide();
         }
 
         /// <summary>
@@ -48,9 +48,9 @@ namespace AttendanceManagementSystem.Views
         private void btnEmployeeInformation_Click(object sender, EventArgs e)
         {
             //従業員一覧画面遷移
-            //var employeeInformation = new EmployeeInformation(_context);
-            //employeeInformation.Show();
-            //Hide();
+            var employeeInformation = new EmployeeInformation(_context);
+            employeeInformation.Show();
+            Hide();
         }
 
         /// <summary>
@@ -61,11 +61,9 @@ namespace AttendanceManagementSystem.Views
         private void btnTotalAmountPaid_Click_1(object sender, EventArgs e)
         {
             //総支給額画面遷移
-            //var totalAmountPaid = new TotalAmountPaid(_context);
-            //totalAmountPaid.Show();
-            //Hide();
-
+            var totalAmountPaid = new TotalAmountPaid(_context);
+            totalAmountPaid.Show();
+            Hide();
         }
-
     }
 }

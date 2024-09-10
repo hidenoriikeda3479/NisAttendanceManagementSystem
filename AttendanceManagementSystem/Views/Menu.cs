@@ -37,7 +37,7 @@ namespace AttendanceManagementSystem.Views
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
         /// <param name="id">社員ID</param>
-        public Menu(AttendanceManagementDbContext context, int id, int permissionId)
+        public Menu(AttendanceManagementDbContext context, int id)
         {
             InitializeComponent();
             _context = context;
@@ -47,8 +47,10 @@ namespace AttendanceManagementSystem.Views
             DateTime now = DateTime.Now;
             string lblText = AttendanceCheck(now);
 
+            var per = _context.Employees.Single(n => n.EmployeeId == _id);
+
             // 権限IDを格納
-            _permissionId = permissionId;
+            _permissionId = per.PermissionId;
 
             // 管理者がログインすると管理ボタン表示
             if (_permissionId == 1)
@@ -76,8 +78,8 @@ namespace AttendanceManagementSystem.Views
         private void btnShiftManagement_Click(object sender, EventArgs e)
         {
             // シフト画面へ遷移
-            // var shift = new Shift(_context,_permissionId);
-            // shift.Show();
+            var shift = new Shift(_context, _permissionId);
+            shift.Show();
         }
 
         /// <summary>
@@ -88,8 +90,8 @@ namespace AttendanceManagementSystem.Views
         private void btnSalaryManagement_Click(object sender, EventArgs e)
         {
             // 給料画面へ遷移
-            // var salary = new Salary(_context, _Id);
-            // salary.show();
+            var salary = new TotalAmountPaid(_context, _id);
+            salary.Show();
         }
 
         /// <summary>
@@ -100,8 +102,8 @@ namespace AttendanceManagementSystem.Views
         private void btnAttendanceManagement_Click(object sender, EventArgs e)
         {
             // 勤怠画面へ遷移
-            // var attendance = new Attendance(_context, _permissionId, _Id);
-            // attendance.show();
+            var attendance = new Attendance(_context, _id);
+            attendance.Show();
         }
 
         /// <summary>
