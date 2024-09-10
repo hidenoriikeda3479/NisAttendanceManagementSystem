@@ -1,26 +1,6 @@
 ﻿using AttendanceManagementSystem.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.VisualBasic.ApplicationServices;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
-using System.Text.RegularExpressions;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolBar;
-using System.Reflection;
-using Microsoft.IdentityModel.Tokens;
 using AttendanceManagementSystem.Models;
 using AttendanceManagementSystem.Common;
-using System.Reflection.Metadata;
-using System.Security.Cryptography;
 
 namespace AttendanceManagementSystem.Views
 {
@@ -42,10 +22,17 @@ namespace AttendanceManagementSystem.Views
         /// コンストラクタ
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
-        /// <param name="employee">従業員ID</param>
         /// <param name="visibleflag">画面変更フラグ</param>
-        public EmployeeRegUpdate(AttendanceManagementDbContext context, int visibleflag, int employeeid, string employeename, int gender,
-           string password, string phonenumber, string postcode, string address, string buildingname)
+        /// <param name="employeeid">従業員ID</param>
+        /// <param name="employeename">従業員名</param>
+        /// <param name="gender">性別</param>
+        /// <param name="password">パスワード</param>
+        /// <param name="phonenumber">電話番号</param>
+        /// <param name="postcode">郵便番号</param>
+        /// <param name="address">住所</param>
+        /// <param name="buildingname">建物名</param>
+        public EmployeeRegUpdate(AttendanceManagementDbContext context, int visibleflag, int employeeid, string employeename,
+            int gender, string password, string phonenumber, string postcode, string address, string buildingname)
         {
             InitializeComponent();
             _context = context; // DBコンテキスト
@@ -73,8 +60,8 @@ namespace AttendanceManagementSystem.Views
             // アイコンを点滅なしに設定する
             errorProvider.BlinkStyle = ErrorBlinkStyle.NeverBlink;
 
-            cmbRank.SelectedIndex = 0;
-            cmbShift.SelectedIndex = 0;
+            cmbRank.SelectedIndex = 0; // ランク初期表示
+            cmbShift.SelectedIndex = 0; // シフト初期表示
         }
 
         #region ボタンクリックイベント
@@ -163,7 +150,6 @@ namespace AttendanceManagementSystem.Views
                 if (aemployee != null)
                 {
                     // 現在の時間で退社する
-                    // TODO
                     aemployee.ResignDate = DateTime.Now;
 
                     // 追加したデータをコミット
@@ -184,11 +170,11 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// 画面表記変更イベント
         /// </summary>
-        /// <param name="visibleUpdate">フラグ固定値</param>
-        private void VisileEvent(int visibleUpdate)
+        /// <param name="visibleflag">フラグ固定値</param>
+        private void VisileEvent(int visibleflag)
         {
             // 登録ボタン押下時、更新画面表記非表示
-            if (visibleUpdate == 1)
+            if (visibleflag == 1)
             {
                 labelUpdate.Visible = false;
                 btnUpdate.Visible = false;
@@ -244,7 +230,6 @@ namespace AttendanceManagementSystem.Views
             // IDで従業員を検索
             var employee = _context.Employees.Single(n => n.EmployeeId == employeeid);
 
-            // TODO
             employee.EmployeeName = txtName.Text;
             employee.Gender = menRadio.Checked ? 1 : 2;
             employee.Password = HashHelper.Sha512(txtPswrd.Text);
@@ -262,6 +247,7 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// テキスト入力確認イベント
         /// </summary>
+        /// <returns>入力が正しい場合は true、入力が不足している場合は false を返す</returns>
         private bool InputCheck()
         {
             var flag = true;
@@ -273,6 +259,7 @@ namespace AttendanceManagementSystem.Views
                 flag = false;
             }
 
+            // パスワードが６～１２文字で入力されているか
             if (txtPswrd.Text.Length < 6)
             {
                 errorProvider.SetError(txtPswrd, "6～12文字で入力して下さい");
@@ -311,7 +298,7 @@ namespace AttendanceManagementSystem.Views
             }
 
             // 郵便番号が入力されているか
-            if (string.IsNullOrEmpty(txtPost.Text))
+            if (txtPost.Text.Length < 7)
             {
                 errorProvider.SetError(txtPost, "郵便番号を入力して下さい");
                 flag = false;
@@ -324,15 +311,8 @@ namespace AttendanceManagementSystem.Views
                 flag = false;
             }
 
-            // 建物名が入力されているか
-            if (string.IsNullOrEmpty(txtBuilding.Text))
-            {
-                errorProvider.SetError(txtBuilding, "建物名を入力して下さい");
-                flag = false;
-            }
-
             // 電話番号が入力されているか
-            if (string.IsNullOrEmpty(txtPhone.Text))
+            if (txtPhone.Text.Length < 11)
             {
                 errorProvider.SetError(txtPhone, "電話番号を入力して下さい");
                 flag = false;
@@ -344,7 +324,7 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// コンボボックス選択確認イベント
         /// </summary>
-        /// <returns></returns>
+        /// <returns>入力が正しい場合は true、入力が不足している場合は false を返す</returns>
         private bool RegistrationCheck()
         {
             var flag = true;
@@ -385,7 +365,6 @@ namespace AttendanceManagementSystem.Views
                 e.Handled = true;
             }
         }
-
         #endregion
     }
 }

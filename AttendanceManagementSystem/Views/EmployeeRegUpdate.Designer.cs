@@ -174,6 +174,7 @@
             txtPost.ShortcutsEnabled = false;
             txtPost.Size = new Size(74, 27);
             txtPost.TabIndex = 10;
+            txtPost.TextAlign = HorizontalAlignment.Center;
             txtPost.KeyPress += OnlyNumbers_KeyPress;
             // 
             // label8
@@ -409,7 +410,7 @@
             labelRegistration.TabIndex = 33;
             labelRegistration.Text = "従業員情報登録";
             // 
-            // EmployeeUpdate
+            // EmployeeRegUpdate
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
@@ -445,7 +446,7 @@
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
-            Name = "EmployeeUpdate";
+            Name = "EmployeeRegUpdate";
             Load += EmployeeUpdate_Load;
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
