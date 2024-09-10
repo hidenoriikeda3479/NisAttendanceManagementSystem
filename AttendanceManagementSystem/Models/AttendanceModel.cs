@@ -13,7 +13,7 @@ namespace AttendanceManagementSystem.Models
         /// <summary>
         /// 従業員ID
         /// </summary>
-        [Key]
+        [Required]
         [Column("employee_id")]
         public int EmployeeId { get; set; }
 

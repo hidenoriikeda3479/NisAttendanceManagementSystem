@@ -61,6 +61,8 @@ namespace AttendanceManagementSystem.Data
             // 複合キーの設定
             modelBuilder.Entity<ShiftManagementModel>()
                 .HasKey(sm => new { sm.EmployeeId, sm.Year, sm.Month, sm.Day });
+            modelBuilder.Entity<AttendanceModel>()
+                .HasKey(sm => new { sm.EmployeeId, sm.Year, sm.Month, sm.Day });
 
             // 権限マスタの初期データ
             modelBuilder.Entity<PermissionModel>().HasData(
@@ -77,12 +79,13 @@ namespace AttendanceManagementSystem.Data
             // シフトマスタの初期データ
             modelBuilder.Entity<ShiftModel>().HasData(
                 new ShiftModel { ShiftId = 1, ShiftTypeName = "Morning", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
-                new ShiftModel { ShiftId = 2, ShiftTypeName = "Evening", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+                new ShiftModel { ShiftId = 2, ShiftTypeName = "Noon", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
+                new ShiftModel { ShiftId = 3, ShiftTypeName = "Evening", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
             );
 
             // 従業員テーブルの初期データ
             modelBuilder.Entity<EmployeeModel>().HasData(
-                new EmployeeModel { EmployeeId = 1, EmployeeName = "John Doe", Gender = 1, Password = "hashedpassword123", PhoneNumber = "08012345678", PostCode = "1234567", Address = "Tokyo, Japan", BirthDate = new DateTime(1990, 1, 1), RankId = 1, ShiftId = 1, HireDate = new DateTime(2020, 1, 1), PermissionId = 1, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+                new EmployeeModel { EmployeeId = 1, EmployeeName = "JohnDoe", Gender = 1, Password = "3627909a29c31381a071ec27f7c9ca97726182aed29a7ddd2e54353322cfb30abb9e3a6df2ac2c20fe23436311d678564d0c8d305930575f60e2d3d048184d79", PhoneNumber = "08012345678", PostCode = "1234567", Address = "Tokyo, Japan", BirthDate = new DateTime(1990, 1, 1), RankId = 1, ShiftId = 1, HireDate = new DateTime(2020, 1, 1), PermissionId = 1, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
             );
 
             // 勤怠テーブルの初期データ
