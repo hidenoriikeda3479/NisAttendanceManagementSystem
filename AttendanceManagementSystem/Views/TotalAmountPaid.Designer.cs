@@ -28,13 +28,27 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
             totallingLabel = new Label();
             labelyear = new Label();
             label3 = new Label();
-            dateTimePicker1 = new DateTimePicker();
+            yeardtp = new DateTimePicker();
             salaryDgv = new DataGridView();
+            employeeColum = new DataGridViewTextBoxColumn();
+            january = new DataGridViewTextBoxColumn();
+            february = new DataGridViewTextBoxColumn();
+            march = new DataGridViewTextBoxColumn();
+            april = new DataGridViewTextBoxColumn();
+            may = new DataGridViewTextBoxColumn();
+            june = new DataGridViewTextBoxColumn();
+            july = new DataGridViewTextBoxColumn();
+            august = new DataGridViewTextBoxColumn();
+            september = new DataGridViewTextBoxColumn();
+            october = new DataGridViewTextBoxColumn();
+            november = new DataGridViewTextBoxColumn();
+            december = new DataGridViewTextBoxColumn();
+            totalsalary = new DataGridViewTextBoxColumn();
             btnLastyear = new Button();
             btnNextyear = new Button();
             searchBtn = new Button();
@@ -54,20 +68,6 @@
             mTotalsalary = new DataGridViewTextBoxColumn();
             monthlyTotalLabel = new Label();
             salaryConfirmationLabel = new Label();
-            employeeColum = new DataGridViewTextBoxColumn();
-            january = new DataGridViewTextBoxColumn();
-            february = new DataGridViewTextBoxColumn();
-            march = new DataGridViewTextBoxColumn();
-            april = new DataGridViewTextBoxColumn();
-            may = new DataGridViewTextBoxColumn();
-            june = new DataGridViewTextBoxColumn();
-            july = new DataGridViewTextBoxColumn();
-            august = new DataGridViewTextBoxColumn();
-            september = new DataGridViewTextBoxColumn();
-            october = new DataGridViewTextBoxColumn();
-            november = new DataGridViewTextBoxColumn();
-            december = new DataGridViewTextBoxColumn();
-            totalsalary = new DataGridViewTextBoxColumn();
             ((System.ComponentModel.ISupportInitialize)salaryDgv).BeginInit();
             ((System.ComponentModel.ISupportInitialize)totalSalaryDgv).BeginInit();
             SuspendLayout();
@@ -102,18 +102,18 @@
             label3.TabIndex = 2;
             label3.Text = "検索日";
             // 
-            // dateTimePicker1
+            // yeardtp
             // 
-            dateTimePicker1.Font = new Font("Yu Gothic UI", 10F);
-            dateTimePicker1.Location = new Point(750, 70);
-            dateTimePicker1.Margin = new Padding(3, 2, 3, 2);
-            dateTimePicker1.MaxDate = new DateTime(2024, 9, 9, 0, 0, 0, 0);
-            dateTimePicker1.MinDate = new DateTime(2010, 1, 1, 0, 0, 0, 0);
-            dateTimePicker1.Name = "dateTimePicker1";
-            dateTimePicker1.Size = new Size(61, 25);
-            dateTimePicker1.TabIndex = 4;
-            dateTimePicker1.Value = new DateTime(2024, 9, 9, 0, 0, 0, 0);
-            dateTimePicker1.ValueChanged += dateTimePicker1_ValueChanged;
+            yeardtp.Font = new Font("Yu Gothic UI", 10F);
+            yeardtp.Location = new Point(750, 70);
+            yeardtp.Margin = new Padding(3, 2, 3, 2);
+            yeardtp.MaxDate = new DateTime(2024, 9, 9, 0, 0, 0, 0);
+            yeardtp.MinDate = new DateTime(2010, 1, 1, 0, 0, 0, 0);
+            yeardtp.Name = "yeardtp";
+            yeardtp.Size = new Size(61, 25);
+            yeardtp.TabIndex = 4;
+            yeardtp.Value = new DateTime(2024, 9, 9, 0, 0, 0, 0);
+            yeardtp.ValueChanged += DtpSalary_ValueChanged;
             // 
             // salaryDgv
             // 
@@ -122,14 +122,14 @@
             salaryDgv.AllowUserToResizeColumns = false;
             salaryDgv.AllowUserToResizeRows = false;
             salaryDgv.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle1.BackColor = SystemColors.Control;
-            dataGridViewCellStyle1.Font = new Font("Yu Gothic UI", 9F);
-            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
-            salaryDgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
+            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle3.BackColor = SystemColors.Control;
+            dataGridViewCellStyle3.Font = new Font("Yu Gothic UI", 9F);
+            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
+            salaryDgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
             salaryDgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             salaryDgv.Columns.AddRange(new DataGridViewColumn[] { employeeColum, january, february, march, april, may, june, july, august, september, october, november, december, totalsalary });
             salaryDgv.Location = new Point(13, 100);
@@ -139,7 +139,132 @@
             salaryDgv.RowHeadersVisible = false;
             salaryDgv.Size = new Size(1050, 391);
             salaryDgv.TabIndex = 5;
-            salaryDgv.VisibleChanged += dateTimePicker1_ValueChanged;
+            salaryDgv.VisibleChanged += DtpSalary_ValueChanged;
+            // 
+            // employeeColum
+            // 
+            employeeColum.DataPropertyName = "EmployeeName";
+            employeeColum.FillWeight = 133.715408F;
+            employeeColum.HeaderText = "従業員名";
+            employeeColum.Name = "employeeColum";
+            employeeColum.ReadOnly = true;
+            // 
+            // january
+            // 
+            january.DataPropertyName = "January";
+            january.FillWeight = 91.55962F;
+            january.HeaderText = "１月";
+            january.Name = "january";
+            january.ReadOnly = true;
+            january.Width = 70;
+            // 
+            // february
+            // 
+            february.DataPropertyName = "February";
+            february.FillWeight = 92.3369141F;
+            february.HeaderText = "２月";
+            february.Name = "february";
+            february.ReadOnly = true;
+            february.Width = 70;
+            // 
+            // march
+            // 
+            march.DataPropertyName = "March";
+            march.FillWeight = 93.0622253F;
+            march.HeaderText = "３月";
+            march.Name = "march";
+            march.ReadOnly = true;
+            march.Width = 70;
+            // 
+            // april
+            // 
+            april.DataPropertyName = "April";
+            april.FillWeight = 93.7390747F;
+            april.HeaderText = "４月";
+            april.Name = "april";
+            april.ReadOnly = true;
+            april.Width = 70;
+            // 
+            // may
+            // 
+            may.DataPropertyName = "May";
+            may.FillWeight = 94.37065F;
+            may.HeaderText = "５月";
+            may.Name = "may";
+            may.ReadOnly = true;
+            may.Width = 70;
+            // 
+            // june
+            // 
+            june.DataPropertyName = "June";
+            june.FillWeight = 94.96F;
+            june.HeaderText = "６月";
+            june.Name = "june";
+            june.ReadOnly = true;
+            june.Width = 70;
+            // 
+            // july
+            // 
+            july.DataPropertyName = "July";
+            july.FillWeight = 95.5099258F;
+            july.HeaderText = "７月";
+            july.Name = "july";
+            july.ReadOnly = true;
+            july.Width = 70;
+            // 
+            // august
+            // 
+            august.DataPropertyName = "August";
+            august.FillWeight = 96.0231247F;
+            august.HeaderText = "８月";
+            august.Name = "august";
+            august.ReadOnly = true;
+            august.Width = 70;
+            // 
+            // september
+            // 
+            september.DataPropertyName = "September";
+            september.FillWeight = 96.502F;
+            september.HeaderText = "９月";
+            september.Name = "september";
+            september.ReadOnly = true;
+            september.Width = 70;
+            // 
+            // october
+            // 
+            october.DataPropertyName = "October";
+            october.FillWeight = 96.94887F;
+            october.HeaderText = "１０月";
+            october.Name = "october";
+            october.ReadOnly = true;
+            october.Width = 70;
+            // 
+            // november
+            // 
+            november.DataPropertyName = "November";
+            november.FillWeight = 97.3658142F;
+            november.HeaderText = "１１月";
+            november.Name = "november";
+            november.ReadOnly = true;
+            november.Width = 70;
+            // 
+            // december
+            // 
+            december.DataPropertyName = "December";
+            december.FillWeight = 97.7549057F;
+            december.HeaderText = "１２月";
+            december.Name = "december";
+            december.ReadOnly = true;
+            december.Width = 70;
+            // 
+            // totalsalary
+            // 
+            totalsalary.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+            totalsalary.DataPropertyName = "Totalsalary";
+            totalsalary.FillWeight = 126.151733F;
+            totalsalary.HeaderText = "年/合計";
+            totalsalary.Name = "totalsalary";
+            totalsalary.ReadOnly = true;
             // 
             // btnLastyear
             // 
@@ -183,14 +308,14 @@
             totalSalaryDgv.AllowUserToResizeColumns = false;
             totalSalaryDgv.AllowUserToResizeRows = false;
             totalSalaryDgv.Anchor = AnchorStyles.Left;
-            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle2.BackColor = SystemColors.Control;
-            dataGridViewCellStyle2.Font = new Font("Yu Gothic UI", 9F);
-            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
-            totalSalaryDgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
+            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle4.BackColor = SystemColors.Control;
+            dataGridViewCellStyle4.Font = new Font("Yu Gothic UI", 9F);
+            dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
+            totalSalaryDgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
             totalSalaryDgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             totalSalaryDgv.Columns.AddRange(new DataGridViewColumn[] { totalJanuary, totalFebruary, totalMarch, totalApril, totalMay, totalJune, totalJuly, totalAugust, totalSeptember, totalOctober, totalNovember, totalDecember, mTotalsalary });
             totalSalaryDgv.Location = new Point(112, 512);
@@ -200,7 +325,7 @@
             totalSalaryDgv.RowHeadersVisible = false;
             totalSalaryDgv.Size = new Size(934, 50);
             totalSalaryDgv.TabIndex = 9;
-            totalSalaryDgv.VisibleChanged += dateTimePicker2_ValueChanged;
+            totalSalaryDgv.VisibleChanged += DtpTotalSalary_ValueChanged;
             // 
             // totalJanuary
             // 
@@ -339,131 +464,6 @@
             salaryConfirmationLabel.TabIndex = 11;
             salaryConfirmationLabel.Text = "給料確認";
             // 
-            // employeeColum
-            // 
-            employeeColum.DataPropertyName = "EmployeeName";
-            employeeColum.FillWeight = 133.715408F;
-            employeeColum.HeaderText = "従業員名";
-            employeeColum.Name = "employeeColum";
-            employeeColum.ReadOnly = true;
-            // 
-            // january
-            // 
-            january.DataPropertyName = "January";
-            january.FillWeight = 91.55962F;
-            january.HeaderText = "１月";
-            january.Name = "january";
-            january.ReadOnly = true;
-            january.Width = 70;
-            // 
-            // february
-            // 
-            february.DataPropertyName = "February";
-            february.FillWeight = 92.3369141F;
-            february.HeaderText = "２月";
-            february.Name = "february";
-            february.ReadOnly = true;
-            february.Width = 70;
-            // 
-            // march
-            // 
-            march.DataPropertyName = "March";
-            march.FillWeight = 93.0622253F;
-            march.HeaderText = "３月";
-            march.Name = "march";
-            march.ReadOnly = true;
-            march.Width = 70;
-            // 
-            // april
-            // 
-            april.DataPropertyName = "April";
-            april.FillWeight = 93.7390747F;
-            april.HeaderText = "４月";
-            april.Name = "april";
-            april.ReadOnly = true;
-            april.Width = 70;
-            // 
-            // may
-            // 
-            may.DataPropertyName = "May";
-            may.FillWeight = 94.37065F;
-            may.HeaderText = "５月";
-            may.Name = "may";
-            may.ReadOnly = true;
-            may.Width = 70;
-            // 
-            // june
-            // 
-            june.DataPropertyName = "June";
-            june.FillWeight = 94.96F;
-            june.HeaderText = "６月";
-            june.Name = "june";
-            june.ReadOnly = true;
-            june.Width = 70;
-            // 
-            // july
-            // 
-            july.DataPropertyName = "July";
-            july.FillWeight = 95.5099258F;
-            july.HeaderText = "７月";
-            july.Name = "july";
-            july.ReadOnly = true;
-            july.Width = 70;
-            // 
-            // august
-            // 
-            august.DataPropertyName = "August";
-            august.FillWeight = 96.0231247F;
-            august.HeaderText = "８月";
-            august.Name = "august";
-            august.ReadOnly = true;
-            august.Width = 70;
-            // 
-            // september
-            // 
-            september.DataPropertyName = "September";
-            september.FillWeight = 96.502F;
-            september.HeaderText = "９月";
-            september.Name = "september";
-            september.ReadOnly = true;
-            september.Width = 70;
-            // 
-            // october
-            // 
-            october.DataPropertyName = "October";
-            october.FillWeight = 96.94887F;
-            october.HeaderText = "１０月";
-            october.Name = "october";
-            october.ReadOnly = true;
-            october.Width = 70;
-            // 
-            // november
-            // 
-            november.DataPropertyName = "November";
-            november.FillWeight = 97.3658142F;
-            november.HeaderText = "１１月";
-            november.Name = "november";
-            november.ReadOnly = true;
-            november.Width = 70;
-            // 
-            // december
-            // 
-            december.DataPropertyName = "December";
-            december.FillWeight = 97.7549057F;
-            december.HeaderText = "１２月";
-            december.Name = "december";
-            december.ReadOnly = true;
-            december.Width = 70;
-            // 
-            // totalsalary
-            // 
-            totalsalary.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-            totalsalary.DataPropertyName = "Totalsalary";
-            totalsalary.FillWeight = 126.151733F;
-            totalsalary.HeaderText = "年/合計";
-            totalsalary.Name = "totalsalary";
-            totalsalary.ReadOnly = true;
-            // 
             // TotalAmountPaid
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -476,7 +476,7 @@
             Controls.Add(btnNextyear);
             Controls.Add(btnLastyear);
             Controls.Add(salaryDgv);
-            Controls.Add(dateTimePicker1);
+            Controls.Add(yeardtp);
             Controls.Add(label3);
             Controls.Add(labelyear);
             Controls.Add(totallingLabel);
@@ -497,7 +497,7 @@
         private Label label3;
         private Button btnSearch;
         private DataGridView salaryDgv;
-        public DateTimePicker dateTimePicker1;
+        public DateTimePicker yeardtp;
         private Button btnLastyear;
         private Button btnNextyear;
         private Button searchBtn;

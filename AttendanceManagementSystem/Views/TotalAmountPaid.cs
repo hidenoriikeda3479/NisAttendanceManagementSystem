@@ -18,7 +18,7 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// 選択年格納
         /// </summary>
-        private int targetYear;
+        private int selectYear;
 
         /// <summary>
         /// ユーザー閲覧
@@ -29,24 +29,22 @@ namespace AttendanceManagementSystem.Views
         /// コンストラクタ
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
-        /// <param name="visibleflag">画面表記フラグ</param>
+        /// <param name="id">ユーザー閲覧</param>
         public TotalAmountPaid(AttendanceManagementDbContext context,int id)
         {
             InitializeComponent();
             _context = context;
-            targetYear = DateTime.Now.Year;
+            selectYear = DateTime.Now.Year;
             targetId = id;
-
         }
 
         /// <summary>
         /// ロード画面
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
         private void TotalAmountPaid_Load(object sender, EventArgs e)
         {
-
             // 押下時、画面表記変更イベント
             bool visibleflag = VisileEvent(targetId);
 
@@ -59,12 +57,11 @@ namespace AttendanceManagementSystem.Views
             else
             {
                 // ラベル初期表示（今年の西暦）
-                UpdateYearLabel();
+                labelyear.Text = yeardtp.Value.ToString("yyyy年");
 
                 // dataGridView の初期表示（今年の西暦）
-                DateList(targetYear);
+                DateList(selectYear);
             }
-
         }
 
         #region ボタンイベント
@@ -72,17 +69,17 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// 検索ボタンクリックイベント
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
         private void searchBtn_Click(object sender, EventArgs e)
         {
-            UpdateYearLabel();
+            labelyear.Text = yeardtp.Value.ToString("yyyy年");
 
             // DateTimePickerの年を取得
-            int searchyear = dateTimePicker1.Value.Year;
+            int searchyear = yeardtp.Value.Year;
 
             // DateTimePickerの値を検索結果の年に設定
-            dateTimePicker1.Value = new DateTime(searchyear, 1, 1);
+            yeardtp.Value = new DateTime(searchyear, 1, 1);
 
             // 給与 dataGridView 反映イベント
             DateList(searchyear);
@@ -91,15 +88,15 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// 左矢印ボタンクリックイベント
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
         private void btnLastyear_Click(object sender, EventArgs e)
         {
             // 現在選択されている年から1年引く
-            int lastYear = dateTimePicker1.Value.Year - 1;
+            int lastYear = yeardtp.Value.Year - 1;
 
             // DateTimePickerの年を1年前に設定
-            dateTimePicker1.Value = new DateTime(lastYear, 1, 1);
+            yeardtp.Value = new DateTime(lastYear, 1, 1);
 
             // 過去年の給与表示(１年前を表示)
             DateList(lastYear);
@@ -108,24 +105,23 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// 右矢印ボタンクリックイベント
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
         private void btnNextyear_Click(object sender, EventArgs e)
         {
             // 次の年給与を表示
-            int nextYear = dateTimePicker1.Value.Year + 1;
+            int nextYear = yeardtp.Value.Year + 1;
 
             // ボタン押下時、現在の年より未来年の表示不可
             if (nextYear <= DateTime.Now.Year)
             {
-                targetYear = nextYear;
-                dateTimePicker1.Value = new DateTime(targetYear, 1, 1);
-                DateList(targetYear);
+                selectYear = nextYear;
+                yeardtp.Value = new DateTime(selectYear, 1, 1);
+                DateList(selectYear);
 
                 return;
             }
         }
-
         #endregion
 
         #region 表示イベント
@@ -134,6 +130,7 @@ namespace AttendanceManagementSystem.Views
         /// 画面表記変更イベント
         /// </summary>
         /// <param name="visibleUpdate">フラグ固定値</param>
+        /// <returns>画面遷移結果</returns>
         private bool VisileEvent(int visibleUpdate)
         {
             //画面表記フラグ
@@ -154,27 +151,13 @@ namespace AttendanceManagementSystem.Views
                 totallingLabel.Visible = false;
                 totalSalaryDgv.Visible = false;
                 monthlyTotalLabel.Visible = false;
-                
 
                 // foamサイズ変更
                 this.Size = new Size(1100, 274);
                 visibleflag = true;
                 return visibleflag;
             }
-
         }
-
-        /// <summary>
-        /// ラベル表示イベント
-        /// </summary>
-        private void UpdateYearLabel()
-        {
-            // 選択した年を表示
-            labelyear.Text = dateTimePicker1.Value.ToString("yyyy年");
-        }
-
-        
-
         #endregion
 
         #region dataGridView 反映
@@ -182,6 +165,8 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// 給与 dataGridView 反映イベント
         /// </summary>
+        /// <param name="targetYear">選択年格納</param>
+        /// <returns>`TotalAmountPaidViewModel` オブジェクトのリスト</returns>
         private List<TotalAmountPaidViewModel> DateList(int targetYear)
         {
             var employees = _context.Employees
@@ -314,15 +299,15 @@ namespace AttendanceManagementSystem.Views
             // 月合計 dataGridView にバインド
             totalSalaryDgv.DataSource = totalTable;
         }
-        
+
         /// <summary>
-        /// 給与 dataGridView の地域通貨設定、年月取得、
+        /// 給与 dataGridView の日本通貨設定、年月取得
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void dateTimePicker1_ValueChanged(object sender, EventArgs e)
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
+        private void DtpSalary_ValueChanged(object sender, EventArgs e)
         {
-            // 列のセルの書式を地域通貨に設定
+            // 列のセルの書式を日本通貨に設定
             foreach (DataGridViewColumn column in salaryDgv.Columns)
             {
                 if (column.Index >= 1 && column.Index <= 14)
@@ -330,18 +315,17 @@ namespace AttendanceManagementSystem.Views
                     column.DefaultCellStyle.Format = "c";
                 }
             }
-            // ラベル表示
-            UpdateYearLabel();
+            labelyear.Text = yeardtp.Value.ToString("yyyy年");
         }
 
         /// <summary>
-        /// 給与合計 dataGridView の地域通貨設定
+        /// 給与合計 dataGridView の日本通貨設定
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void dateTimePicker2_ValueChanged(object sender, EventArgs e)
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
+        private void DtpTotalSalary_ValueChanged(object sender, EventArgs e)
         {
-            // 列のセルの書式を地域通貨に設定
+            // 列のセルの書式を日本通貨に設定
             foreach (DataGridViewColumn column in totalSalaryDgv.Columns)
             {
                 if (column.Index >= 0 && column.Index <= 13)
@@ -357,7 +341,7 @@ namespace AttendanceManagementSystem.Views
         private void SalaryConfirmation()
         {
             //DateListメソッドを呼び出し、結果を取得
-            List<TotalAmountPaidViewModel> result = DateList(targetYear);
+            List<TotalAmountPaidViewModel> result = DateList(selectYear);
 
             //ログインIDから従業員名を取得
             var searchname = _context.Employees.Where(n => n.EmployeeId == targetId).Select(n => n.EmployeeName).ToList();
@@ -370,9 +354,7 @@ namespace AttendanceManagementSystem.Views
 
             //給与 dataGridView を表示
             salaryDgv.DataSource = matchrecord;
-
         }
-
         #endregion
     }
 }
