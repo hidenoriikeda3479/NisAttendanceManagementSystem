@@ -206,5 +206,12 @@ namespace AttendanceManagementSystem.Views
             // レコードがなければ退勤中を返す
             return "退勤中";
         }
+
+        private void btnAdmin_Click(object sender, EventArgs e)
+        {
+            int adminId = 2;
+            var shift = new Shift(_context, adminId);
+            shift.Show();
+        }
     }
 }
