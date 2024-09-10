@@ -67,7 +67,7 @@ namespace AttendanceManagementSystem
 
 
             //入力されたパスワードのハッシュ化
-            string hash = HashHelper.sha512(passwordTextBox2.Text);
+            string hash = HashHelper.Sha512(passwordTextBox2.Text);
 
             //IDとパスワード照合
             var searchpassword = _context.Employees.Where(n => n.EmployeeId == int.Parse(employeeIdTextBox1.Text)).Select(n => n.Password).ToList();
