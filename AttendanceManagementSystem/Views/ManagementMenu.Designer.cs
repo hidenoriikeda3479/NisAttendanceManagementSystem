@@ -28,49 +28,49 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnEmployeeRegistration = new Button();
-            btnEmployeeList = new Button();
-            btnSalaryList = new Button();
+            btnEmployeeRegUpdate = new Button();
+            btnEmployeeInformation = new Button();
+            btnTotalAmountPaid = new Button();
             SuspendLayout();
             // 
-            // btnEmployeeRegistration
+            // btnEmployeeRegUpdate
             // 
-            btnEmployeeRegistration.Location = new Point(12, 12);
-            btnEmployeeRegistration.Name = "btnEmployeeRegistration";
-            btnEmployeeRegistration.Size = new Size(75, 23);
-            btnEmployeeRegistration.TabIndex = 0;
-            btnEmployeeRegistration.Text = "従業員登録";
-            btnEmployeeRegistration.UseVisualStyleBackColor = true;
-            btnEmployeeRegistration.Click += btnEmployeeRegistration_Click;
+            btnEmployeeRegUpdate.Location = new Point(12, 12);
+            btnEmployeeRegUpdate.Name = "btnEmployeeRegUpdate";
+            btnEmployeeRegUpdate.Size = new Size(218, 89);
+            btnEmployeeRegUpdate.TabIndex = 0;
+            btnEmployeeRegUpdate.Text = "従業員登録";
+            btnEmployeeRegUpdate.UseVisualStyleBackColor = true;
+            btnEmployeeRegUpdate.Click += btnEmployeeRegUpdate_Click;
             // 
-            // btnEmployeeList
+            // btnEmployeeInformation
             // 
-            btnEmployeeList.Location = new Point(12, 41);
-            btnEmployeeList.Name = "btnEmployeeList";
-            btnEmployeeList.Size = new Size(75, 23);
-            btnEmployeeList.TabIndex = 1;
-            btnEmployeeList.Text = "従業員一覧";
-            btnEmployeeList.UseVisualStyleBackColor = true;
-            btnEmployeeList.Click += btnEmployeeList_Click;
+            btnEmployeeInformation.Location = new Point(12, 124);
+            btnEmployeeInformation.Name = "btnEmployeeInformation";
+            btnEmployeeInformation.Size = new Size(218, 90);
+            btnEmployeeInformation.TabIndex = 1;
+            btnEmployeeInformation.Text = "従業員一覧";
+            btnEmployeeInformation.UseVisualStyleBackColor = true;
+            btnEmployeeInformation.Click += btnEmployeeInformation_Click;
             // 
-            // btnSalaryList
+            // btnTotalAmountPaid
             // 
-            btnSalaryList.Location = new Point(12, 70);
-            btnSalaryList.Name = "btnSalaryList";
-            btnSalaryList.Size = new Size(75, 23);
-            btnSalaryList.TabIndex = 2;
-            btnSalaryList.Text = "給与一覧";
-            btnSalaryList.UseVisualStyleBackColor = true;
-            btnSalaryList.Click += btnSalaryList_Click;
+            btnTotalAmountPaid.Location = new Point(12, 238);
+            btnTotalAmountPaid.Name = "btnTotalAmountPaid";
+            btnTotalAmountPaid.Size = new Size(218, 90);
+            btnTotalAmountPaid.TabIndex = 2;
+            btnTotalAmountPaid.Text = "総支給額集計";
+            btnTotalAmountPaid.UseVisualStyleBackColor = true;
+            btnTotalAmountPaid.Click += btnTotalAmountPaid_Click_1;
             // 
             // ManagementMenu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
-            Controls.Add(btnSalaryList);
-            Controls.Add(btnEmployeeList);
-            Controls.Add(btnEmployeeRegistration);
+            ClientSize = new Size(242, 340);
+            Controls.Add(btnTotalAmountPaid);
+            Controls.Add(btnEmployeeInformation);
+            Controls.Add(btnEmployeeRegUpdate);
             Name = "ManagementMenu";
             Text = "ManagementMenu";
             ResumeLayout(false);
@@ -78,8 +78,8 @@
 
         #endregion
 
-        private Button btnEmployeeRegistration;
-        private Button btnEmployeeList;
-        private Button btnSalaryList;
+        private Button btnEmployeeRegUpdate;
+        private Button btnEmployeeInformation;
+        private Button btnTotalAmountPaid;
     }
 }
