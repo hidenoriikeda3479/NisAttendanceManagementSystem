@@ -17,7 +17,7 @@ namespace AttendanceManagementSystem.Common
         /// </summary>
         /// <param name="txtps">パスワード</param>
         /// <returns>ハッシュ化されたパスワード</returns>
-        public static string sha512(string txtps)
+        public static string Sha512(string txtps)
         {
             using (SHA512 sha512Hash = SHA512.Create())
             {
