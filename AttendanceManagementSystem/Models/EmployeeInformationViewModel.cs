@@ -36,11 +36,6 @@ namespace AttendanceManagementSystem.Models
         public string Address { get; set; } = default!;
 
         /// <summary>
-        /// 建物名
-        /// </summary>
-        public string? BuildingName { get; set; }
-
-        /// <summary>
         /// 入社日
         /// </summary>
         public DateTime HireDate { get; set; }

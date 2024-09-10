@@ -28,9 +28,9 @@
         /// </summary>
         private void InitializeComponent()
         {
-            upbtn = new Button();
+            Updatebtn = new Button();
             label1 = new Label();
-            dataGridView1 = new DataGridView();
+            Employeedgv = new DataGridView();
             Column1 = new DataGridViewTextBoxColumn();
             Column2 = new DataGridViewTextBoxColumn();
             Column3 = new DataGridViewTextBoxColumn();
@@ -39,24 +39,24 @@
             Column6 = new DataGridViewTextBoxColumn();
             Column7 = new DataGridViewTextBoxColumn();
             Column8 = new DataGridViewTextBoxColumn();
-            atabtn = new Button();
+            Ateendbtn = new Button();
             label2 = new Label();
-            searchTxt = new TextBox();
+            Searchtxt = new TextBox();
             comboBox1 = new ComboBox();
-            searchbtn = new Button();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            Searchbtn = new Button();
+            ((System.ComponentModel.ISupportInitialize)Employeedgv).BeginInit();
             SuspendLayout();
             // 
-            // upbtn
+            // Updatebtn
             // 
-            upbtn.Font = new Font("Yu Gothic UI", 11F);
-            upbtn.Location = new Point(12, 63);
-            upbtn.Name = "upbtn";
-            upbtn.Size = new Size(81, 29);
-            upbtn.TabIndex = 0;
-            upbtn.Text = "更新";
-            upbtn.UseVisualStyleBackColor = true;
-            upbtn.Click += upbtn_Click;
+            Updatebtn.Font = new Font("Yu Gothic UI", 11F);
+            Updatebtn.Location = new Point(12, 63);
+            Updatebtn.Name = "Updatebtn";
+            Updatebtn.Size = new Size(81, 29);
+            Updatebtn.TabIndex = 0;
+            Updatebtn.Text = "更新";
+            Updatebtn.UseVisualStyleBackColor = true;
+            Updatebtn.Click += Ateendbtn_Click;
             // 
             // label1
             // 
@@ -68,17 +68,17 @@
             label1.TabIndex = 1;
             label1.Text = "従業員情報一覧";
             // 
-            // dataGridView1
+            // Employeedgv
             // 
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.AllowUserToResizeColumns = false;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column9, Column6, Column7, Column8 });
-            dataGridView1.Location = new Point(12, 98);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.ReadOnly = true;
-            dataGridView1.Size = new Size(977, 340);
-            dataGridView1.TabIndex = 2;
+            Employeedgv.AllowUserToDeleteRows = false;
+            Employeedgv.AllowUserToResizeColumns = false;
+            Employeedgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            Employeedgv.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column9, Column6, Column7, Column8 });
+            Employeedgv.Location = new Point(12, 98);
+            Employeedgv.Name = "Employeedgv";
+            Employeedgv.ReadOnly = true;
+            Employeedgv.Size = new Size(977, 340);
+            Employeedgv.TabIndex = 2;
             // 
             // Column1
             // 
@@ -139,16 +139,16 @@
             Column8.Name = "Column8";
             Column8.ReadOnly = true;
             // 
-            // atabtn
+            // Ateendbtn
             // 
-            atabtn.Font = new Font("Yu Gothic UI", 11F);
-            atabtn.Location = new Point(99, 63);
-            atabtn.Name = "atabtn";
-            atabtn.Size = new Size(81, 29);
-            atabtn.TabIndex = 3;
-            atabtn.Text = "勤怠確認";
-            atabtn.UseVisualStyleBackColor = true;
-            atabtn.Click += atabtn_Click;
+            Ateendbtn.Font = new Font("Yu Gothic UI", 11F);
+            Ateendbtn.Location = new Point(99, 63);
+            Ateendbtn.Name = "Ateendbtn";
+            Ateendbtn.Size = new Size(81, 29);
+            Ateendbtn.TabIndex = 3;
+            Ateendbtn.Text = "勤怠確認";
+            Ateendbtn.UseVisualStyleBackColor = true;
+            Ateendbtn.Click += Ateendbtn_Click;
             // 
             // label2
             // 
@@ -160,12 +160,12 @@
             label2.TabIndex = 4;
             label2.Text = "従業員名";
             // 
-            // searchTxt
+            // Searchtxt
             // 
-            searchTxt.Location = new Point(420, 19);
-            searchTxt.Name = "searchTxt";
-            searchTxt.Size = new Size(225, 23);
-            searchTxt.TabIndex = 5;
+            Searchtxt.Location = new Point(420, 19);
+            Searchtxt.Name = "Searchtxt";
+            Searchtxt.Size = new Size(225, 23);
+            Searchtxt.TabIndex = 5;
             // 
             // comboBox1
             // 
@@ -177,48 +177,48 @@
             comboBox1.Size = new Size(51, 23);
             comboBox1.TabIndex = 6;
             // 
-            // searchbtn
+            // Searchbtn
             // 
-            searchbtn.Font = new Font("Yu Gothic UI", 11F);
-            searchbtn.Location = new Point(708, 14);
-            searchbtn.Name = "searchbtn";
-            searchbtn.Size = new Size(81, 29);
-            searchbtn.TabIndex = 7;
-            searchbtn.Text = "検索";
-            searchbtn.UseVisualStyleBackColor = true;
-            searchbtn.Click += searchbtn_Click;
+            Searchbtn.Font = new Font("Yu Gothic UI", 11F);
+            Searchbtn.Location = new Point(708, 14);
+            Searchbtn.Name = "Searchbtn";
+            Searchbtn.Size = new Size(81, 29);
+            Searchbtn.TabIndex = 7;
+            Searchbtn.Text = "検索";
+            Searchbtn.UseVisualStyleBackColor = true;
+            Searchbtn.Click += Searchbtn_Click;
             // 
             // EmployeeInformation
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1001, 450);
-            Controls.Add(searchbtn);
+            Controls.Add(Searchbtn);
             Controls.Add(comboBox1);
-            Controls.Add(searchTxt);
+            Controls.Add(Searchtxt);
             Controls.Add(label2);
-            Controls.Add(atabtn);
-            Controls.Add(dataGridView1);
+            Controls.Add(Ateendbtn);
+            Controls.Add(Employeedgv);
             Controls.Add(label1);
-            Controls.Add(upbtn);
+            Controls.Add(Updatebtn);
             Name = "EmployeeInformation";
             Text = "EmployeeInformation";
             Load += EmployeeInformation_Load;
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            ((System.ComponentModel.ISupportInitialize)Employeedgv).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private Button upbtn;
+        private Button Updatebtn;
         private Label label1;
-        private DataGridView dataGridView1;
-        private Button atabtn;
+        private DataGridView Employeedgv;
+        private Button Ateendbtn;
         private Label label2;
-        private TextBox searchTxt;
+        private TextBox Searchtxt;
         private ComboBox comboBox1;
-        private Button searchbtn;
+        private Button Searchbtn;
         private DataGridViewTextBoxColumn Column1;
         private DataGridViewTextBoxColumn Column2;
         private DataGridViewTextBoxColumn Column3;

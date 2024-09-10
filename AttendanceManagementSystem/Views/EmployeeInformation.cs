@@ -15,6 +15,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
 
 namespace AttendanceManagementSystem.Views
@@ -32,7 +33,7 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// コンストラクタ
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="context">DBコンテキスト</param>
         public EmployeeInformation(AttendanceManagementDbContext context)
         {
             InitializeComponent();
@@ -42,40 +43,45 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// ロードイベント
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
         private void EmployeeInformation_Load(object sender, EventArgs e)
         {
             // フォームロード時に従業員データを表示
-            DateList();
-        }
+            var employeeList = DateList();
 
-        
+            // 結果をDataGridViewにバインド
+            Employeedgv.DataSource = employeeList;
+        }
 
         #region Clickイベント一覧
 
         /// <summary>
         /// 検索ボタンクリックイベント
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void searchbtn_Click(object sender, EventArgs e)
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
+        private void Searchbtn_Click(object sender, EventArgs e)
         {
-            DateList();
-
             // ComboBoxで選択された性別の値を取得
             int selectedGender = (int)comboBox1.SelectedIndex;
+
+            // フィルタリングされたリストを取得
+            var employeeList = DateList();
+
+            // 結果をDataGridViewにバインド
+            Employeedgv.DataSource = employeeList;
         }
 
         /// <summary>
         /// 更新ボタンクリックイベント
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void upbtn_Click(object sender, EventArgs e)
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
+        private void Updatebtn_Click(object sender, EventArgs e)
         {
             // 選択された行があるか確認
-            if (dataGridView1.SelectedRows.Count > 0)
+            if (Employeedgv.SelectedRows.Count > 0)
             {
                 //// 選択された従業員のIDを取得 TODO:更新画面に遷移後
                 //int employeeId = (int)dataGridView1.SelectedRows[0].Cells["EmployeeId"].Value;
@@ -91,12 +97,12 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// 勤怠確認ボタンクリックイベント
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private void atabtn_Click(object sender, EventArgs e)
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
+        private void Ateendbtn_Click(object sender, EventArgs e)
         {
             // 選択された行があるか確認
-            if (dataGridView1.SelectedRows.Count > 0)
+            if (Employeedgv.SelectedRows.Count > 0)
             {
                 //// 選択された従業員のID、名前を取得 TODO:勤怠確認画面に遷移後
                 //int employeeId = (int)dataGridView1.SelectedRows[0].Cells["EmployeeId"].Value;
@@ -116,13 +122,14 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// DataGridView反映イベント
         /// </summary>
-        private void DateList()
+        List<EmployeeInformationViewModel> DateList()
         {
             List<EmployeeInformationViewModel> list = new List<EmployeeInformationViewModel>();
 
             // ComboBoxで選択された性別の値を取得
             int selectedGender = comboBox1.SelectedIndex;
 
+            // 従業員テーブルからのデータをクエリ可能な形式で取得 
             var query = _context.Employees.AsQueryable();
 
             // 性別の選択に基づいてフィルタリング
@@ -133,9 +140,9 @@ namespace AttendanceManagementSystem.Views
             }
 
             // 検索フィールドが空でない場合、名前でもフィルタリング
-            if (!string.IsNullOrEmpty(searchTxt.Text))
+            if (!string.IsNullOrEmpty(Searchtxt.Text))
             {
-                query = query.Where(e => e.EmployeeName.Contains(searchTxt.Text));
+                query = query.Where(e => e.EmployeeName.Contains(Searchtxt.Text));
             }
 
             var employeeList = query.Select(n => new EmployeeInformationViewModel
@@ -148,12 +155,11 @@ namespace AttendanceManagementSystem.Views
                 HireDate = n.HireDate,
                 ResignDate = n.ResignDate,
                 UpdatedAt = n.UpdatedAt
-            });
 
-            // 結果をDataGridViewにバインド
-            dataGridView1.DataSource = employeeList.ToList();
+            }).ToList();
+
+            return employeeList;
         }
-
         #endregion
     }
 }
