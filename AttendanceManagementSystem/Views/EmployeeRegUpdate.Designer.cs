@@ -31,8 +31,8 @@
             components = new System.ComponentModel.Container();
             label1 = new Label();
             label2 = new Label();
-            label3 = new Label();
-            label4 = new Label();
+            labelRePswrd = new Label();
+            labelPswrd = new Label();
             label5 = new Label();
             label6 = new Label();
             labelUpdate = new Label();
@@ -87,25 +87,25 @@
             label2.TabIndex = 1;
             label2.Text = "住所・番地";
             // 
-            // label3
+            // labelRePswrd
             // 
-            label3.AutoSize = true;
-            label3.Font = new Font("Yu Gothic UI", 13F);
-            label3.Location = new Point(8, 174);
-            label3.Name = "label3";
-            label3.Size = new Size(133, 25);
-            label3.TabIndex = 2;
-            label3.Text = "パスワード再入力";
+            labelRePswrd.AutoSize = true;
+            labelRePswrd.Font = new Font("Yu Gothic UI", 13F);
+            labelRePswrd.Location = new Point(8, 174);
+            labelRePswrd.Name = "labelRePswrd";
+            labelRePswrd.Size = new Size(133, 25);
+            labelRePswrd.TabIndex = 2;
+            labelRePswrd.Text = "パスワード再入力";
             // 
-            // label4
+            // labelPswrd
             // 
-            label4.AutoSize = true;
-            label4.Font = new Font("Yu Gothic UI", 13F);
-            label4.Location = new Point(62, 138);
-            label4.Name = "label4";
-            label4.Size = new Size(79, 25);
-            label4.TabIndex = 3;
-            label4.Text = "パスワード";
+            labelPswrd.AutoSize = true;
+            labelPswrd.Font = new Font("Yu Gothic UI", 13F);
+            labelPswrd.Location = new Point(62, 138);
+            labelPswrd.Name = "labelPswrd";
+            labelPswrd.Size = new Size(79, 25);
+            labelPswrd.TabIndex = 3;
+            labelPswrd.Text = "パスワード";
             // 
             // label5
             // 
@@ -442,8 +442,8 @@
             Controls.Add(labelUpdate);
             Controls.Add(label6);
             Controls.Add(label5);
-            Controls.Add(label4);
-            Controls.Add(label3);
+            Controls.Add(labelPswrd);
+            Controls.Add(labelRePswrd);
             Controls.Add(label2);
             Controls.Add(label1);
             Name = "EmployeeRegUpdate";
@@ -459,8 +459,8 @@
 
         private Label label1;
         private Label label2;
-        private Label label3;
-        private Label label4;
+        private Label labelRePswrd;
+        private Label labelPswrd;
         private Label label5;
         private Label label6;
         private Label labelUpdate;

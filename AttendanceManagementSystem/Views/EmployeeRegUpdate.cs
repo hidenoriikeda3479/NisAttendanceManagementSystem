@@ -104,7 +104,7 @@ namespace AttendanceManagementSystem.Views
             errorProvider.Clear();
 
             // ボタン押下時、空白エラーチェック
-            if (!InputCheck())
+            if (!InputCheck()| Passwordcheck())
             {
                 MessageBox.Show("必要な情報が入力がされていません");
                 return;
@@ -136,7 +136,6 @@ namespace AttendanceManagementSystem.Views
             if (MessageBox.Show("退社ボタンが押されました。\r\n実行してよろしいでしょうか？", "確認",
                      MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-
                 int employeeId = _employeeid;
 
                 // IDで従業員を検索
@@ -174,6 +173,7 @@ namespace AttendanceManagementSystem.Views
                 labelUpdate.Visible = false;
                 btnUpdate.Visible = false;
                 btnLeaving.Visible = false;
+
             }
             // 更新ボタン押下時、登録表記非表示
             else
@@ -183,6 +183,10 @@ namespace AttendanceManagementSystem.Views
                 dateTimePicker1.Enabled = false;
                 cmbRank.Enabled = false;
                 cmbShift.Enabled = false;
+                txtPswrd.Visible = false;
+                labelPswrd.Visible = false;
+                labelRePswrd.Visible = false;
+                txtRepswrd.Visible = false;
             }
         }
 
@@ -227,7 +231,6 @@ namespace AttendanceManagementSystem.Views
 
             employee.EmployeeName = txtName.Text;
             employee.Gender = menRadio.Checked ? 1 : 2;
-            employee.Password = HashHelper.Sha512(txtPswrd.Text);
             employee.PhoneNumber = txtPhone.Text;
             employee.PostCode = txtPost.Text;
             employee.Address = txtAddress.Text;
@@ -254,6 +257,34 @@ namespace AttendanceManagementSystem.Views
                 flag = false;
             }
 
+            // 郵便番号が入力されているか
+            if (txtPost.Text.Length < 7)
+            {
+                errorProvider.SetError(txtPost, "郵便番号を入力して下さい");
+                flag = false;
+            }
+
+            // 住所・番地が入力されているか
+            if (string.IsNullOrEmpty(txtAddress.Text))
+            {
+                errorProvider.SetError(txtAddress, "住所・番地を入力して下さい");
+                flag = false;
+            }
+
+            // 電話番号が入力されているか
+            if (txtPhone.Text.Length < 11)
+            {
+                errorProvider.SetError(txtPhone, "電話番号を入力して下さい");
+                flag = false;
+            }
+
+            return flag;
+        }
+
+        private bool Passwordcheck()
+        {
+            var flag = true;
+
             // パスワードが６～１２文字で入力されているか
             if (txtPswrd.Text.Length < 6)
             {
@@ -276,43 +307,21 @@ namespace AttendanceManagementSystem.Views
                     // エラーメッセージをクリア
                     errorProvider.SetError(txtPswrd, "");
                 }
-            }
 
-            // パスワード確認の合否
-            if (txtPswrd.Text != txtRepswrd.Text)
-            {
-                errorProvider.SetError(txtRepswrd, "パスワードが同じではありません");
-                flag = false;
-            }
+                // パスワード確認の合否
+                if (txtPswrd.Text != txtRepswrd.Text)
+                {
+                    errorProvider.SetError(txtRepswrd, "パスワードが同じではありません");
+                    flag = false;
+                }
 
-            // パスワード入力されているか
-            if (txtRepswrd.Text == "")
-            {
-                errorProvider.SetError(txtRepswrd, "パスワード入力して下さい");
-                flag = false;
+                // パスワード入力されているか
+                if (txtRepswrd.Text == "")
+                {
+                    errorProvider.SetError(txtRepswrd, "パスワード入力して下さい");
+                    flag = false;
+                }
             }
-
-            // 郵便番号が入力されているか
-            if (txtPost.Text.Length < 7)
-            {
-                errorProvider.SetError(txtPost, "郵便番号を入力して下さい");
-                flag = false;
-            }
-
-            // 住所・番地が入力されているか
-            if (string.IsNullOrEmpty(txtAddress.Text))
-            {
-                errorProvider.SetError(txtAddress, "住所・番地を入力して下さい");
-                flag = false;
-            }
-
-            // 電話番号が入力されているか
-            if (txtPhone.Text.Length < 11)
-            {
-                errorProvider.SetError(txtPhone, "電話番号を入力して下さい");
-                flag = false;
-            }
-
             return flag;
         }
 
