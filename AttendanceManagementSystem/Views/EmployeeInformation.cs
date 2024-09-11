@@ -83,10 +83,10 @@ namespace AttendanceManagementSystem.Views
             // 選択された行があるか確認
             if (Employeedgv.SelectedRows.Count > 0)
             {
-                // 選択された従業員のIDを取得 TODO:更新画面に遷移後
-                int employeeId = (int)Employeedgv.SelectedRows[0].Cells["EmployeeId"].Value;
-                var EmployeeRegUpdate = new EmployeeRegUpdate(_context, employeeId);
-                EmployeeRegUpdate.Show();
+                // 社員情報（更新）画面を表示
+                int employeeId = (int)Employeedgv.SelectedRows[0].Cells["Column1"].Value;
+                var employeeRegUpdate = new EmployeeRegUpdate(_context, employeeId);
+                employeeRegUpdate.Show();
             }
             else
             {
@@ -104,10 +104,10 @@ namespace AttendanceManagementSystem.Views
             // 選択された行があるか確認
             if (Employeedgv.SelectedRows.Count > 0)
             {
-                //// 選択された従業員のID、名前を取得 TODO:勤怠確認画面に遷移後
-                //int employeeId = (int)dataGridView1.SelectedRows[0].Cells["EmployeeId"].Value;
-                //var AttendAnce = new AttendAnce(employeeId.ToString(),employeename.ToString());
-                //AttendAnce.Show();
+                // 勤怠確認画面を表示
+                int employeeId = (int)Employeedgv.SelectedRows[0].Cells["Column1"].Value;
+                var attendance = new Attendance(_context, employeeId);
+                attendance.Show();
             }
             else
             {

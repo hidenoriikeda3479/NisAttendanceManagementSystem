@@ -56,7 +56,7 @@
             Updatebtn.TabIndex = 0;
             Updatebtn.Text = "更新";
             Updatebtn.UseVisualStyleBackColor = true;
-            Updatebtn.Click += Ateendbtn_Click;
+            Updatebtn.Click += Updatebtn_Click;
             // 
             // label1
             // 
