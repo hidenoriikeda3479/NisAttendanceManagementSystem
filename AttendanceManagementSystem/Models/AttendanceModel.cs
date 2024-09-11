@@ -22,21 +22,21 @@ namespace AttendanceManagementSystem.Models
         /// </summary>
         [Required]
         [Column("year")]
-        public int Year { get; set; }
+        public int? Year { get; set; }
 
         /// <summary>
         /// 月
         /// </summary>
         [Required]
         [Column("month")]
-        public int Month { get; set; }
+        public int? Month { get; set; }
 
         /// <summary>
         /// 日
         /// </summary>
         [Required]
         [Column("day")]
-        public int Day { get; set; }
+        public int? Day { get; set; }
 
         /// <summary>
         /// 出社時間
