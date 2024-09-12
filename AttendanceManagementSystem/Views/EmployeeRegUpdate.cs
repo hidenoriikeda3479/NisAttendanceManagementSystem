@@ -1,6 +1,7 @@
 ﻿using AttendanceManagementSystem.Data;
 using AttendanceManagementSystem.Models;
 using AttendanceManagementSystem.Common;
+using System.Windows.Forms;
 
 namespace AttendanceManagementSystem.Views
 {
@@ -22,13 +23,15 @@ namespace AttendanceManagementSystem.Views
         /// コンストラクタ
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
-        /// <param name="visibleflag">画面変更フラグ</param>
         /// <param name="employeeid">従業員ID</param>
         public EmployeeRegUpdate(AttendanceManagementDbContext context, int employeeid = 0)
         {
             InitializeComponent();
             _context = context; // DBコンテキスト
             _employeeid = employeeid;
+
+            // 現在の日付を最大の日付として設定
+            dateTimePicker1.MaxDate = DateTime.Today;
 
             if (employeeid > 0) {
                 var result = _context.Employees.Single(e => e.EmployeeId == employeeid);
@@ -41,6 +44,7 @@ namespace AttendanceManagementSystem.Views
                 txtAddress.Text = result.Address; // 住所
                 txtBuilding.Text = result.Address; // 建物名
             }
+
             // 押下時、画面表記変更イベント
             VisileEvent(employeeid);
         }
@@ -72,7 +76,7 @@ namespace AttendanceManagementSystem.Views
             errorProvider.Clear();
 
             // ボタン押下時、空白エラーチェック
-            if (!InputCheck() | !RegistrationCheck())
+            if (!InputCheck() | !RegistrationCheck()| !Passwordcheck())
             {
                 MessageBox.Show("必要な情報が入力がされていません");
                 return;
@@ -88,8 +92,10 @@ namespace AttendanceManagementSystem.Views
                 // データグリッドを更新して通知
                 MessageBox.Show("新しい従業員が追加されました。");
 
-                // フォームを閉じる
                 this.Close();
+
+                var managementMenu = new ManagementMenu(_context);
+                managementMenu.Show();
             }
         }
 
@@ -104,7 +110,7 @@ namespace AttendanceManagementSystem.Views
             errorProvider.Clear();
 
             // ボタン押下時、空白エラーチェック
-            if (!InputCheck()| Passwordcheck())
+            if (!InputCheck())
             {
                 MessageBox.Show("必要な情報が入力がされていません");
                 return;
@@ -139,9 +145,9 @@ namespace AttendanceManagementSystem.Views
                 int employeeId = _employeeid;
 
                 // IDで従業員を検索
-                var aemployee = _context.Employees.Single(n => n.EmployeeId == employeeId);
+                var aemployee = _context.Employees.Single(n => n.EmployeeId == employeeId);             
 
-                if (aemployee != null)
+                if (aemployee != null && aemployee.ResignDate == null)
                 {
                     // 現在の時間で退社する
                     aemployee.ResignDate = DateTime.Now;
@@ -153,6 +159,10 @@ namespace AttendanceManagementSystem.Views
 
                     // フォームを閉じる
                     this.Close();
+                }
+                else
+                {
+                    MessageBox.Show("この従業員は既に退社済みです");
                 }
             }
         }
@@ -173,7 +183,6 @@ namespace AttendanceManagementSystem.Views
                 labelUpdate.Visible = false;
                 btnUpdate.Visible = false;
                 btnLeaving.Visible = false;
-
             }
             // 更新ボタン押下時、登録表記非表示
             else
@@ -237,7 +246,6 @@ namespace AttendanceManagementSystem.Views
             employee.BuildingName = txtBuilding.Text;
             employee.UpdatedAt = DateTime.Now;
         }
-
         #endregion
 
         #region 入力制限イベント
@@ -277,10 +285,12 @@ namespace AttendanceManagementSystem.Views
                 errorProvider.SetError(txtPhone, "電話番号を入力して下さい");
                 flag = false;
             }
-
             return flag;
         }
 
+        /// <summary>
+        /// パスワード空白チェック
+        /// <returns>入力が正しい場合は true、入力が不足している場合は false を返す</returns>
         private bool Passwordcheck()
         {
             var flag = true;
@@ -346,7 +356,6 @@ namespace AttendanceManagementSystem.Views
                 errorProvider.SetError(cmbShift, "シフトを選択して下さい");
                 flag = false;
             }
-
             return flag;
         }
 

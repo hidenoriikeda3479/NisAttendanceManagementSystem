@@ -28,8 +28,8 @@
         /// </summary>
         private void InitializeComponent()
         {
-            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle2 = new DataGridViewCellStyle();
             totallingLabel = new Label();
             labelyear = new Label();
             label3 = new Label();
@@ -108,7 +108,7 @@
             yeardtp.Location = new Point(750, 70);
             yeardtp.Margin = new Padding(3, 2, 3, 2);
             yeardtp.MaxDate = new DateTime(2024, 9, 9, 0, 0, 0, 0);
-            yeardtp.MinDate = new DateTime(2010, 1, 1, 0, 0, 0, 0);
+            yeardtp.MinDate = new DateTime(1850, 1, 1, 0, 0, 0, 0);
             yeardtp.Name = "yeardtp";
             yeardtp.Size = new Size(61, 25);
             yeardtp.TabIndex = 4;
@@ -122,14 +122,14 @@
             salaryDgv.AllowUserToResizeColumns = false;
             salaryDgv.AllowUserToResizeRows = false;
             salaryDgv.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left;
-            dataGridViewCellStyle3.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle3.BackColor = SystemColors.Control;
-            dataGridViewCellStyle3.Font = new Font("Yu Gothic UI", 9F);
-            dataGridViewCellStyle3.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle3.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle3.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle3.WrapMode = DataGridViewTriState.True;
-            salaryDgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle3;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Yu Gothic UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            salaryDgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             salaryDgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             salaryDgv.Columns.AddRange(new DataGridViewColumn[] { employeeColum, january, february, march, april, may, june, july, august, september, october, november, december, totalsalary });
             salaryDgv.Location = new Point(13, 100);
@@ -308,14 +308,14 @@
             totalSalaryDgv.AllowUserToResizeColumns = false;
             totalSalaryDgv.AllowUserToResizeRows = false;
             totalSalaryDgv.Anchor = AnchorStyles.Left;
-            dataGridViewCellStyle4.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle4.BackColor = SystemColors.Control;
-            dataGridViewCellStyle4.Font = new Font("Yu Gothic UI", 9F);
-            dataGridViewCellStyle4.ForeColor = SystemColors.WindowText;
-            dataGridViewCellStyle4.SelectionBackColor = SystemColors.Highlight;
-            dataGridViewCellStyle4.SelectionForeColor = SystemColors.HighlightText;
-            dataGridViewCellStyle4.WrapMode = DataGridViewTriState.True;
-            totalSalaryDgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle4;
+            dataGridViewCellStyle2.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle2.BackColor = SystemColors.Control;
+            dataGridViewCellStyle2.Font = new Font("Yu Gothic UI", 9F);
+            dataGridViewCellStyle2.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle2.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle2.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle2.WrapMode = DataGridViewTriState.True;
+            totalSalaryDgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle2;
             totalSalaryDgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             totalSalaryDgv.Columns.AddRange(new DataGridViewColumn[] { totalJanuary, totalFebruary, totalMarch, totalApril, totalMay, totalJune, totalJuly, totalAugust, totalSeptember, totalOctober, totalNovember, totalDecember, mTotalsalary });
             totalSalaryDgv.Location = new Point(112, 512);

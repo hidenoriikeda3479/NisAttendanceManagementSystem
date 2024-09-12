@@ -83,6 +83,12 @@ namespace AttendanceManagementSystem.Views
 
             // 給与 dataGridView 反映イベント
             DateList(searchyear);
+
+            // 個人の給与画面表示
+            if (targetId != 0)
+            {
+                SalaryConfirmation();
+            }
         }
 
         /// <summary>
@@ -100,8 +106,14 @@ namespace AttendanceManagementSystem.Views
 
             // 過去年の給与表示(１年前を表示)
             DateList(lastYear);
-        }
 
+            // 個人の給与画面表示
+            if (targetId != 0)
+            {
+                SalaryConfirmation();
+            }
+        }
+        
         /// <summary>
         /// 右矢印ボタンクリックイベント
         /// </summary>
@@ -119,6 +131,11 @@ namespace AttendanceManagementSystem.Views
                 yeardtp.Value = new DateTime(selectYear, 1, 1);
                 DateList(selectYear);
 
+                // 個人の給与画面表示
+                if (targetId != 0)
+                {
+                    SalaryConfirmation();
+                }
                 return;
             }
         }
@@ -239,7 +256,7 @@ namespace AttendanceManagementSystem.Views
                     .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay)),
                     December = n.Where(x => x.Year == targetYear && x.Month == 12)
                     .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay))
-
+                
                 }).ToList();
 
             //  給与 dataGridView を表示
@@ -340,19 +357,19 @@ namespace AttendanceManagementSystem.Views
         /// </summary>
         private void SalaryConfirmation()
         {
-            //DateListメソッドを呼び出し、結果を取得
+            // DateListメソッドを呼び出し、結果を取得
             List<TotalAmountPaidViewModel> result = DateList(selectYear);
 
-            //ログインIDから従業員名を取得
+            // ログインIDから従業員名を取得
             var searchname = _context.Employees.Where(n => n.EmployeeId == targetId).Select(n => n.EmployeeName).ToList();
 
-            //対象社員名を取得
+            // 対象社員名を取得
             var targetname = searchname.First();
 
-            //対象社員の照合
+            // 対象社員の照合
             var matchrecord = result.Where(n => n.EmployeeName == targetname).ToList();
 
-            //給与 dataGridView を表示
+            // 給与 dataGridView を表示
             salaryDgv.DataSource = matchrecord;
         }
         #endregion

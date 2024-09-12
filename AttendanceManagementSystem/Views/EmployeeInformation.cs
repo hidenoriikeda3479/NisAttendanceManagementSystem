@@ -10,6 +10,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Net;
+using System.Reflection;
 using System.Security;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,6 +53,9 @@ namespace AttendanceManagementSystem.Views
 
             // 結果をDataGridViewにバインド
             Employeedgv.DataSource = employeeList;
+
+            // コンボボックス初期選択状態を性別（ダミー）にする
+            cmbgender.SelectedIndex = 0;
         }
 
         #region Clickイベント一覧
@@ -64,7 +68,7 @@ namespace AttendanceManagementSystem.Views
         private void Searchbtn_Click(object sender, EventArgs e)
         {
             // ComboBoxで選択された性別の値を取得
-            int selectedGender = (int)comboBox1.SelectedIndex;
+            int selectedGender = (int)cmbgender.SelectedIndex;
 
             // フィルタリングされたリストを取得
             var employeeList = DateList();
@@ -91,7 +95,7 @@ namespace AttendanceManagementSystem.Views
             else
             {
                 MessageBox.Show("更新する従業員を選択してください。");
-            }     
+            }
         }
 
         /// <summary>
@@ -114,7 +118,6 @@ namespace AttendanceManagementSystem.Views
                 MessageBox.Show("従業員を選択してください。");
             }
         }
-
         #endregion
 
         #region DataGridViewイベント
@@ -126,16 +129,15 @@ namespace AttendanceManagementSystem.Views
         {
             List<EmployeeInformationViewModel> list = new List<EmployeeInformationViewModel>();
 
-            // ComboBoxで選択された性別の値を取得
-            int selectedGender = comboBox1.SelectedIndex;
+            // ComboBoxで選択された性別のインデックスを取得
+            int selectedGender = cmbgender.SelectedIndex;
 
             // 従業員テーブルからのデータをクエリ可能な形式で取得 
             var query = _context.Employees.AsQueryable();
 
             // 性別の選択に基づいてフィルタリング
-            if (selectedGender > 0)
+            if (selectedGender > 0) // 0 は通常「未選択」を意味する場合があります
             {
-                // 男または女が選ばれた場合、その性別でフィルタリング
                 query = query.Where(e => e.Gender == selectedGender);
             }
 
@@ -149,13 +151,12 @@ namespace AttendanceManagementSystem.Views
             {
                 EmployeeId = n.EmployeeId,
                 EmployeeName = n.EmployeeName,
-                Gender = n.Gender,
+                Gender = n.Gender == 1 ? "男" : "女",
                 PhoneNumber = n.PhoneNumber,
                 Address = n.PostCode + n.Address + n.BuildingName,
                 HireDate = n.HireDate,
                 ResignDate = n.ResignDate,
                 UpdatedAt = n.UpdatedAt
-
             }).ToList();
 
             return employeeList;

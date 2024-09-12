@@ -141,6 +141,7 @@
             // 
             txtName.Font = new Font("Yu Gothic UI", 12F);
             txtName.Location = new Point(147, 58);
+            txtName.MaxLength = 15;
             txtName.Name = "txtName";
             txtName.Size = new Size(177, 29);
             txtName.TabIndex = 7;
@@ -174,7 +175,6 @@
             txtPost.ShortcutsEnabled = false;
             txtPost.Size = new Size(74, 27);
             txtPost.TabIndex = 10;
-            txtPost.TextAlign = HorizontalAlignment.Center;
             txtPost.KeyPress += OnlyNumbers_KeyPress;
             // 
             // label8
@@ -213,6 +213,7 @@
             // 
             txtAddress.Font = new Font("Yu Gothic UI", 11F);
             txtAddress.Location = new Point(147, 246);
+            txtAddress.MaxLength = 20;
             txtAddress.Name = "txtAddress";
             txtAddress.Size = new Size(230, 27);
             txtAddress.TabIndex = 14;
@@ -221,6 +222,7 @@
             // 
             txtBuilding.Font = new Font("Yu Gothic UI", 11F);
             txtBuilding.Location = new Point(486, 246);
+            txtBuilding.MaxLength = 20;
             txtBuilding.Name = "txtBuilding";
             txtBuilding.Size = new Size(202, 27);
             txtBuilding.TabIndex = 15;
@@ -250,7 +252,7 @@
             txtPhone.Font = new Font("Yu Gothic UI", 12F);
             txtPhone.ImeMode = ImeMode.Disable;
             txtPhone.Location = new Point(486, 121);
-            txtPhone.MaxLength = 12;
+            txtPhone.MaxLength = 11;
             txtPhone.Name = "txtPhone";
             txtPhone.ShortcutsEnabled = false;
             txtPhone.Size = new Size(117, 29);

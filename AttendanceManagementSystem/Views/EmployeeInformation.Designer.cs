@@ -31,19 +31,19 @@
             Updatebtn = new Button();
             label1 = new Label();
             Employeedgv = new DataGridView();
+            Ateendbtn = new Button();
+            label2 = new Label();
+            Searchtxt = new TextBox();
+            cmbgender = new ComboBox();
+            Searchbtn = new Button();
             Column1 = new DataGridViewTextBoxColumn();
             Column2 = new DataGridViewTextBoxColumn();
             Column3 = new DataGridViewTextBoxColumn();
-            Column4 = new DataGridViewTextBoxColumn();
+            clmgender = new DataGridViewTextBoxColumn();
             Column9 = new DataGridViewTextBoxColumn();
             Column6 = new DataGridViewTextBoxColumn();
             Column7 = new DataGridViewTextBoxColumn();
             Column8 = new DataGridViewTextBoxColumn();
-            Ateendbtn = new Button();
-            label2 = new Label();
-            Searchtxt = new TextBox();
-            comboBox1 = new ComboBox();
-            Searchbtn = new Button();
             ((System.ComponentModel.ISupportInitialize)Employeedgv).BeginInit();
             SuspendLayout();
             // 
@@ -70,15 +70,68 @@
             // 
             // Employeedgv
             // 
+            Employeedgv.AllowUserToAddRows = false;
             Employeedgv.AllowUserToDeleteRows = false;
             Employeedgv.AllowUserToResizeColumns = false;
+            Employeedgv.AllowUserToResizeRows = false;
             Employeedgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            Employeedgv.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, Column4, Column9, Column6, Column7, Column8 });
+            Employeedgv.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, clmgender, Column9, Column6, Column7, Column8 });
             Employeedgv.Location = new Point(12, 98);
             Employeedgv.Name = "Employeedgv";
             Employeedgv.ReadOnly = true;
+            Employeedgv.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             Employeedgv.Size = new Size(977, 340);
             Employeedgv.TabIndex = 2;
+            // 
+            // Ateendbtn
+            // 
+            Ateendbtn.Font = new Font("Yu Gothic UI", 11F);
+            Ateendbtn.Location = new Point(99, 63);
+            Ateendbtn.Name = "Ateendbtn";
+            Ateendbtn.Size = new Size(81, 29);
+            Ateendbtn.TabIndex = 3;
+            Ateendbtn.Text = "勤怠確認";
+            Ateendbtn.UseVisualStyleBackColor = true;
+            Ateendbtn.Click += Ateendbtn_Click;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Yu Gothic UI", 14F);
+            label2.Location = new Point(326, 17);
+            label2.Name = "label2";
+            label2.Size = new Size(88, 25);
+            label2.TabIndex = 4;
+            label2.Text = "従業員名";
+            // 
+            // Searchtxt
+            // 
+            Searchtxt.Location = new Point(420, 19);
+            Searchtxt.MaxLength = 20;
+            Searchtxt.Name = "Searchtxt";
+            Searchtxt.Size = new Size(225, 23);
+            Searchtxt.TabIndex = 5;
+            // 
+            // cmbgender
+            // 
+            cmbgender.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbgender.FormattingEnabled = true;
+            cmbgender.Items.AddRange(new object[] { "性別", "男", "女" });
+            cmbgender.Location = new Point(651, 19);
+            cmbgender.Name = "cmbgender";
+            cmbgender.Size = new Size(51, 23);
+            cmbgender.TabIndex = 6;
+            // 
+            // Searchbtn
+            // 
+            Searchbtn.Font = new Font("Yu Gothic UI", 11F);
+            Searchbtn.Location = new Point(708, 14);
+            Searchbtn.Name = "Searchbtn";
+            Searchbtn.Size = new Size(81, 29);
+            Searchbtn.TabIndex = 7;
+            Searchbtn.Text = "検索";
+            Searchbtn.UseVisualStyleBackColor = true;
+            Searchbtn.Click += Searchbtn_Click;
             // 
             // Column1
             // 
@@ -102,13 +155,13 @@
             Column3.ReadOnly = true;
             Column3.Width = 250;
             // 
-            // Column4
+            // clmgender
             // 
-            Column4.DataPropertyName = "Gender";
-            Column4.HeaderText = "性別";
-            Column4.Name = "Column4";
-            Column4.ReadOnly = true;
-            Column4.Width = 55;
+            clmgender.DataPropertyName = "Gender";
+            clmgender.HeaderText = "性別";
+            clmgender.Name = "clmgender";
+            clmgender.ReadOnly = true;
+            clmgender.Width = 55;
             // 
             // Column9
             // 
@@ -139,62 +192,13 @@
             Column8.Name = "Column8";
             Column8.ReadOnly = true;
             // 
-            // Ateendbtn
-            // 
-            Ateendbtn.Font = new Font("Yu Gothic UI", 11F);
-            Ateendbtn.Location = new Point(99, 63);
-            Ateendbtn.Name = "Ateendbtn";
-            Ateendbtn.Size = new Size(81, 29);
-            Ateendbtn.TabIndex = 3;
-            Ateendbtn.Text = "勤怠確認";
-            Ateendbtn.UseVisualStyleBackColor = true;
-            Ateendbtn.Click += Ateendbtn_Click;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Yu Gothic UI", 14F);
-            label2.Location = new Point(326, 17);
-            label2.Name = "label2";
-            label2.Size = new Size(88, 25);
-            label2.TabIndex = 4;
-            label2.Text = "従業員名";
-            // 
-            // Searchtxt
-            // 
-            Searchtxt.Location = new Point(420, 19);
-            Searchtxt.Name = "Searchtxt";
-            Searchtxt.Size = new Size(225, 23);
-            Searchtxt.TabIndex = 5;
-            // 
-            // comboBox1
-            // 
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Items.AddRange(new object[] { "", "男", "女" });
-            comboBox1.Location = new Point(651, 19);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(51, 23);
-            comboBox1.TabIndex = 6;
-            // 
-            // Searchbtn
-            // 
-            Searchbtn.Font = new Font("Yu Gothic UI", 11F);
-            Searchbtn.Location = new Point(708, 14);
-            Searchbtn.Name = "Searchbtn";
-            Searchbtn.Size = new Size(81, 29);
-            Searchbtn.TabIndex = 7;
-            Searchbtn.Text = "検索";
-            Searchbtn.UseVisualStyleBackColor = true;
-            Searchbtn.Click += Searchbtn_Click;
-            // 
             // EmployeeInformation
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1001, 450);
             Controls.Add(Searchbtn);
-            Controls.Add(comboBox1);
+            Controls.Add(cmbgender);
             Controls.Add(Searchtxt);
             Controls.Add(label2);
             Controls.Add(Ateendbtn);
@@ -217,12 +221,12 @@
         private Button Ateendbtn;
         private Label label2;
         private TextBox Searchtxt;
-        private ComboBox comboBox1;
+        private ComboBox cmbgender;
         private Button Searchbtn;
         private DataGridViewTextBoxColumn Column1;
         private DataGridViewTextBoxColumn Column2;
         private DataGridViewTextBoxColumn Column3;
-        private DataGridViewTextBoxColumn Column4;
+        private DataGridViewTextBoxColumn clmgender;
         private DataGridViewTextBoxColumn Column9;
         private DataGridViewTextBoxColumn Column6;
         private DataGridViewTextBoxColumn Column7;

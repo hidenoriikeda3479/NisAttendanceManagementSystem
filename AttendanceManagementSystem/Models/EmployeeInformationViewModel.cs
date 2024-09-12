@@ -23,7 +23,7 @@ namespace AttendanceManagementSystem.Models
         /// <summary>
         /// 性別
         /// </summary>
-        public int Gender { get; set; }
+        public string Gender { get; set; }
 
         /// <summary>
         /// 電話番号
