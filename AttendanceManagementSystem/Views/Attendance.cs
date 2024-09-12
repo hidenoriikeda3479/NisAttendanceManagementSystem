@@ -75,7 +75,7 @@ namespace AttendanceManagementSystem.Views
             attendanceDataGridView.DataSource = ListAttendance(_employeeModel.EmployeeId, SearchDate.Value.Year, SearchDate.Value.Month);
 
             // 過去日付は編集不可
-            attendanceDataGridView.Enabled = DateTime.Now.Year == SearchDate.Value.Year && DateTime.Now.Month == SearchDate.Value.Month;
+            attendanceDataGridView.Enabled = DateTime.Now.Year == SearchDate.Value.Year && DateTime.Now.Month == SearchDate.Value.Month && _employeeModel.PermissionId == PermissionAdmin;
             btnUpdate.Enabled = DateTime.Now.Year == SearchDate.Value.Year && DateTime.Now.Month == SearchDate.Value.Month;
         }
 

@@ -139,8 +139,18 @@ namespace AttendanceManagementSystem.Views
                     // 更新する対象のレコードを取得
                     var reslut = _context.Attendances.Single(n => n.EmployeeId == _id &&
                                                               n.Year == now.Year && n.Month == now.Month && n.Day == now.Day);
+
+                    // 10分切り捨てで開始時間を設定
+                    var workEndTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute / 10 * 10, 0);
+
+                    if (reslut.WorkStartTime  >= workEndTime)
+                    {
+                        MessageBox.Show("勤務終了時間が勤務開始時間と同じです。勤務時間が設定されていません。");
+                        return;
+                    }
+
                     // 退勤時間と更新時間を追加
-                    reslut.WorkEndTime = now;
+                    reslut.WorkEndTime = workEndTime;
                     reslut.UpdatedAt = now;
 
                     // ラベルテキストを変更
@@ -161,7 +171,11 @@ namespace AttendanceManagementSystem.Views
                     Year = now.Year,
                     Month = now.Month,
                     Day = now.Day,
-                    WorkStartTime = now,
+                    
+                    // 10分切り上げで開始時間を設定
+                    WorkStartTime = now.Minute % 10 == 0
+                                    ? new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0)
+                                    : new DateTime(now.Year, now.Month, now.Day, now.Hour, ((now.Minute / 10) + 1) * 10, 0),
                     CreatedAt = DateTime.Now
                 };
 
