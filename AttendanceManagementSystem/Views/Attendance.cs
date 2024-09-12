@@ -145,6 +145,8 @@ namespace AttendanceManagementSystem.Views
                                                    n.Year == year &&
                                                    n.Month == month).ToList();
 
+            TimeSpan nullDate = TimeSpan.Zero;
+
             //勤怠データをViewModelにマッピング
             var querylist = query.Select(n => new AttendanceViewModel
             {
@@ -159,7 +161,7 @@ namespace AttendanceManagementSystem.Views
                 BreakTimeMinutes = n.BreakTime.HasValue ?
                 (Math.Round(n.BreakTime.Value.Minutes / 10.0) * 10).ToString("00") : null, // 10分単位で四捨五入
                 Remarks = n.Remarks,
-                Workinghours = n.WorkEndTime - n.WorkStartTime - n.BreakTime,
+                Workinghours = n.WorkEndTime - n.WorkStartTime - n.BreakTime ?? null,
                 Date = n.Day,
                 DayOfWeek = (new DateTime(n.Year, n.Month, n.Day).ToString("ddd")),
 
@@ -464,12 +466,11 @@ namespace AttendanceManagementSystem.Views
         /// <returns></returns>
         private bool IsModified(AttendanceViewModel original, AttendanceViewModel updated)
         {
+            
+           
 
-
-
-
-            // 変更があるかセル情報を比較 変更あり=true 変更なし=false
-            return original.WorkStartTimeHour != updated.WorkStartTimeHour ||
+                // 変更があるかセル情報を比較 変更あり=true 変更なし=false
+                return original.WorkStartTimeHour != updated.WorkStartTimeHour ||
                    original.WorkStartTimeMinutes != updated.WorkStartTimeMinutes ||
                    original.WorkEndTimeHour != updated.WorkEndTimeHour ||
                    original.WorkEndTimeMinutes != updated.WorkEndTimeMinutes ||
@@ -486,7 +487,26 @@ namespace AttendanceManagementSystem.Views
         private bool DataNullSearch(AttendanceViewModel updated)
         {
 
-            return updated.WorkStartTimeHour == null &&
+            if (updated.WorkStartTimeHour !=  null &&
+                updated.WorkStartTimeMinutes != null &&
+                updated.WorkEndTimeHour != null &&
+                updated.WorkEndTimeMinutes != null &&
+                updated.BreakTimeHour == null &&
+                updated.BreakTimeMinutes == null)
+            {
+                return true;
+            }
+            else if (updated.WorkStartTimeHour != null &&
+                     updated.WorkStartTimeMinutes != null &&
+                     updated.WorkEndTimeHour == null &&
+                     updated.WorkEndTimeMinutes ==null &&
+                     updated.BreakTimeHour == null &&
+                     updated.BreakTimeMinutes == null) 
+            {
+                return true;
+            }
+
+                return updated.WorkStartTimeHour == null &&
                    updated.WorkStartTimeMinutes == null &&
                    updated.WorkEndTimeHour == null &&
                    updated.WorkEndTimeMinutes == null &&
@@ -537,7 +557,7 @@ namespace AttendanceManagementSystem.Views
             //       updated.BreakTimeMinutes != null;
         }
 
-        
+
 
         /// <summary>
         /// 出勤中の勤怠情報の入力データが有効かどうかを確認するメソッド
@@ -567,9 +587,60 @@ namespace AttendanceManagementSystem.Views
                                             int.Parse(updatedRecord.WorkStartTimeHour!), int.Parse(updatedRecord.WorkStartTimeMinutes!), 0);
                 return;
             }
+            
+            //出社+退社
+            else if (updatedRecord.WorkStartTimeHour != null &&
+                    updatedRecord.WorkStartTimeMinutes != null &&
+                    updatedRecord.WorkEndTimeHour != null &&
+                    updatedRecord.WorkEndTimeMinutes != null &&
+                    updatedRecord.BreakTimeHour == null &&
+                    updatedRecord.BreakTimeMinutes == null) 
+            {
+                //勤怠データを更新
+                searchtable.WorkStartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedRecord.Date,
+                                                         int.Parse(updatedRecord.WorkStartTimeHour!), int.Parse(updatedRecord.WorkStartTimeMinutes!), 0);
+                searchtable.WorkEndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedRecord.Date,
+                                                       int.Parse(updatedRecord.WorkEndTimeHour!), int.Parse(updatedRecord.WorkEndTimeMinutes!), 0);
+            }
+            //出社+休憩
+            else if(updatedRecord.WorkStartTimeHour != null &&
+                    updatedRecord.WorkStartTimeMinutes != null &&
+                    updatedRecord.WorkEndTimeHour == null &&
+                    updatedRecord.WorkEndTimeMinutes == null &&
+                    updatedRecord.BreakTimeHour != null &&
+                    updatedRecord.BreakTimeMinutes != null)
+            {
+                //勤怠データを更新
+                searchtable.WorkStartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedRecord.Date,
+                                                         int.Parse(updatedRecord.WorkStartTimeHour!), int.Parse(updatedRecord.WorkStartTimeMinutes!), 0);
+                searchtable.BreakTime = new TimeSpan(int.Parse(updatedRecord.BreakTimeHour!), int.Parse(updatedRecord.BreakTimeMinutes!), 0);
+            }
+            //部分削除
+            else if (updatedRecord.WorkStartTimeHour != null &&
+                     updatedRecord.WorkStartTimeMinutes != null &&
+                     updatedRecord.WorkEndTimeHour != null &&
+                     updatedRecord.WorkEndTimeMinutes != null &&
+                     updatedRecord.BreakTimeHour == null &&
+                     updatedRecord.BreakTimeMinutes == null) 
+            {
+                searchtable.BreakTime = null;
+            }
 
-            //出社時間が退社時間より遅い、または同じ時間で分が後の場合のエラーチェック
-            else if (int.Parse(updatedRecord.WorkStartTimeHour!) > int.Parse(updatedRecord.WorkEndTimeHour!) ||
+
+            else
+            {
+                //勤怠データを更新
+                searchtable.WorkStartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedRecord.Date,
+                                                         int.Parse(updatedRecord.WorkStartTimeHour!), int.Parse(updatedRecord.WorkStartTimeMinutes!), 0);
+                searchtable.WorkEndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedRecord.Date,
+                                                       int.Parse(updatedRecord.WorkEndTimeHour!), int.Parse(updatedRecord.WorkEndTimeMinutes!), 0);
+                searchtable.BreakTime = new TimeSpan(int.Parse(updatedRecord.BreakTimeHour!), int.Parse(updatedRecord.BreakTimeMinutes!), 0);
+                searchtable.Remarks = updatedRecord.Remarks;
+            }
+
+
+            //出社時間と退社時間の時刻逆転チェック
+            if (int.Parse(updatedRecord.WorkStartTimeHour!) > int.Parse(updatedRecord.WorkEndTimeHour!) ||
                 int.Parse(updatedRecord.WorkStartTimeHour!) == int.Parse(updatedRecord.WorkEndTimeHour!) &&
                 int.Parse(updatedRecord.WorkStartTimeMinutes!) > int.Parse(updatedRecord.WorkEndTimeMinutes!))
             {
@@ -577,13 +648,6 @@ namespace AttendanceManagementSystem.Views
                 return;
             }
 
-            //勤怠データを更新
-            searchtable.WorkStartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedRecord.Date,
-                                                     int.Parse(updatedRecord.WorkStartTimeHour!), int.Parse(updatedRecord.WorkStartTimeMinutes!), 0);
-            searchtable.WorkEndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedRecord.Date,
-                                                   int.Parse(updatedRecord.WorkEndTimeHour!), int.Parse(updatedRecord.WorkEndTimeMinutes!), 0);
-            searchtable.BreakTime = new TimeSpan(int.Parse(updatedRecord.BreakTimeHour!), int.Parse(updatedRecord.BreakTimeMinutes!), 0);
-            searchtable.Remarks = updatedRecord.Remarks;
 
             isProcessingCompleted = true;
         }
@@ -696,11 +760,40 @@ namespace AttendanceManagementSystem.Views
 
                     UpdatedAt = DateTime.Now
 
+                };
 
+
+               
+
+                //新しい従業員データを追加
+                _context.Attendances.Add(newAttendance);
+            }
+
+            //出社+退社
+            else if(updatamatchedrecord.WorkStartTimeHour != null &&
+                    updatamatchedrecord.WorkStartTimeMinutes != null &&
+                    updatamatchedrecord.WorkEndTimeHour != null &&
+                    updatamatchedrecord.WorkEndTimeMinutes != null &&
+                    updatamatchedrecord.BreakTimeHour == null &&
+                    updatamatchedrecord.BreakTimeMinutes == null)
+            {
+                var newAttendance = new AttendanceModel
+                {
+                    EmployeeId = _id,
+                    Year = DateTime.Now.Year,
+                    Month = DateTime.Now.Month,
+                    Day = updatamatchedrecord.Date,
+                    WorkStartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatamatchedrecord.Date,
+                                             int.Parse(updatamatchedrecord.WorkStartTimeHour!),
+                                             int.Parse(updatamatchedrecord.WorkStartTimeMinutes!), 0, 0),
+                    WorkEndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatamatchedrecord.Date,
+                                           int.Parse(updatamatchedrecord.WorkEndTimeHour!),
+                                           int.Parse(updatamatchedrecord.WorkEndTimeMinutes!), 0, 0),
                 };
 
                 //新しい従業員データを追加
                 _context.Attendances.Add(newAttendance);
+
             }
             else
             {
