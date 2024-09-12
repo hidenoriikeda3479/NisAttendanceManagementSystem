@@ -233,30 +233,31 @@ namespace AttendanceManagementSystem.Views
 
                     // 各月の計算式
                     January = n.Where(x => x.Year! == targetYear && x.Month == 1)
-                    .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay)),
+                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
                     February = n.Where(x => x.Year == targetYear && x.Month == 2)
-                    .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay)),
+                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
                     March = n.Where(x => x.Year == targetYear && x.Month == 3)
-                    .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay)),
+                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
                     April = n.Where(x => x.Year == targetYear && x.Month == 4)
-                    .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay)),
+                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
                     May = n.Where(x => x.Year == targetYear && x.Month == 5)
-                    .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay)),
+                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
                     June = n.Where(x => x.Year == targetYear && x.Month == 6)
-                    .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay)),
+                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
                     July = n.Where(x => x.Year == targetYear && x.Month == 7)
-                    .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay)),
+                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
                     August = n.Where(x => x.Year == targetYear && x.Month == 8)
-                    .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay)),
+                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
                     September = n.Where(x => x.Year == targetYear && x.Month == 9)
-                    .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay)),
+                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
                     October = n.Where(x => x.Year == targetYear && x.Month == 10)
-                    .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay)),
+                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
                     November = n.Where(x => x.Year == targetYear && x.Month == 11)
-                    .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay)),
+                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
                     December = n.Where(x => x.Year == targetYear && x.Month == 12)
-                    .Sum(x => (int)((x.WorkEndTime! - x.WorkStartTime! - x.BreakTime!).Value.TotalHours! * x.HourlyPay))
-                
+                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
+
+
                 }).ToList();
 
             //  給与 dataGridView を表示
