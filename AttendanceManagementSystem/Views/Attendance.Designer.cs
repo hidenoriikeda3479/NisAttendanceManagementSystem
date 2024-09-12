@@ -125,6 +125,7 @@
             attendanceDataGridView.Size = new Size(1529, 885);
             attendanceDataGridView.TabIndex = 6;
             attendanceDataGridView.CellBeginEdit += attendanceDataGridView_CellBeginEdit;
+            attendanceDataGridView.CellEnter += Dgv_CellEnter;
             attendanceDataGridView.CellFormatting += attendanceDataGridView_CellFormatting;
             attendanceDataGridView.CellPainting += attendanceDataGridView_CellPainting;
             attendanceDataGridView.DataBindingComplete += attendanceDataGridView_DataBindingComplete;
