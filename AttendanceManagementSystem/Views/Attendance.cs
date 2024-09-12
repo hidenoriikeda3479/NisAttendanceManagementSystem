@@ -1,4 +1,5 @@
-﻿using AttendanceManagementSystem.Data;
+﻿
+using AttendanceManagementSystem.Data;
 using AttendanceManagementSystem.Models;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
@@ -51,6 +52,11 @@ namespace AttendanceManagementSystem.Views
         /// </summary>
         private int _permissionId;
 
+        //処理が完了したかを示すフラグ
+        bool isProcessingCompleted = false;
+
+        bool sss = false;
+
         /// <summary>
         /// ログインした社員の情報を取得して権限IDを設定
         /// </summary>
@@ -68,9 +74,8 @@ namespace AttendanceManagementSystem.Views
             // 権限IDを格納
             _permissionId = empInfo.First();
 
+            // イベントハンドラー
             attendanceDataGridView.CellEnter += new DataGridViewCellEventHandler(Dgv_CellEnter);
-
-
         }
 
         /// <summary>
@@ -108,7 +113,6 @@ namespace AttendanceManagementSystem.Views
         /// <param name="e">イベント情報</param>
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            bool result = false;
 
             //更新確認のメッセージボックスを表示し、Yes/Noの選択
             DialogResult dLog = MessageBox.Show("更新してよろしいですか？", "確認表示", MessageBoxButtons.YesNo);
@@ -117,13 +121,7 @@ namespace AttendanceManagementSystem.Views
             if (dLog == DialogResult.Yes)
             {
                 //勤怠データの更新処理を実行
-                result = ProcessAttendanceData();
-            }
-
-            if (result) 
-            {
-                MessageBox.Show("更新が完了しました。");
-                _context.SaveChanges();
+                ProcessAttendanceData();
             }
 
             //更新されたデータを再取得
@@ -155,17 +153,17 @@ namespace AttendanceManagementSystem.Views
             var querylist = query.Select(n => new AttendanceViewModel
             {
                 AttendanceId = n.EmployeeId,
-                WorkStartTimeHour = n.WorkStartTime.HasValue ? n.WorkStartTime.Value.Hour.ToString("00") : "00",
+                WorkStartTimeHour = n.WorkStartTime.HasValue ? n.WorkStartTime.Value.Hour.ToString("00") : null,
                 WorkStartTimeMinutes = n.WorkStartTime.HasValue ?
-                (Math.Round(n.WorkStartTime.Value.Minute / 10.0) * 10).ToString("00") : "00", // 10分単位で四捨五入
-                WorkEndTimeHour = n.WorkEndTime.HasValue ? n.WorkEndTime.Value.Hour.ToString("00") : "00",
+                (Math.Round(n.WorkStartTime.Value.Minute / 10.0) * 10).ToString("00") : null, // 10分単位で四捨五入
+                WorkEndTimeHour = n.WorkEndTime.HasValue ? n.WorkEndTime.Value.Hour.ToString("00") : null,
                 WorkEndTimeMinutes = n.WorkEndTime.HasValue ?
-                (Math.Round(n.WorkEndTime.Value.Minute / 10.0) * 10).ToString("00") : "00", // 10分単位で四捨五入
-                BreakTimeHour = n.BreakTime.HasValue ? n.BreakTime.Value.Hours.ToString("00") : "00",
+                (Math.Round(n.WorkEndTime.Value.Minute / 10.0) * 10).ToString("00") : null, // 10分単位で四捨五入
+                BreakTimeHour = n.BreakTime.HasValue ? n.BreakTime.Value.Hours.ToString("00") : null,
                 BreakTimeMinutes = n.BreakTime.HasValue ?
-                (Math.Round(n.BreakTime.Value.Minutes / 10.0) * 10).ToString("00") : "00", // 10分単位で四捨五入
+                (Math.Round(n.BreakTime.Value.Minutes / 10.0) * 10).ToString("00") : null, // 10分単位で四捨五入
                 Remarks = n.Remarks,
-                Workinghours = n.WorkEndTime - n.WorkStartTime - n.BreakTime,
+                Workinghours = n.WorkEndTime - n.WorkStartTime - (n.BreakTime ?? null),
                 Date = n.Day,
                 DayOfWeek = (new DateTime(n.Year, n.Month, n.Day).ToString("ddd")),
 
@@ -262,7 +260,7 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// 勤怠テーブルの処理メソッド
         /// </summary>
-        private bool ProcessAttendanceData()
+        private void ProcessAttendanceData()
         {
             //勤怠データ用のViewModelインスタンスを作成
             AttendanceViewModel view = new AttendanceViewModel();
@@ -296,16 +294,37 @@ namespace AttendanceManagementSystem.Views
 
                             if (q)
                             {
-                                return true;
+                                isProcessingCompleted = true;
                             }
                             else
                             {
-                                return false;
+                                MessageBox.Show("検出");
+                                return;
                             }
 
+                            //isProcessingCompleted = true;
                         }
 
                     }
+
+
+
+                    //else
+                    //{
+                    //    MessageBox.Show("検出");
+
+                    //    //更新されたデータを再取得
+                    //    var updatedAttendanceDat = LoadAttendanceData(DateTime.Now.Year, DateTime.Now.Month);
+
+                    //    //DataGridViewに再バインド
+                    //    attendanceDataGridView.DataSource = updatedAttendanceDat;
+
+
+
+                    //    return;
+                    //}
+
+
 
                     //更新前後のレコードを比較して変更があれば、更新処理を実行
                     if (IsModified(originalRecord!, view))
@@ -321,32 +340,58 @@ namespace AttendanceManagementSystem.Views
                         if (DataNullSearch(view))
                         {
                             _context.Attendances.Remove(searchtable!);
-                            return true;
+                            isProcessingCompleted = true;
                         }
                         //更新対象のレコードが存在し、入力値の変更があれば更新処理を実行
-                        else if (searchtable != null)
+                        else if (searchtable != null && IsAttendanceDataValid(view))
                         {
-                            bool result = UpdateAttendance(searchtable, view);
-                            return result;
-                           
+                            UpdateAttendance(searchtable, view);
+
                         }
                         //出勤中の入力値があれば更新処理を実行
                         else if (searchtable != null && IsWorkStartTimeValid(view))
                         {
-                            bool result = UpdateAttendance(searchtable, view);
-                            return result;
+                            UpdateAttendance(searchtable, view);
                         }
+                        //入力が正しくない場合のエラーメッセージ表示
+                        //else
+                        //{
+
+                        //    //MessageBox.Show("入力をやり直してください");
+                        //}
 
                     }
+
 
                 }
             }
 
-            return false;
+
+            _context.SaveChanges();
+
+            ////処理が完了した場合にのみSaveChangesを呼び出す
+            //if (InsertAttendance(view) == true)
+            //{
+            //    //追加したデータをコミット
+            //    _context.SaveChanges();
+            //    MessageBox.Show("更新が完了しました。");
+
+            //}
+            //else if (isProcessingCompleted && IsAttendanceDataValid(view) == true ||
+            //        isProcessingCompleted == false && IsAttendanceDataValid(view) == true)
+            //{
+
+            //    MessageBox.Show("入力をやり直してください");
+
+            //}
+
+            //更新されたデータを再取得
+            //var updatedAttendanceData = LoadAttendanceData(DateTime.Now.Year, DateTime.Now.Month);
+
+            //DataGridViewに再バインド
+            //attendanceDataGridView.DataSource = updatedAttendanceData;
 
         }
-        
-
 
         /// <summary>
         /// データグリッドビューの行データを取得し、AttendanceViewModel にマッピングするメソッド
@@ -421,11 +466,7 @@ namespace AttendanceManagementSystem.Views
         private bool IsModified(AttendanceViewModel original, AttendanceViewModel updated)
         {
 
-            
-            //else if (a)
-            //{
 
-            //}
 
             // 変更があるかセル情報を比較 変更あり=true 変更なし=false
             return original.WorkStartTimeHour != updated.WorkStartTimeHour ||
@@ -458,7 +499,6 @@ namespace AttendanceManagementSystem.Views
             {
                 return false;
             }
-
         }
 
         /// <summary>
@@ -472,22 +512,22 @@ namespace AttendanceManagementSystem.Views
             //bool d = false;
 
             //既存レコード or 新規登録
-            if (updated.WorkStartTimeHour != null &&
+            if (updated.WorkStartTimeHour != null ||
                updated.WorkStartTimeMinutes != null)
             {
                 return true;
             }
             //未登録情報
-            else if (updated.WorkEndTimeHour == null &&
-                     updated.WorkEndTimeMinutes == null)
+            else if (updated.WorkStartTimeHour == null &&
+                    updated.WorkStartTimeMinutes == null &&
+                    updated.WorkEndTimeHour == null &&
+                    updated.WorkEndTimeMinutes == null)
             {
                 return false;
             }
             //入力ミス
             else
             {
-
-
                 //d = true;
                 return true;
             }
@@ -514,16 +554,14 @@ namespace AttendanceManagementSystem.Views
             return updated.WorkStartTimeHour != null &&
                   updated.WorkStartTimeMinutes != null;
         }
+
         /// <summary>
         /// 勤怠情報の更新処理
         /// </summary>
         /// <param name="searchtable">更新対象の勤怠情報</param>
         /// <param name="updatedRecord">更新内容を持つ勤怠データ</param>
-        private bool UpdateAttendance(AttendanceModel searchtable, AttendanceViewModel updatedRecord)
+        private void UpdateAttendance(AttendanceModel searchtable, AttendanceViewModel updatedRecord)
         {
-
-
-
             //出社時間が入力されていて、退社時間が未入力の場合
             if (updatedRecord.WorkStartTimeHour != null &&
                         updatedRecord.WorkStartTimeMinutes != null &&
@@ -533,7 +571,7 @@ namespace AttendanceManagementSystem.Views
                 //出社時間のみ更新
                 searchtable.WorkStartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedRecord.Date,
                                             int.Parse(updatedRecord.WorkStartTimeHour!), int.Parse(updatedRecord.WorkStartTimeMinutes!), 0);
-                return true;
+                return;
             }
 
             //出社+退社
@@ -549,7 +587,6 @@ namespace AttendanceManagementSystem.Views
                                                          int.Parse(updatedRecord.WorkStartTimeHour!), int.Parse(updatedRecord.WorkStartTimeMinutes!), 0);
                 searchtable.WorkEndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedRecord.Date,
                                                        int.Parse(updatedRecord.WorkEndTimeHour!), int.Parse(updatedRecord.WorkEndTimeMinutes!), 0);
-                return true;
             }
             //出社+休憩
             else if (updatedRecord.WorkStartTimeHour != null &&
@@ -563,9 +600,17 @@ namespace AttendanceManagementSystem.Views
                 searchtable.WorkStartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedRecord.Date,
                                                          int.Parse(updatedRecord.WorkStartTimeHour!), int.Parse(updatedRecord.WorkStartTimeMinutes!), 0);
                 searchtable.BreakTime = new TimeSpan(int.Parse(updatedRecord.BreakTimeHour!), int.Parse(updatedRecord.BreakTimeMinutes!), 0);
-                return true;
             }
-            
+            //部分削除
+            else if (updatedRecord.WorkStartTimeHour != null &&
+                     updatedRecord.WorkStartTimeMinutes != null &&
+                     updatedRecord.WorkEndTimeHour != null &&
+                     updatedRecord.WorkEndTimeMinutes != null &&
+                     updatedRecord.BreakTimeHour == null &&
+                     updatedRecord.BreakTimeMinutes == null)
+            {
+                searchtable.BreakTime = null;
+            }
             else
             {
                 //勤怠データを更新
@@ -575,8 +620,6 @@ namespace AttendanceManagementSystem.Views
                                                        int.Parse(updatedRecord.WorkEndTimeHour!), int.Parse(updatedRecord.WorkEndTimeMinutes!), 0);
                 searchtable.BreakTime = new TimeSpan(int.Parse(updatedRecord.BreakTimeHour!), int.Parse(updatedRecord.BreakTimeMinutes!), 0);
                 searchtable.Remarks = updatedRecord.Remarks;
-
-                
             }
 
 
@@ -586,13 +629,12 @@ namespace AttendanceManagementSystem.Views
                 int.Parse(updatedRecord.WorkStartTimeMinutes!) > int.Parse(updatedRecord.WorkEndTimeMinutes!))
             {
                 MessageBox.Show("出社時間の入力をやり直してください");
-                return false;
+                return;
             }
 
 
-            return true;
+            isProcessingCompleted = true;
         }
-
 
         /// <summary>
         /// 勤怠情報の登録処理
@@ -618,15 +660,12 @@ namespace AttendanceManagementSystem.Views
                     WorkStartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatamatchedrecord.Date,
                                              int.Parse(updatamatchedrecord.WorkStartTimeHour!),
                                              int.Parse(updatamatchedrecord.WorkStartTimeMinutes!), 0, 0),
-                    Remarks = updatamatchedrecord.Remarks,
-
                     BreakTime = TimeSpan.Zero,
+                    Remarks = updatamatchedrecord.Remarks,
 
                     CreatedAt = DateTime.Now,
 
                     UpdatedAt = DateTime.Now
-
-                    
 
                 };
 
@@ -635,6 +674,48 @@ namespace AttendanceManagementSystem.Views
 
                 //isProcessingCompleted = true;
 
+            }
+            //出社+退社登録
+            else if (updatamatchedrecord.WorkStartTimeHour != null &&
+                     updatamatchedrecord.WorkStartTimeMinutes != null &&
+                     updatamatchedrecord.WorkEndTimeHour != null &&
+                     updatamatchedrecord.WorkEndTimeMinutes != null &&
+                     updatamatchedrecord.BreakTimeHour == null &&
+                     updatamatchedrecord.BreakTimeMinutes == null)
+            {
+                var newAttendance = new AttendanceModel
+                {
+                    EmployeeId = _id,
+                    Year = DateTime.Now.Year,
+                    Month = DateTime.Now.Month,
+                    Day = updatamatchedrecord.Date,
+                    WorkStartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatamatchedrecord.Date,
+                                             int.Parse(updatamatchedrecord.WorkStartTimeHour!),
+                                             int.Parse(updatamatchedrecord.WorkStartTimeMinutes!), 0, 0),
+                    WorkEndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatamatchedrecord.Date,
+                                           int.Parse(updatamatchedrecord.WorkEndTimeHour!),
+                                           int.Parse(updatamatchedrecord.WorkEndTimeMinutes!), 0, 0),
+                    BreakTime = TimeSpan.Zero,
+                };
+
+                if (int.Parse(updatamatchedrecord.WorkStartTimeHour!) < int.Parse(updatamatchedrecord.WorkEndTimeHour!))
+                {
+                    // 勤務時間算出
+                    var a = newAttendance.WorkEndTime - newAttendance.WorkStartTime - newAttendance.BreakTime;
+
+                    //勤務時間の判定
+                    if (a.Value.TotalMinutes > 0)
+                    {
+                        //新しい従業員データを追加
+                        _context.Attendances.Add(newAttendance);
+
+                        isProcessingCompleted = true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
             }
             //出社+退社+休憩登録
             else if (updatamatchedrecord.WorkStartTimeHour != null &&
@@ -671,7 +752,7 @@ namespace AttendanceManagementSystem.Views
                         //新しい従業員データを追加
                         _context.Attendances.Add(newAttendance);
 
-                        return true;
+                        isProcessingCompleted = true;
                     }
                     else
                     {
@@ -735,31 +816,10 @@ namespace AttendanceManagementSystem.Views
                     WorkEndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatamatchedrecord.Date,
                                            int.Parse(updatamatchedrecord.WorkEndTimeHour!),
                                            int.Parse(updatamatchedrecord.WorkEndTimeMinutes!), 0, 0),
-
-                    BreakTime = TimeSpan.Zero,
                 };
 
-                if (int.Parse(updatamatchedrecord.WorkStartTimeHour!) < int.Parse(updatamatchedrecord.WorkEndTimeHour!))
-                {
-                    // 勤務時間算出
-                    var a = newAttendance.WorkEndTime - newAttendance.WorkStartTime - newAttendance.BreakTime;
-
-                    //勤務時間の判定
-                    if (a.Value.TotalMinutes > 0)
-                    {
-                        //新しい従業員データを追加
-                        _context.Attendances.Add(newAttendance);
-
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
-                }
-
-                ////新しい従業員データを追加
-                //_context.Attendances.Add(newAttendance);
+                //新しい従業員データを追加
+                _context.Attendances.Add(newAttendance);
 
             }
             else
@@ -767,7 +827,7 @@ namespace AttendanceManagementSystem.Views
                 return false;
             }
 
-            return false;
+            return true;
 
 
         }
@@ -988,6 +1048,11 @@ namespace AttendanceManagementSystem.Views
             var originalValue = attendanceDataGridView[e.ColumnIndex, e.RowIndex].Value;
         }
 
+        /// <summary>
+        /// データグリッドビューのコンボボックスクリック処理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void Dgv_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
             if (attendanceDataGridView[e.ColumnIndex, e.RowIndex].GetType().Equals(typeof(DataGridViewComboBoxCell)))
@@ -995,16 +1060,14 @@ namespace AttendanceManagementSystem.Views
                 attendanceDataGridView.BeginEdit(false);
                 ((DataGridViewComboBoxEditingControl)attendanceDataGridView.EditingControl).DroppedDown = true;
             }
-
         }
     }
 }
 
 
 
-    
 
 
-        
-    
+
+
 
