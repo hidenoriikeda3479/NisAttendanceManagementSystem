@@ -282,16 +282,16 @@ namespace AttendanceManagementSystem.Views
             }
 
             // 出社時間より退社時間が早くないかをチェック
-            if (updatedAttendanceList.Any(n => !string.IsNullOrEmpty(n.WorkEndTimeHour) && (CalculateMinutes(n.WorkStartTimeHour, n.WorkStartTimeMinutes) > CalculateMinutes(n.WorkEndTimeHour, n.WorkEndTimeMinutes))))
+            if (updatedAttendanceList.Any(n => !string.IsNullOrEmpty(n.WorkEndTimeHour) && (CalculateMinutes(n.WorkStartTimeHour, n.WorkStartTimeMinutes) >= CalculateMinutes(n.WorkEndTimeHour, n.WorkEndTimeMinutes))))
             {
-                MessageBox.Show("退社時間が出社時間より早いです。");
+                MessageBox.Show("退社時間が出社時間より早い、または同時刻に設定されています。");
                 return false;
             }
 
             // 稼働時間より休憩時間が多すぎないかをチェック
-            if (updatedAttendanceList.Any(n => !string.IsNullOrEmpty(n.BreakTimeHour) && !string.IsNullOrEmpty(n.WorkEndTimeHour) && (CalculateMinutes(n.BreakTimeHour, n.BreakTimeMinutes) > CalculateMinutes(n.WorkEndTimeHour, n.WorkEndTimeMinutes) - CalculateMinutes(n.WorkStartTimeHour, n.WorkStartTimeMinutes))))
+            if (updatedAttendanceList.Any(n => !string.IsNullOrEmpty(n.BreakTimeHour) && !string.IsNullOrEmpty(n.WorkEndTimeHour) && (CalculateMinutes(n.BreakTimeHour, n.BreakTimeMinutes) >= CalculateMinutes(n.WorkEndTimeHour, n.WorkEndTimeMinutes) - CalculateMinutes(n.WorkStartTimeHour, n.WorkStartTimeMinutes))))
             {
-                MessageBox.Show("休憩時間が稼働時間を超えています。");
+                MessageBox.Show("休憩時間が稼働時間を超えているか、または同時間に設定されています。。");
                 return false;
             }
 
