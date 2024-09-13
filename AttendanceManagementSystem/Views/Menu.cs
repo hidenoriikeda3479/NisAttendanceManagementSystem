@@ -102,7 +102,7 @@ namespace AttendanceManagementSystem.Views
         private void btnAttendanceManagement_Click(object sender, EventArgs e)
         {
             // 勤怠画面へ遷移
-            var attendance = new Attendance(_context, _id);
+            var attendance = new Attendance(_context, _id, _id);
             attendance.Show();
         }
 
@@ -114,7 +114,7 @@ namespace AttendanceManagementSystem.Views
         private void btnAdminMenu_Click(object sender, EventArgs e)
         {
             // 管理画面へ遷移
-            var managementMenu = new ManagementMenu(_context);
+            var managementMenu = new ManagementMenu(_context, _id);
             managementMenu.Show();
             Hide();
         }

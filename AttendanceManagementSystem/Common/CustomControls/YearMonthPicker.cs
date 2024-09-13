@@ -11,11 +11,19 @@ namespace AttendanceManagementSystem.Common.CustomControls
     /// </summary>
     public class YearMonthPicker : DateTimePicker
     {
+        /// <summary>
+        /// 月が選択されたかどうかを判定するためのフラグ
+        /// </summary>
+        private bool isMonthSelected;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
         public YearMonthPicker()
         {
             // カレンダー表示で年月のみを選択可能に設定
             this.Format = DateTimePickerFormat.Custom;
-            
+
             // 年月のみ表示
             this.CustomFormat = "yyyy年MM月";
 
@@ -30,6 +38,9 @@ namespace AttendanceManagementSystem.Common.CustomControls
 
             // カレンダーが閉じられたときに日付を1日にリセット
             this.CloseUp += new EventHandler(OnCloseUp);
+
+            // DropDownイベントを登録
+            this.DropDown += YearMonthPicker_DropDown;
         }
 
         /// <summary>
@@ -50,6 +61,20 @@ namespace AttendanceManagementSystem.Common.CustomControls
         public DateTime GetSelectedYearMonth()
         {
             return new DateTime(this.Value.Year, this.Value.Month, 1);
+        }
+
+        /// <summary>
+        /// DropDownイベント発生時に月選択モードに切り替える
+        /// </summary>
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
+        private void YearMonthPicker_DropDown(object sender, EventArgs e)
+        {
+            // 月選択モードにするためにCtrl + ↑キーを送信
+            SendKeys.Send("^{UP}");
+
+            // 月が選択される前にフラグをリセット
+            isMonthSelected = false;
         }
     }
 }

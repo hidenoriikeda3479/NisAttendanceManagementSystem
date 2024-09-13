@@ -20,9 +20,14 @@ namespace AttendanceManagementSystem.Views
         private readonly AttendanceManagementDbContext _context;
 
         /// <summary>
-        /// 従業員情報
+        /// ログイン従業員情報
         /// </summary>
-        private readonly EmployeeModel _employeeModel;
+        private readonly EmployeeModel _loginEmployeeModel;
+
+        /// <summary>
+        /// 更新対象従業員ID
+        /// </summary>
+        private readonly int _targetEmployeeId;
 
         /// <summary>
         /// 管理者権限
@@ -37,14 +42,16 @@ namespace AttendanceManagementSystem.Views
         /// コンストラクタ
         /// </summary>
         /// <param name="context">データベースコンテキスト</param>
-        /// <param name="employeeId">従業員ID</param>
-        public Attendance(AttendanceManagementDbContext context, int employeeId)
+        /// <param name="loginEmployeeId">ログイン従業員ID</param>
+        /// <param name="targetEmployeeId">更新対象従業員ID</param>
+        public Attendance(AttendanceManagementDbContext context, int loginEmployeeId, int targetEmployeeId)
         {
             InitializeComponent();
 
             // DBコンテキストと従業員情報を設定
             _context = context;
-            _employeeModel = LoadEmployee(employeeId);
+            _targetEmployeeId = targetEmployeeId;
+            _loginEmployeeModel = LoadEmployee(loginEmployeeId);
         }
 
         #endregion
@@ -59,11 +66,11 @@ namespace AttendanceManagementSystem.Views
         private void Attendance_Load(object sender, EventArgs e)
         {
             // 勤怠情報を表示
-            attendanceDataGridView.DataSource = ListAttendance(_employeeModel.EmployeeId, DateTime.Now.Year, DateTime.Now.Month);
+            attendanceDataGridView.DataSource = ListAttendance(_targetEmployeeId, DateTime.Now.Year, DateTime.Now.Month);
 
             // 権限に応じて操作を制御
-            attendanceDataGridView.Enabled = _employeeModel.PermissionId == PermissionAdmin;
-            btnUpdate.Visible = _employeeModel.PermissionId == PermissionAdmin;
+            attendanceDataGridView.Enabled = _loginEmployeeModel.PermissionId == PermissionAdmin;
+            btnUpdate.Visible = _loginEmployeeModel.PermissionId == PermissionAdmin;
         }
 
         /// <summary>
@@ -74,10 +81,10 @@ namespace AttendanceManagementSystem.Views
         private void btnSearch_Click(object sender, EventArgs e)
         {
             // 指定された月の勤怠情報を表示
-            attendanceDataGridView.DataSource = ListAttendance(_employeeModel.EmployeeId, SearchDate.Value.Year, SearchDate.Value.Month);
+            attendanceDataGridView.DataSource = ListAttendance(_targetEmployeeId, SearchDate.Value.Year, SearchDate.Value.Month);
 
             // 過去日付は編集不可
-            attendanceDataGridView.Enabled = DateTime.Now.Year == SearchDate.Value.Year && DateTime.Now.Month == SearchDate.Value.Month && _employeeModel.PermissionId == PermissionAdmin;
+            attendanceDataGridView.Enabled = DateTime.Now.Year == SearchDate.Value.Year && DateTime.Now.Month == SearchDate.Value.Month && _loginEmployeeModel.PermissionId == PermissionAdmin;
             btnUpdate.Enabled = DateTime.Now.Year == SearchDate.Value.Year && DateTime.Now.Month == SearchDate.Value.Month;
         }
 
@@ -105,7 +112,7 @@ namespace AttendanceManagementSystem.Views
             MessageBox.Show("更新が完了しました");
 
             // 更新結果を再取得
-            attendanceDataGridView.DataSource = ListAttendance(_employeeModel.EmployeeId, SearchDate.Value.Year, SearchDate.Value.Month);
+            attendanceDataGridView.DataSource = ListAttendance(_targetEmployeeId, SearchDate.Value.Year, SearchDate.Value.Month);
         }
 
         /// <summary>
@@ -176,7 +183,7 @@ namespace AttendanceManagementSystem.Views
             foreach (var attendance in attendanceList.Where(n => n.AttendanceId.HasValue).ToList())
             {
                 // DBから該当の勤怠情報を取得
-                var existingAttendance = _context.Attendances.Single(a => a.EmployeeId == _employeeModel.EmployeeId && a.Year == attendance.Year && a.Month == attendance.Month && a.Day == attendance.Date);
+                var existingAttendance = _context.Attendances.Single(a => a.EmployeeId == _targetEmployeeId && a.Year == attendance.Year && a.Month == attendance.Month && a.Day == attendance.Date);
 
                 // 削除処理
                 if (string.IsNullOrEmpty(attendance.WorkStartTimeHour))
@@ -200,7 +207,7 @@ namespace AttendanceManagementSystem.Views
         private List<AttendanceModel> SetCreateAttendanceModels(List<AttendanceViewModel> attendanceList) =>
             attendanceList.Select(attendance => new AttendanceModel
             {
-                EmployeeId = _employeeModel.EmployeeId,
+                EmployeeId = _targetEmployeeId,
                 Year = attendance.Year,
                 Month = attendance.Month,
                 Day = attendance.Date,

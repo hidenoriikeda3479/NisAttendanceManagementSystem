@@ -132,7 +132,7 @@ namespace AttendanceManagementSystem.Views
             attendanceDataGridView.Columns.AddRange(new DataGridViewColumn[] { AttendanceIdColumn10, YearColumn, MonthColumn, DateColumn1, DayOfWeekColumn2, WorkStartTimeHourColumn3, WorkStartTimeMinutesColumn4, WorkEndTimeHourColumn5, WorkEndTimeMinutesColumn6, BreakTimeHourColumn7, BreakTimeMinutesColumn8, WorkinghoursColumn9, RemarksColumn10 });
             attendanceDataGridView.Location = new Point(5, 73);
             attendanceDataGridView.Name = "attendanceDataGridView";
-            attendanceDataGridView.Size = new Size(1171, 896);
+            attendanceDataGridView.Size = new Size(1171, 928);
             attendanceDataGridView.TabIndex = 6;
             attendanceDataGridView.CellEnter += attendanceDataGridView_CellEnter;
             attendanceDataGridView.CellFormatting += attendanceDataGridView_CellFormatting;
@@ -260,7 +260,7 @@ namespace AttendanceManagementSystem.Views
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1182, 981);
+            ClientSize = new Size(1182, 1013);
             Controls.Add(btnUpdate);
             Controls.Add(attendanceDataGridView);
             Controls.Add(btnSearch);
