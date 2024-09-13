@@ -50,7 +50,7 @@
             // Updatebtn
             // 
             Updatebtn.Font = new Font("Yu Gothic UI", 11F);
-            Updatebtn.Location = new Point(12, 63);
+            Updatebtn.Location = new Point(28, 63);
             Updatebtn.Name = "Updatebtn";
             Updatebtn.Size = new Size(81, 29);
             Updatebtn.TabIndex = 0;
@@ -80,7 +80,7 @@
             Employeedgv.Name = "Employeedgv";
             Employeedgv.ReadOnly = true;
             Employeedgv.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            Employeedgv.Size = new Size(977, 340);
+            Employeedgv.Size = new Size(1016, 340);
             Employeedgv.TabIndex = 2;
             // 
             // Column1
@@ -145,7 +145,7 @@
             // Ateendbtn
             // 
             Ateendbtn.Font = new Font("Yu Gothic UI", 11F);
-            Ateendbtn.Location = new Point(99, 63);
+            Ateendbtn.Location = new Point(115, 63);
             Ateendbtn.Name = "Ateendbtn";
             Ateendbtn.Size = new Size(81, 29);
             Ateendbtn.TabIndex = 3;
@@ -196,7 +196,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1001, 450);
+            ClientSize = new Size(1075, 450);
             Controls.Add(Searchbtn);
             Controls.Add(cmbgender);
             Controls.Add(Searchtxt);
@@ -207,6 +207,7 @@
             Controls.Add(Updatebtn);
             Name = "EmployeeInformation";
             Text = "EmployeeInformation";
+            FormClosing += EmployeeInformation_FormClosing;
             Load += EmployeeInformation_Load;
             ((System.ComponentModel.ISupportInitialize)Employeedgv).EndInit();
             ResumeLayout(false);

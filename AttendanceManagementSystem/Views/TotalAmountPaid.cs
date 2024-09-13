@@ -30,7 +30,7 @@ namespace AttendanceManagementSystem.Views
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
         /// <param name="id">ユーザー閲覧</param>
-        public TotalAmountPaid(AttendanceManagementDbContext context,int id = 0)
+        public TotalAmountPaid(AttendanceManagementDbContext context, int id = 0)
         {
             InitializeComponent();
             _context = context;
@@ -49,7 +49,7 @@ namespace AttendanceManagementSystem.Views
             bool visibleflag = VisileEvent(targetId);
 
             //画面表記変更イベントを実行し、表示状態を取得
-            if (visibleflag) 
+            if (visibleflag)
             {
                 //給料画面表示
                 SalaryConfirmation();
@@ -88,6 +88,9 @@ namespace AttendanceManagementSystem.Views
             if (targetId != 0)
             {
                 SalaryConfirmation();
+
+                // 給与 dataGridView 反映イベント
+                DateList(searchyear);
             }
         }
 
@@ -111,9 +114,12 @@ namespace AttendanceManagementSystem.Views
             if (targetId != 0)
             {
                 SalaryConfirmation();
+
+                // 過去年の給与表示(１年前を表示)
+                DateList(lastYear);
             }
         }
-        
+
         /// <summary>
         /// 右矢印ボタンクリックイベント
         /// </summary>
@@ -135,6 +141,8 @@ namespace AttendanceManagementSystem.Views
                 if (targetId != 0)
                 {
                     SalaryConfirmation();
+
+                    DateList(selectYear);
                 }
                 return;
             }
@@ -175,6 +183,24 @@ namespace AttendanceManagementSystem.Views
                 return visibleflag;
             }
         }
+
+        /// <summary>
+        /// 管理メニュー再表示
+        /// </summary>
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
+        private void TotalAmountPaid_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //画面表記フラグ
+            int visibleflag = targetId;
+
+            if (visibleflag == 0)
+            {
+                var managementMenu = new ManagementMenu(_context);
+                managementMenu.Show();
+            }
+            return;
+        }
         #endregion
 
         #region dataGridView 反映
@@ -198,9 +224,9 @@ namespace AttendanceManagementSystem.Views
                     e.e.EmployeeName,
                     e.e.EmployeeId,
                     e.e.RankId,
-                    Year = a != null ? a.Year : (int?)null,
-                    Month = a != null ? a.Month : (int?)null,
-                    Day = a != null ? a.Day : (int?)null,
+                    Year = a != null ? a.Year : (decimal?)null,
+                    Month = a != null ? a.Month : (decimal?)null,
+                    Day = a != null ? a.Day : (decimal?)null,
                     WorkStartTime = a != null ? a.WorkStartTime : null,
                     WorkEndTime = a != null ? a.WorkEndTime : null,
                     BreakTime = a != null ? a.BreakTime : null,
@@ -232,31 +258,31 @@ namespace AttendanceManagementSystem.Views
                     EmployeeName = n.Key.EmployeeName,
 
                     // 各月の計算式
-                    January = n.Where(x => x.Year! == targetYear && x.Month == 1)
-                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    February = n.Where(x => x.Year == targetYear && x.Month == 2)
-                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    March = n.Where(x => x.Year == targetYear && x.Month == 3)
-                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    April = n.Where(x => x.Year == targetYear && x.Month == 4)
-                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    May = n.Where(x => x.Year == targetYear && x.Month == 5)
-                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    June = n.Where(x => x.Year == targetYear && x.Month == 6)
-                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    July = n.Where(x => x.Year == targetYear && x.Month == 7)
-                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    August = n.Where(x => x.Year == targetYear && x.Month == 8)
-                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    September = n.Where(x => x.Year == targetYear && x.Month == 9)
-                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    October = n.Where(x => x.Year == targetYear && x.Month == 10)
-                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    November = n.Where(x => x.Year == targetYear && x.Month == 11)
-                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    December = n.Where(x => x.Year == targetYear && x.Month == 12)
-                    .Sum(x => (int)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
 
+                    January = n.Where(x => x.Year! == targetYear && x.Month == 1)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
+                    February = n.Where(x => x.Year == targetYear && x.Month == 2)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
+                    March = n.Where(x => x.Year == targetYear && x.Month == 3)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
+                    April = n.Where(x => x.Year == targetYear && x.Month == 4)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
+                    May = n.Where(x => x.Year == targetYear && x.Month == 5)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
+                    June = n.Where(x => x.Year == targetYear && x.Month == 6)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
+                    July = n.Where(x => x.Year == targetYear && x.Month == 7)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
+                    August = n.Where(x => x.Year == targetYear && x.Month == 8)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
+                    September = n.Where(x => x.Year == targetYear && x.Month == 9)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
+                    October = n.Where(x => x.Year == targetYear && x.Month == 10)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
+                    November = n.Where(x => x.Year == targetYear && x.Month == 11)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
+                    December = n.Where(x => x.Year == targetYear && x.Month == 12)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
 
                 }).ToList();
 
@@ -277,20 +303,20 @@ namespace AttendanceManagementSystem.Views
         {
             // DataTable 作成
             DataTable totalTable = new DataTable();
-            totalTable.Columns.Add("January", typeof(int));
-            totalTable.Columns.Add("February", typeof(int));
-            totalTable.Columns.Add("March", typeof(int));
-            totalTable.Columns.Add("April", typeof(int));
-            totalTable.Columns.Add("May", typeof(int));
-            totalTable.Columns.Add("June", typeof(int));
-            totalTable.Columns.Add("July", typeof(int));
-            totalTable.Columns.Add("August", typeof(int));
-            totalTable.Columns.Add("September", typeof(int));
-            totalTable.Columns.Add("October", typeof(int));
-            totalTable.Columns.Add("November", typeof(int));
-            totalTable.Columns.Add("December", typeof(int));
-            totalTable.Columns.Add("Totalsalary", typeof(int));
-        
+            totalTable.Columns.Add("January", typeof(decimal));
+            totalTable.Columns.Add("February", typeof(decimal));
+            totalTable.Columns.Add("March", typeof(decimal));
+            totalTable.Columns.Add("April", typeof(decimal));
+            totalTable.Columns.Add("May", typeof(decimal));
+            totalTable.Columns.Add("June", typeof(decimal));
+            totalTable.Columns.Add("July", typeof(decimal));
+            totalTable.Columns.Add("August", typeof(decimal));
+            totalTable.Columns.Add("September", typeof(decimal));
+            totalTable.Columns.Add("October", typeof(decimal));
+            totalTable.Columns.Add("November", typeof(decimal));
+            totalTable.Columns.Add("December", typeof(decimal));
+            totalTable.Columns.Add("Totalsalary", typeof(decimal));
+
             // 各月列の合計を計算
             DataRow row = totalTable.NewRow();
             row["January"] = employees.Sum(e => e.January);

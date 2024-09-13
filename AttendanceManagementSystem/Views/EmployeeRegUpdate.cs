@@ -33,7 +33,8 @@ namespace AttendanceManagementSystem.Views
             // 現在の日付を最大の日付として設定
             dateTimePicker1.MaxDate = DateTime.Today;
 
-            if (employeeid > 0) {
+            if (employeeid > 0)
+            {
                 var result = _context.Employees.Single(e => e.EmployeeId == employeeid);
 
                 // 更新時のテキスト表記
@@ -76,7 +77,7 @@ namespace AttendanceManagementSystem.Views
             errorProvider.Clear();
 
             // ボタン押下時、空白エラーチェック
-            if (!InputCheck() | !RegistrationCheck()| !Passwordcheck())
+            if (!InputCheck() | !RegistrationCheck() | !Passwordcheck())
             {
                 MessageBox.Show("必要な情報が入力がされていません");
                 return;
@@ -93,9 +94,6 @@ namespace AttendanceManagementSystem.Views
                 MessageBox.Show("新しい従業員が追加されました。");
 
                 this.Close();
-
-                var managementMenu = new ManagementMenu(_context);
-                managementMenu.Show();
             }
         }
 
@@ -145,7 +143,7 @@ namespace AttendanceManagementSystem.Views
                 int employeeId = _employeeid;
 
                 // IDで従業員を検索
-                var aemployee = _context.Employees.Single(n => n.EmployeeId == employeeId);             
+                var aemployee = _context.Employees.Single(n => n.EmployeeId == employeeId);
 
                 if (aemployee != null && aemployee.ResignDate == null)
                 {
@@ -280,7 +278,7 @@ namespace AttendanceManagementSystem.Views
             }
 
             // 電話番号が入力されているか
-            if (txtPhone.Text.Length < 11)
+            if (txtPhone.Text.Length < 10)
             {
                 errorProvider.SetError(txtPhone, "電話番号を入力して下さい");
                 flag = false;
@@ -364,7 +362,7 @@ namespace AttendanceManagementSystem.Views
         /// </summary>
         /// <param name="sender">イベント発生元のオブジェクト</param>
         /// <param name="e">イベントデータ</param>
-        private void OnlyNumbers_KeyPress(object sender,KeyPressEventArgs e)
+        private void OnlyNumbers_KeyPress(object sender, KeyPressEventArgs e)
         {
             //バックスペースが押された時は有効（Deleteキーも有効）
             if (e.KeyChar == '\b')

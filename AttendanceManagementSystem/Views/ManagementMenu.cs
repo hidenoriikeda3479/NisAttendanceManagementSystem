@@ -37,7 +37,6 @@ namespace AttendanceManagementSystem.Views
             //従業員登録・更新画面遷移
             var employeeRegUpdate = new EmployeeRegUpdate(_context);
             employeeRegUpdate.Show();
-            Hide();
         }
 
         /// <summary>

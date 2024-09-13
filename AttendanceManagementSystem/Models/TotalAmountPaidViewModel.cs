@@ -18,64 +18,64 @@ namespace AttendanceManagementSystem.Models
         /// <summary>
         /// 1月
         /// </summary>
-        public int January { get; set; }
+        public decimal January { get; set; }
 
         /// <summary>
         /// 2月
         /// </summary>
-        public int February { get; set; }
+        public decimal February { get; set; }
 
         /// <summary>
         /// 3月
         /// </summary>
-        public int March { get; set; }
+        public decimal March { get; set; }
 
         /// <summary>
         /// 4月
         /// </summary>
-        public int April { get; set; }
+        public decimal April { get; set; }
 
         /// <summary>
         /// 5月
         /// </summary>
-        public int May { get; set; }
+        public decimal May { get; set; }
 
         /// <summary>
         /// 6月
         /// </summary>
-        public int June { get; set; }
+        public decimal June { get; set; }
 
         /// <summary>
         /// 7月
         /// </summary>
-        public int July { get; set; }
+        public decimal July { get; set; }
 
         /// <summary>
         /// 8月
         /// </summary>
-        public int August { get; set; }
+        public decimal August { get; set; }
 
         /// <summary>
         /// 9月
         /// </summary>
-        public int September { get; set; }
+        public decimal September { get; set; }
 
         /// <summary>
         /// 10月
         /// </summary>
-        public int October { get; set; }
+        public decimal October { get; set; }
 
         /// <summary>
         /// 11月
         /// </summary>
-        public int November { get; set; }
+        public decimal November { get; set; }
 
         /// <summary>
         /// 12月
         /// </summary>
-        public int December { get; set; }
+        public decimal December { get; set; }
 
-        public int Totalsalary
+        public decimal Totalsalary
         {
             get
             {

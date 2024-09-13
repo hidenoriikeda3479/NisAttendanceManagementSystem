@@ -91,6 +91,9 @@ namespace AttendanceManagementSystem.Views
                 int employeeId = (int)Employeedgv.SelectedRows[0].Cells["Column1"].Value;
                 var employeeRegUpdate = new EmployeeRegUpdate(_context, employeeId);
                 employeeRegUpdate.Show();
+
+                var managementMenu = new ManagementMenu(_context);
+                managementMenu.Close();
             }
             else
             {
@@ -157,10 +160,17 @@ namespace AttendanceManagementSystem.Views
                 HireDate = n.HireDate,
                 ResignDate = n.ResignDate,
                 UpdatedAt = n.UpdatedAt
+
             }).ToList();
 
             return employeeList;
         }
         #endregion
+
+        private void EmployeeInformation_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            var managementMenu = new ManagementMenu(_context);
+            managementMenu.Show();
+        }
     }
 }
