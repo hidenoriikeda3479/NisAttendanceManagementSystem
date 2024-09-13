@@ -21,10 +21,21 @@ namespace AttendanceManagementSystem.Views
         /// </summary>
         private readonly AttendanceManagementDbContext _context;
 
-        public ManagementMenu(AttendanceManagementDbContext context)
+        /// <summary>
+        /// ログイン従業員ID
+        /// </summary>
+        private readonly int _loginEmployeeId;
+
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="context">DBコンテキスト</param>
+        /// <param name="loginEmployeeId">従業員ID</param
+        public ManagementMenu(AttendanceManagementDbContext context, int loginEmployeeId)
         {
             InitializeComponent();
             _context = context;
+            _loginEmployeeId = loginEmployeeId;
         }
 
         /// <summary>
@@ -48,7 +59,7 @@ namespace AttendanceManagementSystem.Views
         private void btnEmployeeInformation_Click(object sender, EventArgs e)
         {
             //従業員一覧画面遷移
-            var employeeInformation = new EmployeeInformation(_context);
+            var employeeInformation = new EmployeeInformation(_context, _loginEmployeeId);
             employeeInformation.Show();
             Hide();
         }

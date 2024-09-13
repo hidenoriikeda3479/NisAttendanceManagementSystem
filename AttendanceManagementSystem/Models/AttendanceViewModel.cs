@@ -14,6 +14,16 @@ namespace AttendanceManagementSystem.Models
         public int? AttendanceId { get; set; }
 
         /// <summary>
+        /// 年
+        /// </summary>
+        public int Year { get; set; }
+
+        /// <summary>
+        /// 月
+        /// </summary>
+        public int Month { get; set; }
+
+        /// <summary>
         /// 日付
         /// </summary>
         public int Date { get; set; }
@@ -56,7 +66,7 @@ namespace AttendanceManagementSystem.Models
         /// <summary>
         /// 勤務時間
         /// </summary>
-        public TimeSpan? Workinghours { get; set; }
+        public TimeSpan? WorkingHours { get; set; }
 
         /// <summary>
         /// 備考
