@@ -1,4 +1,6 @@
-﻿namespace AttendanceManagementSystem.Views
+﻿using AttendanceManagementSystem.Common.CustomControls;
+
+namespace AttendanceManagementSystem.Views
 {
     partial class Attendance
     {
@@ -41,7 +43,7 @@
             DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
             label1 = new Label();
             label3 = new Label();
-            SearchDate = new DateTimePicker();
+            SearchDate = new YearMonthPicker();
             btnUpdate = new Button();
             btnSearch = new Button();
             attendanceDataGridView = new DataGridView();
@@ -86,9 +88,11 @@
             SearchDate.CustomFormat = "yyyy年MM月";
             SearchDate.Format = DateTimePickerFormat.Custom;
             SearchDate.Location = new Point(320, 33);
+            SearchDate.MaxDate = new DateTime(2024, 9, 13, 10, 43, 23, 369);
             SearchDate.Name = "SearchDate";
             SearchDate.Size = new Size(172, 23);
             SearchDate.TabIndex = 2;
+            SearchDate.Value = new DateTime(2024, 9, 1, 0, 0, 0, 0);
             // 
             // btnUpdate
             // 
@@ -130,6 +134,7 @@
             attendanceDataGridView.Name = "attendanceDataGridView";
             attendanceDataGridView.Size = new Size(1171, 896);
             attendanceDataGridView.TabIndex = 6;
+            attendanceDataGridView.CellEnter += attendanceDataGridView_CellEnter;
             attendanceDataGridView.CellFormatting += attendanceDataGridView_CellFormatting;
             // 
             // AttendanceIdColumn10
@@ -274,7 +279,6 @@
 
         private Label label1;
         private Label label3;
-        private DateTimePicker SearchDate;
         private Button btnUpdate;
         private Button btnSearch;
         private DataGridView attendanceDataGridView;
@@ -291,5 +295,6 @@
         private DataGridViewComboBoxColumn BreakTimeMinutesColumn8;
         private DataGridViewTextBoxColumn WorkinghoursColumn9;
         private DataGridViewTextBoxColumn RemarksColumn10;
+        private YearMonthPicker SearchDate;
     }
 }

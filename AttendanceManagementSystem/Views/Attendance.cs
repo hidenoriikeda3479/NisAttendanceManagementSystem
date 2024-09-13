@@ -1,7 +1,9 @@
 ﻿using AttendanceManagementSystem.Data;
 using AttendanceManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System.Data;
+using System.Windows.Forms;
 
 namespace AttendanceManagementSystem.Views
 {
@@ -125,6 +127,27 @@ namespace AttendanceManagementSystem.Views
                     case "日":
                         e.CellStyle!.BackColor = Color.LightCoral;
                         break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// セルにフォーカスイベント
+        /// </summary>
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">セルイベントに関する情報</param>
+        private void attendanceDataGridView_CellEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            // 現在のセルが DataGridViewComboBoxCell かどうかを確認
+            if (attendanceDataGridView[e.ColumnIndex, e.RowIndex] is DataGridViewComboBoxCell)
+            {
+                // セルを編集モードにする
+                attendanceDataGridView.BeginEdit(false);
+
+                // 編集中のコントロールが ComboBox であれば、ドロップダウンリストを自動的に開く
+                if (attendanceDataGridView.EditingControl is DataGridViewComboBoxEditingControl comboBox)
+                {
+                    comboBox.DroppedDown = true;
                 }
             }
         }
