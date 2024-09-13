@@ -1,4 +1,6 @@
-﻿namespace AttendanceManagementSystem.Views
+﻿using AttendanceManagementSystem.Common.CustomControls;
+
+namespace AttendanceManagementSystem.Views
 {
     partial class Attendance
     {
@@ -41,11 +43,13 @@
             DataGridViewCellStyle dataGridViewCellStyle11 = new DataGridViewCellStyle();
             label1 = new Label();
             label3 = new Label();
-            SearchDate = new DateTimePicker();
+            SearchDate = new YearMonthPicker();
             btnUpdate = new Button();
             btnSearch = new Button();
             attendanceDataGridView = new DataGridView();
             AttendanceIdColumn10 = new DataGridViewTextBoxColumn();
+            YearColumn = new DataGridViewTextBoxColumn();
+            MonthColumn = new DataGridViewTextBoxColumn();
             DateColumn1 = new DataGridViewTextBoxColumn();
             DayOfWeekColumn2 = new DataGridViewTextBoxColumn();
             WorkStartTimeHourColumn3 = new DataGridViewComboBoxColumn();
@@ -81,12 +85,14 @@
             // 
             // SearchDate
             // 
-            SearchDate.Location = new Point(320, 40);
+            SearchDate.CustomFormat = "yyyy年MM月";
+            SearchDate.Format = DateTimePickerFormat.Custom;
+            SearchDate.Location = new Point(320, 33);
+            SearchDate.MaxDate = new DateTime(2024, 9, 13, 10, 43, 23, 369);
             SearchDate.Name = "SearchDate";
             SearchDate.Size = new Size(172, 23);
             SearchDate.TabIndex = 2;
-            SearchDate.ValueChanged += SearchDate_ValueChanged;
-            SearchDate.DropDown += SearchDate_DropDown;
+            SearchDate.Value = new DateTime(2024, 9, 1, 0, 0, 0, 0);
             // 
             // btnUpdate
             // 
@@ -110,6 +116,9 @@
             // 
             // attendanceDataGridView
             // 
+            attendanceDataGridView.AllowUserToAddRows = false;
+            attendanceDataGridView.AllowUserToResizeColumns = false;
+            attendanceDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.MiddleLeft;
             dataGridViewCellStyle1.BackColor = SystemColors.Control;
             dataGridViewCellStyle1.Font = new Font("Yu Gothic UI", 12F, FontStyle.Bold, GraphicsUnit.Point, 128);
@@ -118,14 +127,15 @@
             dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
             dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
             attendanceDataGridView.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
-            attendanceDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            attendanceDataGridView.Columns.AddRange(new DataGridViewColumn[] { AttendanceIdColumn10, DateColumn1, DayOfWeekColumn2, WorkStartTimeHourColumn3, WorkStartTimeMinutesColumn4, WorkEndTimeHourColumn5, WorkEndTimeMinutesColumn6, BreakTimeHourColumn7, BreakTimeMinutesColumn8, WorkinghoursColumn9, RemarksColumn10 });
-            attendanceDataGridView.Location = new Point(-1, 84);
+            attendanceDataGridView.ColumnHeadersHeight = 60;
+            attendanceDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
+            attendanceDataGridView.Columns.AddRange(new DataGridViewColumn[] { AttendanceIdColumn10, YearColumn, MonthColumn, DateColumn1, DayOfWeekColumn2, WorkStartTimeHourColumn3, WorkStartTimeMinutesColumn4, WorkEndTimeHourColumn5, WorkEndTimeMinutesColumn6, BreakTimeHourColumn7, BreakTimeMinutesColumn8, WorkinghoursColumn9, RemarksColumn10 });
+            attendanceDataGridView.Location = new Point(5, 73);
             attendanceDataGridView.Name = "attendanceDataGridView";
-            attendanceDataGridView.Size = new Size(1529, 885);
+            attendanceDataGridView.Size = new Size(1171, 928);
             attendanceDataGridView.TabIndex = 6;
+            attendanceDataGridView.CellEnter += attendanceDataGridView_CellEnter;
             attendanceDataGridView.CellFormatting += attendanceDataGridView_CellFormatting;
-            attendanceDataGridView.CellPainting += attendanceDataGridView_CellPainting;
             // 
             // AttendanceIdColumn10
             // 
@@ -134,6 +144,20 @@
             AttendanceIdColumn10.Name = "AttendanceIdColumn10";
             AttendanceIdColumn10.Visible = false;
             // 
+            // YearColumn
+            // 
+            YearColumn.DataPropertyName = "Year";
+            YearColumn.HeaderText = "Year";
+            YearColumn.Name = "YearColumn";
+            YearColumn.Visible = false;
+            // 
+            // MonthColumn
+            // 
+            MonthColumn.DataPropertyName = "Month";
+            MonthColumn.HeaderText = "Month";
+            MonthColumn.Name = "MonthColumn";
+            MonthColumn.Visible = false;
+            // 
             // DateColumn1
             // 
             DateColumn1.DataPropertyName = "Date";
@@ -141,6 +165,7 @@
             DateColumn1.DefaultCellStyle = dataGridViewCellStyle2;
             DateColumn1.HeaderText = "日付";
             DateColumn1.Name = "DateColumn1";
+            DateColumn1.ReadOnly = true;
             DateColumn1.Width = 50;
             // 
             // DayOfWeekColumn2
@@ -150,6 +175,7 @@
             DayOfWeekColumn2.DefaultCellStyle = dataGridViewCellStyle3;
             DayOfWeekColumn2.HeaderText = "曜日";
             DayOfWeekColumn2.Name = "DayOfWeekColumn2";
+            DayOfWeekColumn2.ReadOnly = true;
             DayOfWeekColumn2.Width = 50;
             // 
             // WorkStartTimeHourColumn3
@@ -157,7 +183,7 @@
             WorkStartTimeHourColumn3.DataPropertyName = "WorkStartTimeHour";
             dataGridViewCellStyle4.Font = new Font("MS UI Gothic", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 128);
             WorkStartTimeHourColumn3.DefaultCellStyle = dataGridViewCellStyle4;
-            WorkStartTimeHourColumn3.HeaderText = "出社時間(時)";
+            WorkStartTimeHourColumn3.HeaderText = "出社時間     (時)";
             WorkStartTimeHourColumn3.Items.AddRange(new object[] { "", "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23" });
             WorkStartTimeHourColumn3.Name = "WorkStartTimeHourColumn3";
             WorkStartTimeHourColumn3.Width = 80;
@@ -167,7 +193,7 @@
             WorkStartTimeMinutesColumn4.DataPropertyName = "WorkStartTimeMinutes";
             dataGridViewCellStyle5.Font = new Font("MS UI Gothic", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 128);
             WorkStartTimeMinutesColumn4.DefaultCellStyle = dataGridViewCellStyle5;
-            WorkStartTimeMinutesColumn4.HeaderText = "出社時間(分)";
+            WorkStartTimeMinutesColumn4.HeaderText = "出社時間     (分)";
             WorkStartTimeMinutesColumn4.Items.AddRange(new object[] { "", "00", "10", "20", "30", "40", "50" });
             WorkStartTimeMinutesColumn4.Name = "WorkStartTimeMinutesColumn4";
             WorkStartTimeMinutesColumn4.Width = 80;
@@ -177,7 +203,7 @@
             WorkEndTimeHourColumn5.DataPropertyName = "WorkEndTimeHour";
             dataGridViewCellStyle6.Font = new Font("MS UI Gothic", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 128);
             WorkEndTimeHourColumn5.DefaultCellStyle = dataGridViewCellStyle6;
-            WorkEndTimeHourColumn5.HeaderText = "退社時間(時)";
+            WorkEndTimeHourColumn5.HeaderText = "退社時間     (時)";
             WorkEndTimeHourColumn5.Items.AddRange(new object[] { "", "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23" });
             WorkEndTimeHourColumn5.Name = "WorkEndTimeHourColumn5";
             WorkEndTimeHourColumn5.Width = 80;
@@ -187,7 +213,7 @@
             WorkEndTimeMinutesColumn6.DataPropertyName = "WorkEndTimeMinutes";
             dataGridViewCellStyle7.Font = new Font("MS UI Gothic", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 128);
             WorkEndTimeMinutesColumn6.DefaultCellStyle = dataGridViewCellStyle7;
-            WorkEndTimeMinutesColumn6.HeaderText = "退社時間(分)";
+            WorkEndTimeMinutesColumn6.HeaderText = "退社時間     (分)";
             WorkEndTimeMinutesColumn6.Items.AddRange(new object[] { "", "00", "10", "20", "30", "40", "50" });
             WorkEndTimeMinutesColumn6.Name = "WorkEndTimeMinutesColumn6";
             WorkEndTimeMinutesColumn6.Width = 80;
@@ -197,7 +223,7 @@
             BreakTimeHourColumn7.DataPropertyName = "BreakTimeHour";
             dataGridViewCellStyle8.Font = new Font("MS UI Gothic", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 128);
             BreakTimeHourColumn7.DefaultCellStyle = dataGridViewCellStyle8;
-            BreakTimeHourColumn7.HeaderText = "休憩時間(時)";
+            BreakTimeHourColumn7.HeaderText = "休憩時間     (時)";
             BreakTimeHourColumn7.Items.AddRange(new object[] { "", "00", "01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23" });
             BreakTimeHourColumn7.Name = "BreakTimeHourColumn7";
             BreakTimeHourColumn7.Width = 80;
@@ -207,8 +233,8 @@
             BreakTimeMinutesColumn8.DataPropertyName = "BreakTimeMinutes";
             dataGridViewCellStyle9.Font = new Font("MS UI Gothic", 14.25F, FontStyle.Regular, GraphicsUnit.Point, 128);
             BreakTimeMinutesColumn8.DefaultCellStyle = dataGridViewCellStyle9;
-            BreakTimeMinutesColumn8.HeaderText = "休憩時間(分)";
-            BreakTimeMinutesColumn8.Items.AddRange(new object[] { "", "00", "10", "20", "30", "40", "50", "60" });
+            BreakTimeMinutesColumn8.HeaderText = "休憩時間     (分)";
+            BreakTimeMinutesColumn8.Items.AddRange(new object[] { "", "00", "10", "20", "30", "40", "50" });
             BreakTimeMinutesColumn8.Name = "BreakTimeMinutesColumn8";
             BreakTimeMinutesColumn8.Width = 80;
             // 
@@ -219,6 +245,7 @@
             WorkinghoursColumn9.DefaultCellStyle = dataGridViewCellStyle10;
             WorkinghoursColumn9.HeaderText = "勤務時間";
             WorkinghoursColumn9.Name = "WorkinghoursColumn9";
+            WorkinghoursColumn9.ReadOnly = true;
             // 
             // RemarksColumn10
             // 
@@ -233,15 +260,15 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1540, 981);
+            ClientSize = new Size(1182, 1013);
+            Controls.Add(btnUpdate);
             Controls.Add(attendanceDataGridView);
             Controls.Add(btnSearch);
-            Controls.Add(btnUpdate);
             Controls.Add(SearchDate);
             Controls.Add(label3);
             Controls.Add(label1);
             Name = "Attendance";
-            Text = "Form1";
+            Text = "勤怠管理";
             Load += Attendance_Load;
             ((System.ComponentModel.ISupportInitialize)attendanceDataGridView).EndInit();
             ResumeLayout(false);
@@ -252,11 +279,12 @@
 
         private Label label1;
         private Label label3;
-        private DateTimePicker SearchDate;
         private Button btnUpdate;
         private Button btnSearch;
         private DataGridView attendanceDataGridView;
         private DataGridViewTextBoxColumn AttendanceIdColumn10;
+        private DataGridViewTextBoxColumn YearColumn;
+        private DataGridViewTextBoxColumn MonthColumn;
         private DataGridViewTextBoxColumn DateColumn1;
         private DataGridViewTextBoxColumn DayOfWeekColumn2;
         private DataGridViewComboBoxColumn WorkStartTimeHourColumn3;
@@ -267,5 +295,6 @@
         private DataGridViewComboBoxColumn BreakTimeMinutesColumn8;
         private DataGridViewTextBoxColumn WorkinghoursColumn9;
         private DataGridViewTextBoxColumn RemarksColumn10;
+        private YearMonthPicker SearchDate;
     }
 }

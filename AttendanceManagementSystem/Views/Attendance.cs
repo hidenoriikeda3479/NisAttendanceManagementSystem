@@ -1,769 +1,357 @@
 ﻿using AttendanceManagementSystem.Data;
 using AttendanceManagementSystem.Models;
-using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace AttendanceManagementSystem.Views
 {
     /// <summary>
-    /// 勤怠管理画面表示
+    /// 勤怠管理画面
     /// </summary>
     public partial class Attendance : Form
     {
+        #region メンバ変数
+
         /// <summary>
         /// DBコンテキスト
         /// </summary>
         private readonly AttendanceManagementDbContext _context;
 
         /// <summary>
-        /// データグリッドビュー更新前情報保存
+        /// ログイン従業員情報
         /// </summary>
-        List<AttendanceViewModel> viewModels = new List<AttendanceViewModel>();
+        private readonly EmployeeModel _loginEmployeeModel;
 
         /// <summary>
-        /// 一か月カレンダー情報取得
+        /// 更新対象従業員ID
         /// </summary>
-        List<int> OneMonth = new List<int>();
-
-        //月選択が行われたかを判定するフラグ
-        private bool isMonthSelected = false;
+        private readonly int _targetEmployeeId;
 
         /// <summary>
-        /// ログイン画面から受け取った社員ID
+        /// 管理者権限
         /// </summary>
-        private int _id;
+        private const int PermissionAdmin = 1;
+
+        #endregion
+
+        #region コンストラクタ
 
         /// <summary>
-        /// 社員IDに紐づいている権限ID
-        /// </summary>
-        private int _permissionId;
-
-        //処理が完了したかを示すフラグ
-        bool isProcessingCompleted = false;
-
-        /// <summary>
-        /// ログインした社員の情報を取得して権限IDを設定
+        /// コンストラクタ
         /// </summary>
         /// <param name="context">データベースコンテキスト</param>
-        /// <param name="id">ログインした社員のID</param>
-        public Attendance(AttendanceManagementDbContext context, int id)
+        /// <param name="loginEmployeeId">ログイン従業員ID</param>
+        /// <param name="targetEmployeeId">更新対象従業員ID</param>
+        public Attendance(AttendanceManagementDbContext context, int loginEmployeeId, int targetEmployeeId)
         {
             InitializeComponent();
+
+            // DBコンテキストと従業員情報を設定
             _context = context;
-            _id = id;
-
-            // ログインした社員情報
-            var empInfo = _context.Employees.Where(n => n.EmployeeId == _id).Select(n => n.PermissionId);
-
-            // 権限IDを格納
-            _permissionId = empInfo.First();
+            _targetEmployeeId = targetEmployeeId;
+            _loginEmployeeModel = LoadEmployee(loginEmployeeId);
         }
 
+        #endregion
+
+        #region アクションイベント
+
         /// <summary>
-        /// 初期表示イベント
+        /// 画面ロードイベント
         /// </summary>
         /// <param name="sender">オブジェクト情報</param>
         /// <param name="e">イベント情報</param>
         private void Attendance_Load(object sender, EventArgs e)
         {
-            //データグリッドビュー表示設定
-            ConfigureDataGridView();
+            // 勤怠情報を表示
+            attendanceDataGridView.DataSource = ListAttendance(_targetEmployeeId, DateTime.Now.Year, DateTime.Now.Month);
 
-            //// 現在の年と月の勤怠データを取得
-            List<AttendanceViewModel> DisplayAttendanceViewModel = LoadAttendanceData(DateTime.Now.Year, DateTime.Now.Month);
-
-            // DataGridViewにデータをバインドして表示
-            attendanceDataGridView.DataSource = DisplayAttendanceViewModel;
+            // 権限に応じて操作を制御
+            attendanceDataGridView.Enabled = _loginEmployeeModel.PermissionId == PermissionAdmin;
+            btnUpdate.Visible = _loginEmployeeModel.PermissionId == PermissionAdmin;
         }
 
         /// <summary>
-        /// 検索ボタンイベント
+        /// 検索ボタンクリックイベント
         /// </summary>
         /// <param name="sender">オブジェクト情報</param>
-        /// <param name="e">イベント情報</param>    
+        /// <param name="e">イベント情報</param>
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            //検索対象月の勤怠表示
-            LoadMonthlyAttendanceData();
+            // 指定された月の勤怠情報を表示
+            attendanceDataGridView.DataSource = ListAttendance(_targetEmployeeId, SearchDate.Value.Year, SearchDate.Value.Month);
+
+            // 過去日付は編集不可
+            attendanceDataGridView.Enabled = DateTime.Now.Year == SearchDate.Value.Year && DateTime.Now.Month == SearchDate.Value.Month && _loginEmployeeModel.PermissionId == PermissionAdmin;
+            btnUpdate.Enabled = DateTime.Now.Year == SearchDate.Value.Year && DateTime.Now.Month == SearchDate.Value.Month;
         }
 
         /// <summary>
-        /// 更新ボタンイベント
+        /// 更新ボタンクリックイベント
         /// </summary>
         /// <param name="sender">オブジェクト情報</param>
         /// <param name="e">イベント情報</param>
         private void btnUpdate_Click(object sender, EventArgs e)
         {
+            // 表示されている勤怠情報を取得
+            var updatedAttendanceList = attendanceDataGridView.DataSource as List<AttendanceViewModel>;
 
-            //更新確認のメッセージボックスを表示し、Yes/Noの選択
-            DialogResult dLog = MessageBox.Show("更新してよろしいですか？", "確認表示", MessageBoxButtons.YesNo);
-
-            //メッセージボックスで"Yes"を選択した場合
-            if (dLog == DialogResult.Yes)
-            {
-                //勤怠データの更新処理を実行
-                ProcessAttendanceData();
-            }
-        }
-
-        /// <summary>
-        /// 月の勤怠データを取得
-        /// </summary>
-        /// <param name="year">取得する年</param>
-        /// <param name="month">取得する月</param>
-        /// <returns>勤怠データのリスト</returns>
-        private List<AttendanceViewModel> LoadAttendanceData(int year, int month)
-        {
-            //指定した年と月の最終日（その月の日数）を取得
-            int daysInMonth = DateTime.DaysInMonth(year, month);
-
-            //指定した社員ID、年、月に該当する勤怠データをデータベースから取得
-            var query = _context.Attendances.Where(n => n.EmployeeId == _id &&
-                                                   n.Year == year &&
-                                                   n.Month == month).ToList();
-
-            //勤怠データをViewModelにマッピング
-            var querylist = query.Select(n => new AttendanceViewModel
-            {
-                AttendanceId = n.EmployeeId,
-                WorkStartTimeHour = n.WorkStartTime.HasValue ? n.WorkStartTime.Value.Hour.ToString("00") : null,
-                WorkStartTimeMinutes = n.WorkStartTime.HasValue ?
-                (Math.Round(n.WorkStartTime.Value.Minute / 10.0) * 10).ToString("00") : null, // 10分単位で四捨五入
-                WorkEndTimeHour = n.WorkEndTime.HasValue ? n.WorkEndTime.Value.Hour.ToString("00") : null,
-                WorkEndTimeMinutes = n.WorkEndTime.HasValue ?
-                (Math.Round(n.WorkEndTime.Value.Minute / 10.0) * 10).ToString("00") : null, // 10分単位で四捨五入
-                BreakTimeHour = n.BreakTime.HasValue ? n.BreakTime.Value.Hours.ToString("00") : null,
-                BreakTimeMinutes = n.BreakTime.HasValue ?
-                (Math.Round(n.BreakTime.Value.Minutes / 10.0) * 10).ToString("00") : null, // 10分単位で四捨五入
-                Remarks = n.Remarks,
-                Workinghours = n.WorkEndTime - n.WorkStartTime - n.BreakTime,
-                Date = n.Day,
-                DayOfWeek = (new DateTime(n.Year, n.Month, n.Day).ToString("ddd")),
-
-            });
-
-            //1ヶ月分の日付リストを作成（1日から月末まで）
-            OneMonth = Enumerable.Range(1, daysInMonth).ToList();
-
-            //1ヶ月分の日付リストと取得した勤怠データを日付で外部結合し、全日分の勤怠データを作成
-            var result = OneMonth
-                         .GroupJoin(
-                             //勤怠リストのクエリ
-                             querylist,
-                             //OneMonthのキー（日付）
-                             day => day,
-                             //querylistのキー(日付)
-                             vm => vm.Date,
-                             (day, attendanceList) => new
-                             {
-                                 Date = day,
-                                 Attendance = attendanceList.SingleOrDefault()  // 勤怠データがない場合は null
-                             })
-                         .Select(result => new AttendanceViewModel
-                         {
-                             //日付と曜日の情報を含めた勤怠データを作成
-                             AttendanceId = result.Attendance?.AttendanceId,
-                             Date = result.Date,
-                             DayOfWeek = (new DateTime(year, month, result.Date)).ToString("ddd"),
-                             WorkEndTimeHour = result.Attendance?.WorkEndTimeHour,
-                             WorkEndTimeMinutes = result.Attendance?.WorkEndTimeMinutes,
-                             WorkStartTimeHour = result.Attendance?.WorkStartTimeHour,
-                             WorkStartTimeMinutes = result.Attendance?.WorkStartTimeMinutes,
-                             BreakTimeHour = result.Attendance?.BreakTimeHour,
-                             BreakTimeMinutes = result.Attendance?.BreakTimeMinutes,
-                             Workinghours = result.Attendance?.Workinghours,
-                             Remarks = result.Attendance?.Remarks,
-                         }).ToList();
-
-            //取得したデータのクローンを作成し、更新前情報として保存
-            viewModels = result.Select(n => (AttendanceViewModel)n.Clone()).ToList();
-
-            //管理者権限がある場合はデータグリッドビューを編集可能に設定
-            if (_permissionId == 1)
-            {
-                attendanceDataGridView.ReadOnly = false;
-            }
-            //管理者権限がない場合はデータグリッドビューを読み取り専用に設定
-            else
-            {
-                attendanceDataGridView.ReadOnly = true;
-
-                //更新ボタンの非表示
-                btnUpdate.Visible = false;
-            }
-
-            //マッピングされた勤怠データリストを返す
-            return result;
-        }
-
-        /// <summary>
-        /// 選択された月の勤怠データを表示するメソッド
-        /// </summary>
-        private void LoadMonthlyAttendanceData()
-        {
-            //dateTimePicker1から選択された年と月の勤怠データを取得
-            var result = LoadAttendanceData(SearchDate.Value.Year, SearchDate.Value.Month);
-
-            //取得した勤怠データをデータグリッドビューに反映
-            attendanceDataGridView.DataSource = result;
-
-            //現在の年月と選択された年月が異なる場合、データグリッドビューを読み取り専用に設定
-            if (DateTime.Now.Year != SearchDate.Value.Year ||
-               DateTime.Now.Month != SearchDate.Value.Month)
-            {
-                attendanceDataGridView.ReadOnly = true;
-            }
-            //現在の年月と選択された年月が同じ場合、編集可能に設定
-            else
-            {
-                attendanceDataGridView.ReadOnly = false;
-            }
-        }
-
-        //DateTimePickerのDropDownイベントで月選択モードに切り替え
-        private void SearchDate_DropDown(object sender, EventArgs e)
-        {
-            //月選択モードにするためにCtrl + ↑キーを送信
-            SendKeys.Send("^{UP}");
-
-            //月が選択される前にフラグをリセット
-            isMonthSelected = false;
-        }
-
-        /// <summary>
-        /// 勤怠テーブルの処理メソッド
-        /// </summary>
-        private void ProcessAttendanceData()
-        {
-            //勤怠データ用のViewModelインスタンスを作成
-            AttendanceViewModel view = new AttendanceViewModel();
-
-            //管理者権限があり、選択された年月が現在の年月と一致する場合の処理
-            if (_permissionId == 1 && DateTime.Now.Year == SearchDate.Value.Year &&
-               DateTime.Now.Month == SearchDate.Value.Month)
-            {
-                //DataGridViewの各行をループして処理を行う
-                foreach (DataGridViewRow row in attendanceDataGridView.Rows)
-                {
-
-                    //データグリッドビューから現在の行の勤怠データを取得
-                    view = ViewDataAcquisition(row);
-
-                    //データグリッドビューの入力値からマッチするレコードを取得
-                    AttendanceViewModel updatamatchedrecord = ViewDataSearch(view);
-
-                    //更新前のデータと取得したデータを比較
-                    var originalRecord = viewModels.SingleOrDefault(n => n.AttendanceId == updatamatchedrecord.AttendanceId &&
-                                                                         n.Date == updatamatchedrecord.Date);
-
-                    //勤怠データの入力チェック
-                    if (IsAttendanceDataValid(view))
-                    {
-                        //更新前のレコードが存在しない場合は、新規登録処理を実行
-                        if (originalRecord!.AttendanceId == null)
-                        {
-                            InsertAttendance(view);
-                            isProcessingCompleted = true;
-                        }
-                    }
-
-                    //更新前後のレコードを比較して変更があれば、更新処理を実行
-                    if (IsModified(originalRecord!, updatamatchedrecord))
-                    {
-
-                        //データベースから更新対象のレコードを取得
-                        var searchtable = _context.Attendances.SingleOrDefault(n => n.EmployeeId == updatamatchedrecord.AttendanceId &&
-                                                                                    n.Year == DateTime.Now.Year &&
-                                                                                    n.Month == DateTime.Now.Month &&
-                                                                                    n.Day == updatamatchedrecord.Date);
-
-                        //勤怠データの入力値がすべてnullの場合は削除処理を実行
-                        if (DataNullSearch(updatamatchedrecord))
-                        {
-                            _context.Attendances.Remove(searchtable!);
-                            isProcessingCompleted = true;
-                        }
-                        //更新対象のレコードが存在し、入力値の変更があれば更新処理を実行
-                        else if (searchtable != null && IsAttendanceDataValid(view))
-                        {
-                            UpdateAttendance(searchtable, updatamatchedrecord);
-
-                        }
-                        //出勤中の入力値があれば更新処理を実行
-                        else if (searchtable != null && IsWorkStartTimeValid(view))
-                        {
-                            UpdateAttendance(searchtable, updatamatchedrecord);
-                        }
-                        //入力が正しくない場合のエラーメッセージ表示
-                        else
-                        {
-                            MessageBox.Show("入力をやり直してください");
-                        }
-
-                    }
-
-                }
-            }
-            else
-            {
+            // 勤怠情報の検証
+            if (!CheckAttendance(updatedAttendanceList!))
                 return;
-            }
 
-            //処理が完了した場合にのみSaveChangesを呼び出す
-            if (isProcessingCompleted)
-            {
-                //追加したデータをコミット
-                _context.SaveChanges();
-                MessageBox.Show("更新が完了しました。");
-            }
-            else
-            {
-                MessageBox.Show("入力をやり直してください");
-            }
+            // DBに新規追加、削除、更新を反映
+            ProcessDatabaseChanges(updatedAttendanceList!);
 
-            //更新されたデータを再取得
-            var updatedAttendanceData = LoadAttendanceData(DateTime.Now.Year, DateTime.Now.Month);
+            // 変更を保存
+            _context.SaveChanges();
 
-            //DataGridViewに再バインド
-            attendanceDataGridView.DataSource = updatedAttendanceData;
+            // 処理完了メッセージを表示
+            MessageBox.Show("更新が完了しました");
+
+            // 更新結果を再取得
+            attendanceDataGridView.DataSource = ListAttendance(_targetEmployeeId, SearchDate.Value.Year, SearchDate.Value.Month);
         }
 
         /// <summary>
-        /// データグリッドビューの行データを取得し、AttendanceViewModel にマッピングするメソッド
-        /// </summary>
-        /// <param name="row">データグリッドビューの行データ</param>
-        /// <returns>取得したデータをマッピングした AttendanceViewModel view</returns>
-        private AttendanceViewModel ViewDataAcquisition(DataGridViewRow row)
-        {
-            AttendanceViewModel view = new AttendanceViewModel();
-
-            //データベース登録情報アリ
-            if (row.Cells[0].Value != null && int.Parse(row.Cells[0].Value.ToString()!) > 0)
-            {
-                view.AttendanceId = int.Parse(row.Cells[0].Value.ToString()!);
-                view.Date = int.Parse(row.Cells[1].Value.ToString()!);
-                view.DayOfWeek = row.Cells[2].Value?.ToString();
-                view.WorkStartTimeHour = row.Cells[3].Value?.ToString();
-                view.WorkStartTimeMinutes = row.Cells[4].Value?.ToString();
-                view.WorkEndTimeHour = row.Cells[5].Value?.ToString();
-                view.WorkEndTimeMinutes = row.Cells[6].Value?.ToString();
-                view.BreakTimeHour = row.Cells[7].Value?.ToString();
-                view.BreakTimeMinutes = row.Cells[8].Value?.ToString();
-                view.Remarks = row.Cells[10].Value?.ToString();
-            }
-            //データベース登録情報なし
-            else
-            {
-                view.AttendanceId = null;
-                view.Date = int.Parse(row.Cells[1].Value.ToString()!);
-                view.DayOfWeek = row.Cells[2].Value?.ToString();
-                view.WorkStartTimeHour = row.Cells[3].Value?.ToString();
-                view.WorkStartTimeMinutes = row.Cells[4].Value?.ToString();
-                view.WorkEndTimeHour = row.Cells[5].Value?.ToString();
-                view.WorkEndTimeMinutes = row.Cells[6].Value?.ToString();
-                view.BreakTimeHour = row.Cells[7].Value?.ToString();
-                view.BreakTimeMinutes = row.Cells[8].Value?.ToString();
-                view.Remarks = row.Cells[10].Value?.ToString();
-            }
-            return view;
-
-        }
-
-        /// <summary>
-        /// データグリッドビューの入力レコードを取得
-        /// </summary>
-        /// <param name="view">入力された勤怠データ</param>
-        /// <returns>取得した AttendanceViewModel viewdatasearch</returns>
-        private AttendanceViewModel ViewDataSearch(AttendanceViewModel view)
-        {
-            //初期化された AttendanceViewModel インスタンスを作成
-            AttendanceViewModel viewdatasearch = new AttendanceViewModel();
-
-            //AttendanceId が存在する場合、入力されたViewModelをそのまま返す
-            if (view.AttendanceId != null)
-            {
-                viewdatasearch = view;
-            }
-            //AttendanceIdが存在しない場合は、日付情報のみを設定
-            else
-            {
-                viewdatasearch.Date = view.Date;
-            }
-            return viewdatasearch;
-        }
-
-        /// <summary>
-        /// 勤怠データの変更があるかどうかをチェックするメソッド
-        /// </summary>
-        /// <param name="original">変更前の勤怠データ</param>
-        /// <param name="updated">変更後の勤怠データ</param>
-        /// <returns></returns>
-        private bool IsModified(AttendanceViewModel original, AttendanceViewModel updated)
-        {
-
-            // 変更があるかセル情報を比較 変更あり=true 変更なし=false
-            return original.WorkStartTimeHour != updated.WorkStartTimeHour ||
-                   original.WorkStartTimeMinutes != updated.WorkStartTimeMinutes ||
-                   original.WorkEndTimeHour != updated.WorkEndTimeHour ||
-                   original.WorkEndTimeMinutes != updated.WorkEndTimeMinutes ||
-                   original.BreakTimeHour != updated.BreakTimeHour ||
-                   original.BreakTimeMinutes != updated.BreakTimeMinutes ||
-                   original.Remarks != updated.Remarks;
-        }
-
-        /// <summary>
-        /// データグリッドビューの値があるかどうかをチェックするメソッド
-        /// </summary>
-        /// <param name="updated">チェック対象の勤怠データ</param>
-        /// <returns>すべての値がnullの場合はtrue、そうでない場合はfalse</returns>
-        private bool DataNullSearch(AttendanceViewModel updated)
-        {
-
-            return updated.WorkStartTimeHour == null &&
-                   updated.WorkStartTimeMinutes == null &&
-                   updated.WorkEndTimeHour == null &&
-                   updated.WorkEndTimeMinutes == null &&
-                   updated.BreakTimeHour == null &&
-                   updated.BreakTimeMinutes == null;
-        }
-
-        /// <summary>
-        /// 勤怠情報の入力データが有効かどうかを確認するメソッド
-        /// </summary>
-        /// <param name="updated">確認対象の勤怠情報</param>
-        /// <returns>すべての時間情報が入力されていればtrue、そうでなければfalse</returns>
-        private bool IsAttendanceDataValid(AttendanceViewModel updated)
-        {
-
-            return updated.WorkStartTimeHour != null &&
-                   updated.WorkStartTimeMinutes != null &&
-                   updated.WorkEndTimeHour != null &&
-                   updated.WorkEndTimeMinutes != null &&
-                   updated.BreakTimeHour != null &&
-                   updated.BreakTimeMinutes != null;
-        }
-
-        /// <summary>
-        /// 出勤中の勤怠情報の入力データが有効かどうかを確認するメソッド
-        /// </summary>
-        /// <param name="updated">確認対象の勤怠情報</param>
-        /// <returns>すべての時間情報が入力されていればtrue、そうでなければfalse</returns>
-        private bool IsWorkStartTimeValid(AttendanceViewModel updated)
-        {
-            return updated.WorkStartTimeHour != null &&
-                  updated.WorkStartTimeMinutes != null;
-        }
-        /// <summary>
-        /// 勤怠情報の更新処理
-        /// </summary>
-        /// <param name="searchtable">更新対象の勤怠情報</param>
-        /// <param name="updatedRecord">更新内容を持つ勤怠データ</param>
-        private void UpdateAttendance(AttendanceModel searchtable, AttendanceViewModel updatedRecord)
-        {
-            //出社時間が入力されていて、退社時間が未入力の場合
-            if (updatedRecord.WorkStartTimeHour != null &&
-                        updatedRecord.WorkStartTimeMinutes != null &&
-                        updatedRecord.WorkEndTimeHour == null &&
-                        updatedRecord.WorkEndTimeMinutes == null)
-            {
-                //出社時間のみ更新
-                searchtable.WorkStartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedRecord.Date,
-                                            int.Parse(updatedRecord.WorkStartTimeHour!), int.Parse(updatedRecord.WorkStartTimeMinutes!), 0);
-                return;
-            }
-
-            //出社時間が退社時間より遅い、または同じ時間で分が後の場合のエラーチェック
-            else if (int.Parse(updatedRecord.WorkStartTimeHour!) > int.Parse(updatedRecord.WorkEndTimeHour!) ||
-                int.Parse(updatedRecord.WorkStartTimeHour!) == int.Parse(updatedRecord.WorkEndTimeHour!) &&
-                int.Parse(updatedRecord.WorkStartTimeMinutes!) > int.Parse(updatedRecord.WorkEndTimeMinutes!))
-            {
-                MessageBox.Show("出社時間の入力をやり直してください");
-                return;
-            }
-
-            //勤怠データを更新
-            searchtable.WorkStartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedRecord.Date,
-                                                     int.Parse(updatedRecord.WorkStartTimeHour!), int.Parse(updatedRecord.WorkStartTimeMinutes!), 0);
-            searchtable.WorkEndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedRecord.Date,
-                                                   int.Parse(updatedRecord.WorkEndTimeHour!), int.Parse(updatedRecord.WorkEndTimeMinutes!), 0);
-            searchtable.BreakTime = new TimeSpan(int.Parse(updatedRecord.BreakTimeHour!), int.Parse(updatedRecord.BreakTimeMinutes!), 0);
-            searchtable.Remarks = updatedRecord.Remarks;
-
-            isProcessingCompleted = true;
-        }
-
-        /// <summary>
-        /// 勤怠情報の登録処理
-        /// </summary>
-        /// <param name="updatamatchedrecord">登録内容を持つ勤怠データ</param>
-        private void InsertAttendance(AttendanceViewModel updatamatchedrecord)
-        {
-            //時間入力チェック
-            if (int.Parse(updatamatchedrecord.WorkStartTimeHour!) > int.Parse(updatamatchedrecord.WorkEndTimeHour!) ||
-                int.Parse(updatamatchedrecord.WorkStartTimeHour!) == int.Parse(updatamatchedrecord.WorkEndTimeHour!) &&
-                int.Parse(updatamatchedrecord.WorkStartTimeMinutes!) > int.Parse(updatamatchedrecord.WorkEndTimeMinutes!))
-            {
-                MessageBox.Show("入力をやり直してください");
-                return;
-            }
-            //未来日ではないか登録日チェック
-            else if (DateTime.Now.Day < updatamatchedrecord.Date)
-            {
-                MessageBox.Show("入力をやり直してください");
-                return;
-            }
-
-            // 新しい従業員データの作成
-            var newAttendance = new AttendanceModel
-            {
-                EmployeeId = _id,
-                Year = DateTime.Now.Year,
-                Month = DateTime.Now.Month,
-                Day = updatamatchedrecord.Date,
-                WorkStartTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatamatchedrecord.Date,
-                                             int.Parse(updatamatchedrecord.WorkStartTimeHour!),
-                                             int.Parse(updatamatchedrecord.WorkStartTimeMinutes!), 0, 0),
-
-                WorkEndTime = new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatamatchedrecord.Date,
-                                           int.Parse(updatamatchedrecord.WorkEndTimeHour!),
-                                           int.Parse(updatamatchedrecord.WorkEndTimeMinutes!), 0, 0),
-
-                BreakTime = new TimeSpan(int.Parse(updatamatchedrecord.BreakTimeHour!),
-                                         int.Parse(updatamatchedrecord.BreakTimeMinutes!), 0),
-
-                Remarks = updatamatchedrecord.Remarks,
-
-                CreatedAt = DateTime.Now,
-
-                UpdatedAt = DateTime.Now,
-
-            };
-            //新しい従業員データを追加
-            _context.Attendances.Add(newAttendance);
-
-        }
-
-        /// <summary>
-        /// カレンダーフォーマット設定
-        /// </summary>
-        /// <param name="sender">オブジェクト情報</param>
-        /// <param name="e">イベント情報</param>
-        private void SearchDate_ValueChanged(object sender, EventArgs e)
-        {
-
-            if (SearchDate.Focused && !isMonthSelected)
-            {
-                //月が選択されたことをマーク
-                isMonthSelected = true;
-
-                // Enterキーを送信してドロップダウンを閉じる
-                SendKeys.Send("{ENTER}");
-            }
-        }
-
-        /// <summary>
-        /// 土曜日と日曜日の色付け 　
+        /// セル描画前のフォーマットを設定イベント
         /// </summary>
         /// <param name="sender">オブジェクト情報</param>
         /// <param name="e">イベント情報</param>
         private void attendanceDataGridView_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            //曜日の列をターゲットにする
+            // 曜日列のみを対象
             if (attendanceDataGridView.Columns[e.ColumnIndex].DataPropertyName == "DayOfWeek")
             {
-                //曜日の値を取得
-                string? dayOfWeek = e.Value?.ToString();
-
-                //土日の場合に背景色を変更
-                if (dayOfWeek == "土")
+                // 曜日を取得し、土日かどうか判定
+                switch (e.Value?.ToString())
                 {
-                    //土曜日のカラー
-                    e.CellStyle!.BackColor = Color.LightBlue;
-                }
-                else if (dayOfWeek == "日")
-                {
-                    //日曜日のカラー
-                    e.CellStyle!.BackColor = Color.LightCoral;
+                    case "土":
+                        e.CellStyle!.BackColor = Color.LightBlue;
+                        break;
+                    case "日":
+                        e.CellStyle!.BackColor = Color.LightCoral;
+                        break;
                 }
             }
         }
 
         /// <summary>
-        /// ヘッダーの分割
+        /// セルにフォーカスイベント
         /// </summary>
-        /// <param name="sender">オブジェクト情報</param>
-        /// <param name="e">イベント情報</param>
-        private void attendanceDataGridView_CellPainting(object sender, DataGridViewCellPaintingEventArgs e)
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">セルイベントに関する情報</param>
+        private void attendanceDataGridView_CellEnter(object sender, DataGridViewCellEventArgs e)
         {
-            //編集箇所選択
-            if (e.RowIndex == -1 && (e.ColumnIndex == 3 || e.ColumnIndex == 4 || e.ColumnIndex == 5 ||
-                e.ColumnIndex == 6 || e.ColumnIndex == 7 || e.ColumnIndex == 8))
+            // 現在のセルが DataGridViewComboBoxCell かどうかを確認
+            if (attendanceDataGridView[e.ColumnIndex, e.RowIndex] is DataGridViewComboBoxCell)
             {
-                //自前で描画したいので、既存の描画は無効化する
-                e.Paint(e.CellBounds, DataGridViewPaintParts.None);
-                e.Handled = true;
+                // セルを編集モードにする
+                attendanceDataGridView.BeginEdit(false);
 
-                //描画すべき領域の取得
-                var rect = attendanceDataGridView.GetCellDisplayRectangle(e.ColumnIndex, e.RowIndex, true);
-                rect.Width -= 1;
-                rect.Height -= 1;
-
-                //外枠を描画する
-                e.Graphics!.DrawRectangle(new Pen(SystemColors.ControlDark), rect);
-
-                //セルを2分割してテキストを描画
-                var separatedHeight = rect.Height / 2;  // 上下2分割の高さを計算
-
-                if (e.ColumnIndex == 3 || e.ColumnIndex == 4)
+                // 編集中のコントロールが ComboBox であれば、ドロップダウンリストを自動的に開く
+                if (attendanceDataGridView.EditingControl is DataGridViewComboBoxEditingControl comboBox)
                 {
-                    //上部に「出社」を表示
-                    var topRect = new Rectangle(rect.X, rect.Y, rect.Width, separatedHeight);
-
-                    TextRenderer.DrawText(e.Graphics, "出社",
-                        new Font(attendanceDataGridView.ColumnHeadersDefaultCellStyle.Font.FontFamily, 14, FontStyle.Bold),
-                        topRect,
-                        SystemColors.ControlText,
-                        TextFormatFlags.VerticalCenter |
-                        TextFormatFlags.HorizontalCenter |
-                        TextFormatFlags.EndEllipsis);
-
-                    //下部に「時間」または「分」を表示
-                    var bottomRect = new Rectangle(rect.X, rect.Y + separatedHeight, rect.Width, separatedHeight);
-
-                    string bottomText = e.ColumnIndex == 3 ? "時間" : "分";
-
-                    TextRenderer.DrawText(e.Graphics, bottomText,
-                        new Font(attendanceDataGridView.ColumnHeadersDefaultCellStyle.Font.FontFamily, 14, FontStyle.Bold),
-                        bottomRect,
-                        SystemColors.ControlText,
-                        TextFormatFlags.VerticalCenter |
-                        TextFormatFlags.HorizontalCenter |
-                        TextFormatFlags.EndEllipsis);
-
-                    //下部の仕切り線の描画
-                    e.Graphics.DrawLine(new Pen(SystemColors.ControlDark),
-                                        rect.Left,
-                                        rect.Bottom - separatedHeight,
-                                        rect.Right,
-                                        rect.Bottom - separatedHeight);
+                    comboBox.DroppedDown = true;
                 }
-                if (e.ColumnIndex == 5 || e.ColumnIndex == 6)
+            }
+        }
+
+        #endregion
+
+        #region privateメソッド
+
+        /// <summary>
+        /// 勤怠情報の新規追加、削除、更新を処理
+        /// </summary>
+        /// <param name="attendanceList">勤怠情報リスト</param>
+        private void ProcessDatabaseChanges(List<AttendanceViewModel> attendanceList)
+        {
+            // 新規追加処理
+            var insertAttendanceList = attendanceList
+                .Where(n => !n.AttendanceId.HasValue && !string.IsNullOrEmpty(n.WorkStartTimeHour))
+                .ToList();
+
+            if (insertAttendanceList.Any())
+            {
+                _context.Attendances.AddRange(SetCreateAttendanceModels(insertAttendanceList));
+            }
+
+            // 削除と更新の処理
+            foreach (var attendance in attendanceList.Where(n => n.AttendanceId.HasValue).ToList())
+            {
+                // DBから該当の勤怠情報を取得
+                var existingAttendance = _context.Attendances.Single(a => a.EmployeeId == _targetEmployeeId && a.Year == attendance.Year && a.Month == attendance.Month && a.Day == attendance.Date);
+
+                // 削除処理
+                if (string.IsNullOrEmpty(attendance.WorkStartTimeHour))
                 {
-                    //上部に「退社」を表示
-                    var topRect = new Rectangle(rect.X, rect.Y, rect.Width, separatedHeight);
-
-                    TextRenderer.DrawText(e.Graphics, "退社",
-                        new Font(attendanceDataGridView.ColumnHeadersDefaultCellStyle.Font.FontFamily, 14, FontStyle.Bold),
-                        topRect,
-                        SystemColors.ControlText,
-                        TextFormatFlags.VerticalCenter |
-                        TextFormatFlags.HorizontalCenter |
-                        TextFormatFlags.EndEllipsis);
-
-                    //下部に「時間」または「分」を表示
-                    var bottomRect = new Rectangle(rect.X, rect.Y + separatedHeight, rect.Width, separatedHeight);
-
-                    string bottomText = e.ColumnIndex == 5 ? "時間" : "分";
-
-                    TextRenderer.DrawText(e.Graphics, bottomText,
-                        new Font(attendanceDataGridView.ColumnHeadersDefaultCellStyle.Font.FontFamily, 14, FontStyle.Bold),
-                        bottomRect,
-                        SystemColors.ControlText,
-                        TextFormatFlags.VerticalCenter |
-                        TextFormatFlags.HorizontalCenter |
-                        TextFormatFlags.EndEllipsis);
-
-                    //下部の仕切り線の描画
-                    e.Graphics.DrawLine(new Pen(SystemColors.ControlDark),
-                                        rect.Left,
-                                        rect.Bottom - separatedHeight,
-                                        rect.Right,
-                                        rect.Bottom - separatedHeight);
+                    _context.Attendances.Remove(existingAttendance);
                 }
-                if (e.ColumnIndex == 7 || e.ColumnIndex == 8)
+                // 更新処理
+                else
                 {
-                    //上部に「休憩」を表示
-                    var topRect = new Rectangle(rect.X, rect.Y, rect.Width, separatedHeight);
-
-                    TextRenderer.DrawText(e.Graphics, "休憩",
-                        new Font(attendanceDataGridView.ColumnHeadersDefaultCellStyle.Font.FontFamily, 14, FontStyle.Bold),
-                        topRect,
-                        SystemColors.ControlText,
-                        TextFormatFlags.VerticalCenter |
-                        TextFormatFlags.HorizontalCenter |
-                        TextFormatFlags.EndEllipsis);
-
-                    //下部に「時間」または「分」を表示
-                    var bottomRect = new Rectangle(rect.X, rect.Y + separatedHeight, rect.Width, separatedHeight);
-
-                    string bottomText = e.ColumnIndex == 7 ? "時間" : "分";
-
-                    TextRenderer.DrawText(e.Graphics, bottomText,
-                        new Font(attendanceDataGridView.ColumnHeadersDefaultCellStyle.Font.FontFamily, 14, FontStyle.Bold),
-                        bottomRect,
-                        SystemColors.ControlText,
-                        TextFormatFlags.VerticalCenter |
-                        TextFormatFlags.HorizontalCenter |
-                        TextFormatFlags.EndEllipsis);
-
-                    //下部の仕切り線の描画
-                    e.Graphics.DrawLine(new Pen(SystemColors.ControlDark),
-                                        rect.Left,
-                                        rect.Bottom - separatedHeight,
-                                        rect.Right,
-                                        rect.Bottom - separatedHeight);
+                    UpdateAttendanceModel(existingAttendance, attendance);
+                    _context.Entry(existingAttendance).State = EntityState.Modified;
                 }
-
             }
         }
 
         /// <summary>
-        /// データグリッドビュー表示設定
+        /// 勤怠新規登録情報を作成
         /// </summary>
-        private void ConfigureDataGridView()
+        /// <param name="attendanceList">勤怠情報のリスト</param>
+        /// <returns>勤怠作成情報リスト</returns>
+        private List<AttendanceModel> SetCreateAttendanceModels(List<AttendanceViewModel> attendanceList) =>
+            attendanceList.Select(attendance => new AttendanceModel
+            {
+                EmployeeId = _targetEmployeeId,
+                Year = attendance.Year,
+                Month = attendance.Month,
+                Day = attendance.Date,
+                WorkStartTime = attendance.WorkStartTimeHour != null
+                                ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, attendance.Date,
+                                    int.Parse(attendance.WorkStartTimeHour!), int.Parse(attendance.WorkStartTimeMinutes!), 0)
+                                : null,
+                WorkEndTime = attendance.WorkEndTimeHour != null
+                                ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, attendance.Date,
+                                    int.Parse(attendance.WorkEndTimeHour!), int.Parse(attendance.WorkEndTimeMinutes!), 0)
+                                : null,
+                BreakTime = attendance.BreakTimeHour != null
+                                ? new TimeSpan(int.Parse(attendance.BreakTimeHour!), int.Parse(attendance.BreakTimeMinutes!), 0)
+                                : null,
+                Remarks = attendance.Remarks,
+                CreatedAt = DateTime.Now
+            }).ToList();
+
+        /// <summary>
+        /// 勤怠情報更新
+        /// </summary>
+        /// <param name="existingAttendance">既存のDBデータ</param>
+        /// <param name="updatedAttendance">更新するデータ</param>
+        private void UpdateAttendanceModel(AttendanceModel existingAttendance, AttendanceViewModel updatedAttendance)
         {
-            //行の自動追加をオフ
-            attendanceDataGridView.AllowUserToAddRows = false;
+            existingAttendance.WorkStartTime = updatedAttendance.WorkStartTimeHour != null
+                ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedAttendance.Date,
+                    int.Parse(updatedAttendance.WorkStartTimeHour!), int.Parse(updatedAttendance.WorkStartTimeMinutes!), 0)
+                : null;
 
-            //タイムピッカー表示設定
-            SearchDate.Format = DateTimePickerFormat.Custom;
+            existingAttendance.WorkEndTime = updatedAttendance.WorkEndTimeHour != null
+                ? new DateTime(DateTime.Now.Year, DateTime.Now.Month, updatedAttendance.Date,
+                    int.Parse(updatedAttendance.WorkEndTimeHour!), int.Parse(updatedAttendance.WorkEndTimeMinutes!), 0)
+                : null;
 
-            //フォーマット設定
-            SearchDate.CustomFormat = "yyyy年MM月";
+            existingAttendance.BreakTime = updatedAttendance.BreakTimeHour != null
+                ? new TimeSpan(int.Parse(updatedAttendance.BreakTimeHour!), int.Parse(updatedAttendance.BreakTimeMinutes!), 0)
+                : null;
 
-            //セルの高さを自動調整
-            attendanceDataGridView.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
-
-            //ヘッダーの高さを固定にしてリサイズを禁止
-            attendanceDataGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-
-            //ヘッダーの高さを設定
-            attendanceDataGridView.ColumnHeadersHeight = 60;
-
-            //DataGridView2の列の幅をユーザーが変更できないようにする
-            attendanceDataGridView.AllowUserToResizeColumns = false;
+            existingAttendance.Remarks = updatedAttendance.Remarks;
+            existingAttendance.UpdatedAt = DateTime.Now;
         }
+
+        /// <summary>
+        /// 勤怠情報の入力検証
+        /// </summary>
+        /// <param name="updatedAttendanceList">更新された勤怠情報のリスト</param>
+        /// <returns>検証結果（true: 正常, false: エラー）</returns>
+        private bool CheckAttendance(List<AttendanceViewModel> updatedAttendanceList)
+        {
+            // 時間の不正な入力をチェック
+            if (updatedAttendanceList.Any(n => (string.IsNullOrEmpty(n.WorkStartTimeHour) != string.IsNullOrEmpty(n.WorkStartTimeMinutes)) ||
+                                               (string.IsNullOrEmpty(n.WorkEndTimeHour) != string.IsNullOrEmpty(n.WorkEndTimeMinutes)) ||
+                                               (string.IsNullOrEmpty(n.BreakTimeHour) != string.IsNullOrEmpty(n.BreakTimeMinutes))))
+            {
+                MessageBox.Show("時刻が正しく入力されていません。");
+                return false;
+            }
+
+            // 出社時間がない場合に、退社時間または休憩時間、備考が入力されているかどうかをチェック
+            if (updatedAttendanceList.Any(n => string.IsNullOrEmpty(n.WorkStartTimeHour) && (!string.IsNullOrEmpty(n.WorkEndTimeHour) || !string.IsNullOrEmpty(n.BreakTimeHour) || !string.IsNullOrEmpty(n.Remarks))))
+            {
+                MessageBox.Show("出社時間を入力してください。");
+                return false;
+            }
+
+            // 退社時間がある場合に、休憩時間が正しく入力されているかチェック
+            if (updatedAttendanceList.Any(n => !string.IsNullOrEmpty(n.WorkEndTimeHour) && string.IsNullOrEmpty(n.BreakTimeHour)))
+            {
+                MessageBox.Show("休憩時間を入力してください。");
+                return false;
+            }
+
+            // 出社時間より退社時間が早くないかをチェック
+            if (updatedAttendanceList.Any(n => !string.IsNullOrEmpty(n.WorkEndTimeHour) && (CalculateMinutes(n.WorkStartTimeHour, n.WorkStartTimeMinutes) >= CalculateMinutes(n.WorkEndTimeHour, n.WorkEndTimeMinutes))))
+            {
+                MessageBox.Show("退社時間が出社時間より早い、または同時刻に設定されています。");
+                return false;
+            }
+
+            // 稼働時間より休憩時間が多すぎないかをチェック
+            if (updatedAttendanceList.Any(n => !string.IsNullOrEmpty(n.BreakTimeHour) && !string.IsNullOrEmpty(n.WorkEndTimeHour) && (CalculateMinutes(n.BreakTimeHour, n.BreakTimeMinutes) >= CalculateMinutes(n.WorkEndTimeHour, n.WorkEndTimeMinutes) - CalculateMinutes(n.WorkStartTimeHour, n.WorkStartTimeMinutes))))
+            {
+                MessageBox.Show("休憩時間が稼働時間を超えているか、または同時間に設定されています。。");
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// 時間を分に変換
+        /// </summary>
+        /// <param name="hour">時間</param>
+        /// <param name="minute">分</param>
+        /// <returns>分に変換された時間</returns>
+        private static int CalculateMinutes(string? hour, string? minute)
+        {
+            int parsedHour = int.TryParse(hour, out int h) ? h : 0;
+            int parsedMinute = int.TryParse(minute, out int m) ? m : 0;
+            return parsedHour * 60 + parsedMinute;
+        }
+
+        /// <summary>
+        /// 従業員情報を取得
+        /// </summary>
+        /// <param name="employeeId">従業員ID</param>
+        /// <returns>従業員情報</returns>
+        private EmployeeModel LoadEmployee(int employeeId) =>
+            _context.Employees.Single(n => n.EmployeeId == employeeId);
+
+        /// <summary>
+        /// 勤怠情報を取得
+        /// </summary>
+        /// <param name="employeeId">従業員ID</param>
+        /// <param name="year">対象年</param>
+        /// <param name="month">対象月</param>
+        /// <returns>勤怠情報リスト</returns>
+        private IList<AttendanceViewModel> ListAttendance(int employeeId, int year, int month) =>
+            (from day in Enumerable.Range(1, DateTime.DaysInMonth(year, month)).ToList()
+             join attendance in _context.Attendances.Where(n => n.EmployeeId == employeeId && n.Year == year && n.Month == month).AsNoTracking()
+                 on day equals attendance.Day into attendances
+             from attendance in attendances.DefaultIfEmpty()
+             select new AttendanceViewModel()
+             {
+                 AttendanceId = attendance?.EmployeeId,
+                 WorkStartTimeHour = attendance?.WorkStartTime.HasValue == true ? attendance.WorkStartTime.Value.Hour.ToString("00") : null,
+                 WorkStartTimeMinutes = attendance?.WorkStartTime.HasValue == true ? (Math.Round(attendance.WorkStartTime.Value.Minute / 10.0) * 10).ToString("00") : null,
+                 WorkEndTimeHour = attendance?.WorkEndTime.HasValue == true ? attendance.WorkEndTime.Value.Hour.ToString("00") : null,
+                 WorkEndTimeMinutes = attendance?.WorkEndTime.HasValue == true ? (Math.Round(attendance.WorkEndTime.Value.Minute / 10.0) * 10).ToString("00") : null,
+                 BreakTimeHour = attendance?.BreakTime.HasValue == true ? attendance.BreakTime.Value.Hours.ToString("00") : null,
+                 BreakTimeMinutes = attendance?.BreakTime.HasValue == true ? (Math.Round(attendance.BreakTime.Value.Minutes / 10.0) * 10).ToString("00") : null,
+                 Remarks = attendance?.Remarks,
+                 WorkingHours = attendance?.WorkEndTime.HasValue == true && attendance?.WorkStartTime.HasValue == true
+                     ? attendance.WorkEndTime - attendance.WorkStartTime - (attendance.BreakTime ?? TimeSpan.Zero)
+                     : null,
+                 Year = year,
+                 Month = month,
+                 Date = attendance?.Day ?? day,
+                 DayOfWeek = attendance != null
+                     ? new DateTime(attendance.Year, attendance.Month, attendance.Day).ToString("ddd")
+                     : new DateTime(year, month, day).ToString("ddd"),
+             }).ToList();
+
+        #endregion
     }
 }
-
-
-
-    
-
-
-        
-    
-

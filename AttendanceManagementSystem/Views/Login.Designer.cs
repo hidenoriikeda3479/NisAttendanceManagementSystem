@@ -40,7 +40,7 @@
             btnLogin.Location = new Point(126, 173);
             btnLogin.Name = "btnLogin";
             btnLogin.Size = new Size(75, 23);
-            btnLogin.TabIndex = 0;
+            btnLogin.TabIndex = 2;
             btnLogin.Text = "ログイン";
             btnLogin.UseVisualStyleBackColor = true;
             btnLogin.Click += btnLogin_Click;
@@ -69,11 +69,11 @@
             // 
             employeeIdTextBox1.ImeMode = ImeMode.Disable;
             employeeIdTextBox1.Location = new Point(106, 57);
-            employeeIdTextBox1.MaxLength = 2;
+            employeeIdTextBox1.MaxLength = 1000;
             employeeIdTextBox1.Name = "employeeIdTextBox1";
             employeeIdTextBox1.ShortcutsEnabled = false;
             employeeIdTextBox1.Size = new Size(221, 23);
-            employeeIdTextBox1.TabIndex = 3;
+            employeeIdTextBox1.TabIndex = 0;
             employeeIdTextBox1.KeyPress += employeeIdTextBox1_KeyPress;
             // 
             // passwordTextBox2
@@ -83,7 +83,7 @@
             passwordTextBox2.Name = "passwordTextBox2";
             passwordTextBox2.PasswordChar = '*';
             passwordTextBox2.Size = new Size(221, 23);
-            passwordTextBox2.TabIndex = 3;
+            passwordTextBox2.TabIndex = 1;
             // 
             // Login
             // 

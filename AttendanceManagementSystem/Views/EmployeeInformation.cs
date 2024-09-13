@@ -32,13 +32,20 @@ namespace AttendanceManagementSystem.Views
         private readonly AttendanceManagementDbContext _context;
 
         /// <summary>
+        /// ログイン従業員ID
+        /// </summary>
+        private readonly int _loginEmployeeId;
+
+        /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
-        public EmployeeInformation(AttendanceManagementDbContext context)
+        /// <param name="loginEmployeeId">従業員ID</param>
+        public EmployeeInformation(AttendanceManagementDbContext context, int loginEmployeeId)
         {
             InitializeComponent();
             _context = context;
+            _loginEmployeeId = loginEmployeeId;
         }
 
         /// <summary>
@@ -113,7 +120,7 @@ namespace AttendanceManagementSystem.Views
             {
                 // 勤怠確認画面を表示
                 int employeeId = (int)Employeedgv.SelectedRows[0].Cells["Column1"].Value;
-                var attendance = new Attendance(_context, employeeId);
+                var attendance = new Attendance(_context, _loginEmployeeId, employeeId);
                 attendance.Show();
             }
             else
