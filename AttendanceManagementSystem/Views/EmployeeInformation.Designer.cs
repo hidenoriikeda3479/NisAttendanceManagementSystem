@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            DataGridViewCellStyle dataGridViewCellStyle1 = new DataGridViewCellStyle();
             Updatebtn = new Button();
             label1 = new Label();
             Employeedgv = new DataGridView();
@@ -74,9 +75,18 @@
             Employeedgv.AllowUserToDeleteRows = false;
             Employeedgv.AllowUserToResizeColumns = false;
             Employeedgv.AllowUserToResizeRows = false;
+            dataGridViewCellStyle1.Alignment = DataGridViewContentAlignment.TopCenter;
+            dataGridViewCellStyle1.BackColor = SystemColors.Control;
+            dataGridViewCellStyle1.Font = new Font("Yu Gothic UI", 9F);
+            dataGridViewCellStyle1.ForeColor = SystemColors.WindowText;
+            dataGridViewCellStyle1.SelectionBackColor = SystemColors.Highlight;
+            dataGridViewCellStyle1.SelectionForeColor = SystemColors.HighlightText;
+            dataGridViewCellStyle1.WrapMode = DataGridViewTriState.True;
+            Employeedgv.ColumnHeadersDefaultCellStyle = dataGridViewCellStyle1;
             Employeedgv.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             Employeedgv.Columns.AddRange(new DataGridViewColumn[] { Column1, Column2, Column3, clmgender, Column9, Column6, Column7, Column8 });
             Employeedgv.Location = new Point(30, 98);
+            Employeedgv.MultiSelect = false;
             Employeedgv.Name = "Employeedgv";
             Employeedgv.ReadOnly = true;
             Employeedgv.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
@@ -86,61 +96,74 @@
             // Column1
             // 
             Column1.DataPropertyName = "EmployeeId";
+            Column1.FillWeight = 80.5639343F;
             Column1.HeaderText = "ID";
             Column1.Name = "Column1";
             Column1.ReadOnly = true;
+            Column1.Width = 50;
             // 
             // Column2
             // 
             Column2.DataPropertyName = "EmployeeName";
+            Column2.FillWeight = 83.7883F;
             Column2.HeaderText = "従業員名";
             Column2.Name = "Column2";
             Column2.ReadOnly = true;
+            Column2.Width = 104;
             // 
             // Column3
             // 
             Column3.DataPropertyName = "Address";
+            Column3.FillWeight = 215.8878F;
             Column3.HeaderText = "住所";
             Column3.Name = "Column3";
             Column3.ReadOnly = true;
-            Column3.Width = 250;
+            Column3.Width = 280;
             // 
             // clmgender
             // 
             clmgender.DataPropertyName = "Gender";
+            clmgender.FillWeight = 41.904274F;
             clmgender.HeaderText = "性別";
             clmgender.Name = "clmgender";
             clmgender.ReadOnly = true;
-            clmgender.Width = 55;
+            clmgender.Width = 60;
             // 
             // Column9
             // 
             Column9.DataPropertyName = "PhoneNumber";
+            Column9.FillWeight = 124.0782F;
             Column9.HeaderText = "電話番号";
             Column9.Name = "Column9";
             Column9.ReadOnly = true;
-            Column9.Width = 150;
+            Column9.Width = 154;
             // 
             // Column6
             // 
             Column6.DataPropertyName = "HireDate";
+            Column6.FillWeight = 82.2147751F;
             Column6.HeaderText = "入社日";
             Column6.Name = "Column6";
             Column6.ReadOnly = true;
+            Column6.Width = 102;
             // 
             // Column7
             // 
             Column7.DataPropertyName = "ResignDate";
+            Column7.FillWeight = 84.57037F;
             Column7.HeaderText = "退社日";
             Column7.Name = "Column7";
             Column7.ReadOnly = true;
+            Column7.Width = 105;
             // 
             // Column8
             // 
             Column8.DataPropertyName = "UpdatedAt";
+            Column8.FillWeight = 86.99224F;
             Column8.HeaderText = "更新日時";
             Column8.Name = "Column8";
             Column8.ReadOnly = true;
+            Column8.Width = 108;
             // 
             // Ateendbtn
             // 
@@ -196,7 +219,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1075, 450);
+            ClientSize = new Size(1073, 450);
             Controls.Add(Searchbtn);
             Controls.Add(cmbgender);
             Controls.Add(Searchtxt);

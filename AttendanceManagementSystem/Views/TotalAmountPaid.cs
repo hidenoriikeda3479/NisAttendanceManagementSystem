@@ -1,7 +1,6 @@
 ﻿using AttendanceManagementSystem.Data;
 using AttendanceManagementSystem.Models;
 using System.Data;
-using System.Windows.Forms;
 
 namespace AttendanceManagementSystem.Views
 {
@@ -38,6 +37,8 @@ namespace AttendanceManagementSystem.Views
             targetId = id;
         }
 
+        #region ロード・表示
+
         /// <summary>
         /// ロード画面
         /// </summary>
@@ -45,7 +46,7 @@ namespace AttendanceManagementSystem.Views
         /// <param name="e">イベントデータ</param>
         private void TotalAmountPaid_Load(object sender, EventArgs e)
         {
-            // 押下時、画面表記変更イベント
+            // 画面表記変更フラグ
             bool visibleflag = VisileEvent(targetId);
 
             //画面表記変更イベントを実行し、表示状態を取得
@@ -56,15 +57,64 @@ namespace AttendanceManagementSystem.Views
             }
             else
             {
-                // ラベル初期表示（今年の西暦）
-                labelyear.Text = yeardtp.Value.ToString("yyyy年");
-
                 // dataGridView の初期表示（今年の西暦）
                 DateList(selectYear);
             }
         }
 
-        #region ボタンイベント
+        /// <summary>
+        /// 画面表記変更イベント
+        /// </summary>
+        /// <param name="visibleUpdate">フラグ固定値</param>
+        /// <returns>画面遷移結果</returns>
+        private bool VisileEvent(int visibleTotal)
+        {
+            //画面表記変更フラグ
+            bool visibleflag;
+
+            // 画面表記変更フラグ分岐
+            if (visibleTotal == 0)
+            {
+                // 総支給額集計ボタン押下時、総合集計表非表示
+                salaryConfirmationLabel.Visible = false;
+
+                visibleflag = false;
+                return visibleflag;
+            }
+            else
+            {
+                // 給料確認ボタン押下時、総合集計表非表示
+                totallingLabel.Visible = false;
+                totalSalaryDgv.Visible = false;
+                monthlyTotalLabel.Visible = false;
+
+                // foamサイズ変更
+                this.Size = new Size(1095, 274);
+                visibleflag = true;
+                return visibleflag;
+            }
+        }
+
+        /// <summary>
+        /// 管理メニュー再表示
+        /// </summary>
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
+        private void TotalAmountPaid_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //画面表記変更フラグ
+            int visibleflag = targetId;
+
+            if (visibleflag == 0)
+            {
+                var managementMenu = new ManagementMenu(_context, targetId);
+                managementMenu.Show();
+            }
+            return;
+        }
+        #endregion
+
+        #region clickイベント
 
         /// <summary>
         /// 検索ボタンクリックイベント
@@ -73,25 +123,28 @@ namespace AttendanceManagementSystem.Views
         /// <param name="e">イベントデータ</param>
         private void searchBtn_Click(object sender, EventArgs e)
         {
+            // 選択したカレンダーをラベルに表示
             labelyear.Text = yeardtp.Value.ToString("yyyy年");
 
-            // DateTimePickerの年を取得
-            int searchyear = yeardtp.Value.Year;
+            // カレンダー選択年
+            int searchYear = yeardtp.Value.Year;
 
-            // DateTimePickerの値を検索結果の年に設定
-            yeardtp.Value = new DateTime(searchyear, 1, 1);
+            selectYear = searchYear;
 
-            // 給与 dataGridView 反映イベント
-            DateList(searchyear);
+            // DateTimePickerの選択年を設定
+            yeardtp.Value = new DateTime(selectYear, 1, 1);
 
             // 個人の給与画面表示
             if (targetId != 0)
             {
                 SalaryConfirmation();
-
-                // 給与 dataGridView 反映イベント
-                DateList(searchyear);
             }
+            else
+            {
+                // 給与 dataGridView 反映イベント
+                DateList(selectYear);
+            }
+            return;
         }
 
         /// <summary>
@@ -104,20 +157,22 @@ namespace AttendanceManagementSystem.Views
             // 現在選択されている年から1年引く
             int lastYear = yeardtp.Value.Year - 1;
 
-            // DateTimePickerの年を1年前に設定
-            yeardtp.Value = new DateTime(lastYear, 1, 1);
+            selectYear = lastYear;
 
-            // 過去年の給与表示(１年前を表示)
-            DateList(lastYear);
+            // DateTimePickerの年を1年前に設定
+            yeardtp.Value = new DateTime(selectYear, 1, 1);
 
             // 個人の給与画面表示
             if (targetId != 0)
             {
                 SalaryConfirmation();
-
-                // 過去年の給与表示(１年前を表示)
-                DateList(lastYear);
             }
+            else
+            {
+                // 給与 dataGridView 反映イベント
+                DateList(selectYear);
+            }
+            return;
         }
 
         /// <summary>
@@ -141,69 +196,14 @@ namespace AttendanceManagementSystem.Views
                 if (targetId != 0)
                 {
                     SalaryConfirmation();
-
-                    DateList(selectYear);
                 }
                 return;
             }
         }
         #endregion
 
-        #region 表示イベント
-
-        /// <summary>
-        /// 画面表記変更イベント
-        /// </summary>
-        /// <param name="visibleUpdate">フラグ固定値</param>
-        /// <returns>画面遷移結果</returns>
-        private bool VisileEvent(int visibleUpdate)
-        {
-            //画面表記フラグ
-            bool visibleflag;
-
-            // 画面表記変更フラグ分岐
-            if (visibleUpdate == 0)
-            {
-                // 総支給額集計ボタン押下時、総合集計表非表示
-                salaryConfirmationLabel.Visible = false;
-
-                visibleflag = false;
-                return visibleflag;
-            }
-            else
-            {
-                // 給料確認ボタン押下時、総合集計表非表示
-                totallingLabel.Visible = false;
-                totalSalaryDgv.Visible = false;
-                monthlyTotalLabel.Visible = false;
-
-                // foamサイズ変更
-                this.Size = new Size(1100, 274);
-                visibleflag = true;
-                return visibleflag;
-            }
-        }
-
-        /// <summary>
-        /// 管理メニュー再表示
-        /// </summary>
-        /// <param name="sender">イベント発生元のオブジェクト</param>
-        /// <param name="e">イベントデータ</param>
-        private void TotalAmountPaid_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            //画面表記フラグ
-            int visibleflag = targetId;
-
-            if (visibleflag == 0)
-            {
-                var managementMenu = new ManagementMenu(_context);
-                managementMenu.Show();
-            }
-            return;
-        }
-        #endregion
-
         #region dataGridView 反映
+
         /// <summary>
         /// 給与 dataGridView 反映イベント
         /// </summary>
@@ -259,30 +259,65 @@ namespace AttendanceManagementSystem.Views
 
                     // 各月の計算式
 
-                    January = n.Where(x => x.Year! == targetYear && x.Month == 1)
-                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    February = n.Where(x => x.Year == targetYear && x.Month == 2)
-                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    March = n.Where(x => x.Year == targetYear && x.Month == 3)
-                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    April = n.Where(x => x.Year == targetYear && x.Month == 4)
-                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    May = n.Where(x => x.Year == targetYear && x.Month == 5)
-                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    June = n.Where(x => x.Year == targetYear && x.Month == 6)
-                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    July = n.Where(x => x.Year == targetYear && x.Month == 7)
-                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    August = n.Where(x => x.Year == targetYear && x.Month == 8)
-                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    September = n.Where(x => x.Year == targetYear && x.Month == 9)
-                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    October = n.Where(x => x.Year == targetYear && x.Month == 10)
-                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    November = n.Where(x => x.Year == targetYear && x.Month == 11)
-                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
-                    December = n.Where(x => x.Year == targetYear && x.Month == 12)
-                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault()).TotalHours * x.HourlyPay)),
+                    // １月の給与計算
+                    January = n.Where(x => x.Year! == targetYear && x.Month == 1 && x.WorkEndTime != null)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault())
+                    .TotalHours * x.HourlyPay)),
+
+                    // ２月の給与計算
+                    February = n.Where(x => x.Year == targetYear && x.Month == 2 && x.WorkEndTime != null)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault())
+                    .TotalHours * x.HourlyPay)),
+
+                    // ３月の給与計算
+                    March = n.Where(x => x.Year == targetYear && x.Month == 3 && x.WorkEndTime != null)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault())
+                    .TotalHours * x.HourlyPay)),
+
+                    // ４月の給与計算
+                    April = n.Where(x => x.Year == targetYear && x.Month == 4 && x.WorkEndTime != null)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault())
+                    .TotalHours * x.HourlyPay)),
+
+                    // ５月の給与計算
+                    May = n.Where(x => x.Year == targetYear && x.Month == 5 && x.WorkEndTime != null)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault())
+                    .TotalHours * x.HourlyPay)),
+
+                    // ６月の給与計算
+                    June = n.Where(x => x.Year == targetYear && x.Month == 6 && x.WorkEndTime != null)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault())
+                    .TotalHours * x.HourlyPay)),
+
+                    // ７月の給与計算
+                    July = n.Where(x => x.Year == targetYear && x.Month == 7 && x.WorkEndTime != null)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault())
+                    .TotalHours * x.HourlyPay)),
+
+                    // ８月の給与計算
+                    August = n.Where(x => x.Year == targetYear && x.Month == 8 && x.WorkEndTime != null)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault())
+                    .TotalHours * x.HourlyPay)),
+
+                    // ９月の給与計算
+                    September = n.Where(x => x.Year == targetYear && x.Month == 9 && x.WorkEndTime != null)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault())
+                    .TotalHours * x.HourlyPay)),
+
+                    // １０月の給与計算
+                    October = n.Where(x => x.Year == targetYear && x.Month == 10 && x.WorkEndTime != null)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault())
+                    .TotalHours * x.HourlyPay)),
+
+                    // １１月の給与計算
+                    November = n.Where(x => x.Year == targetYear && x.Month == 11 && x.WorkEndTime != null)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault())
+                    .TotalHours * x.HourlyPay)),
+
+                    // １２月の給与計算
+                    December = n.Where(x => x.Year == targetYear && x.Month == 12 && x.WorkEndTime != null)
+                    .Sum(x => (decimal)((x.WorkEndTime.GetValueOrDefault() - x.WorkStartTime.GetValueOrDefault() - x.BreakTime.GetValueOrDefault())
+                    .TotalHours * x.HourlyPay)),
 
                 }).ToList();
 

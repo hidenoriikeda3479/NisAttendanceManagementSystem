@@ -1,7 +1,6 @@
 ﻿using AttendanceManagementSystem.Data;
 using AttendanceManagementSystem.Models;
 using AttendanceManagementSystem.Common;
-using System.Windows.Forms;
 
 namespace AttendanceManagementSystem.Views
 {
@@ -33,6 +32,7 @@ namespace AttendanceManagementSystem.Views
             // 現在の日付を最大の日付として設定
             dateTimePicker1.MaxDate = DateTime.Today;
 
+            // employeeid が 0 より大きい場合、選択した従業員で更新画面を開く
             if (employeeid > 0)
             {
                 var result = _context.Employees.Single(e => e.EmployeeId == employeeid);
@@ -50,6 +50,8 @@ namespace AttendanceManagementSystem.Views
             VisileEvent(employeeid);
         }
 
+        #region ロード・表示
+
         /// <summary>
         /// 従業員登録・更新画面ロード
         /// </summary>
@@ -63,8 +65,9 @@ namespace AttendanceManagementSystem.Views
             cmbRank.SelectedIndex = 0; // ランク初期表示
             cmbShift.SelectedIndex = 0; // シフト初期表示
         }
+        #endregion
 
-        #region ボタンクリックイベント
+        #region clickイベント
 
         /// <summary>
         /// 登録ボタンクリックイベント

@@ -1,23 +1,7 @@
 ﻿using AttendanceManagementSystem.Data;
 using AttendanceManagementSystem.Models;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.VisualBasic.ApplicationServices;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Net;
-using System.Reflection;
-using System.Security;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement;
-using static System.Windows.Forms.VisualStyles.VisualStyleElement.StartPanel;
+
 
 namespace AttendanceManagementSystem.Views
 {
@@ -48,6 +32,8 @@ namespace AttendanceManagementSystem.Views
             _loginEmployeeId = loginEmployeeId;
         }
 
+        #region ロード・表示
+
         /// <summary>
         /// ロードイベント
         /// </summary>
@@ -63,9 +49,25 @@ namespace AttendanceManagementSystem.Views
 
             // コンボボックス初期選択状態を性別（ダミー）にする
             cmbgender.SelectedIndex = 0;
+
+            // 縦スクロールバーのみ表示
+            Employeedgv.ScrollBars = ScrollBars.Vertical;
         }
 
-        #region Clickイベント一覧
+        /// <summary>
+        /// 管理メニュー再表示
+        /// </summary>
+        /// <param name="sender">イベント発生元のオブジェクト</param>
+        /// <param name="e">イベントデータ</param>
+        private void EmployeeInformation_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            //  従業員一覧画面が閉じられた際に管理メニュー表示
+            var managementMenu = new ManagementMenu(_context, _loginEmployeeId);
+            managementMenu.Show();
+        }
+        #endregion
+
+        #region Clickイベント
 
         /// <summary>
         /// 検索ボタンクリックイベント
@@ -99,7 +101,7 @@ namespace AttendanceManagementSystem.Views
                 var employeeRegUpdate = new EmployeeRegUpdate(_context, employeeId);
                 employeeRegUpdate.Show();
 
-                var managementMenu = new ManagementMenu(_context);
+                var managementMenu = new ManagementMenu(_context, _loginEmployeeId);
                 managementMenu.Close();
             }
             else
@@ -173,11 +175,5 @@ namespace AttendanceManagementSystem.Views
             return employeeList;
         }
         #endregion
-
-        private void EmployeeInformation_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            var managementMenu = new ManagementMenu(_context);
-            managementMenu.Show();
-        }
     }
 }
