@@ -32,6 +32,11 @@
             Updatebtn = new Button();
             label1 = new Label();
             Employeedgv = new DataGridView();
+            Ateendbtn = new Button();
+            label2 = new Label();
+            Searchtxt = new TextBox();
+            cmbgender = new ComboBox();
+            Searchbtn = new Button();
             Column1 = new DataGridViewTextBoxColumn();
             Column2 = new DataGridViewTextBoxColumn();
             Column3 = new DataGridViewTextBoxColumn();
@@ -40,11 +45,6 @@
             Column6 = new DataGridViewTextBoxColumn();
             Column7 = new DataGridViewTextBoxColumn();
             Column8 = new DataGridViewTextBoxColumn();
-            Ateendbtn = new Button();
-            label2 = new Label();
-            Searchtxt = new TextBox();
-            cmbgender = new ComboBox();
-            Searchbtn = new Button();
             ((System.ComponentModel.ISupportInitialize)Employeedgv).BeginInit();
             SuspendLayout();
             // 
@@ -90,8 +90,58 @@
             Employeedgv.Name = "Employeedgv";
             Employeedgv.ReadOnly = true;
             Employeedgv.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
-            Employeedgv.Size = new Size(1016, 340);
+            Employeedgv.Size = new Size(1009, 340);
             Employeedgv.TabIndex = 2;
+            // 
+            // Ateendbtn
+            // 
+            Ateendbtn.Font = new Font("Yu Gothic UI", 11F);
+            Ateendbtn.Location = new Point(115, 63);
+            Ateendbtn.Name = "Ateendbtn";
+            Ateendbtn.Size = new Size(81, 29);
+            Ateendbtn.TabIndex = 3;
+            Ateendbtn.Text = "勤怠確認";
+            Ateendbtn.UseVisualStyleBackColor = true;
+            Ateendbtn.Click += Ateendbtn_Click;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Font = new Font("Yu Gothic UI", 14F);
+            label2.Location = new Point(326, 17);
+            label2.Name = "label2";
+            label2.Size = new Size(88, 25);
+            label2.TabIndex = 4;
+            label2.Text = "従業員名";
+            // 
+            // Searchtxt
+            // 
+            Searchtxt.Location = new Point(420, 19);
+            Searchtxt.MaxLength = 20;
+            Searchtxt.Name = "Searchtxt";
+            Searchtxt.Size = new Size(225, 23);
+            Searchtxt.TabIndex = 5;
+            // 
+            // cmbgender
+            // 
+            cmbgender.DropDownStyle = ComboBoxStyle.DropDownList;
+            cmbgender.FormattingEnabled = true;
+            cmbgender.Items.AddRange(new object[] { "性別", "男", "女" });
+            cmbgender.Location = new Point(651, 19);
+            cmbgender.Name = "cmbgender";
+            cmbgender.Size = new Size(51, 23);
+            cmbgender.TabIndex = 6;
+            // 
+            // Searchbtn
+            // 
+            Searchbtn.Font = new Font("Yu Gothic UI", 11F);
+            Searchbtn.Location = new Point(708, 14);
+            Searchbtn.Name = "Searchbtn";
+            Searchbtn.Size = new Size(81, 29);
+            Searchbtn.TabIndex = 7;
+            Searchbtn.Text = "検索";
+            Searchbtn.UseVisualStyleBackColor = true;
+            Searchbtn.Click += Searchbtn_Click;
             // 
             // Column1
             // 
@@ -163,63 +213,13 @@
             Column8.HeaderText = "更新日時";
             Column8.Name = "Column8";
             Column8.ReadOnly = true;
-            Column8.Width = 108;
-            // 
-            // Ateendbtn
-            // 
-            Ateendbtn.Font = new Font("Yu Gothic UI", 11F);
-            Ateendbtn.Location = new Point(115, 63);
-            Ateendbtn.Name = "Ateendbtn";
-            Ateendbtn.Size = new Size(81, 29);
-            Ateendbtn.TabIndex = 3;
-            Ateendbtn.Text = "勤怠確認";
-            Ateendbtn.UseVisualStyleBackColor = true;
-            Ateendbtn.Click += Ateendbtn_Click;
-            // 
-            // label2
-            // 
-            label2.AutoSize = true;
-            label2.Font = new Font("Yu Gothic UI", 14F);
-            label2.Location = new Point(326, 17);
-            label2.Name = "label2";
-            label2.Size = new Size(88, 25);
-            label2.TabIndex = 4;
-            label2.Text = "従業員名";
-            // 
-            // Searchtxt
-            // 
-            Searchtxt.Location = new Point(420, 19);
-            Searchtxt.MaxLength = 20;
-            Searchtxt.Name = "Searchtxt";
-            Searchtxt.Size = new Size(225, 23);
-            Searchtxt.TabIndex = 5;
-            // 
-            // cmbgender
-            // 
-            cmbgender.DropDownStyle = ComboBoxStyle.DropDownList;
-            cmbgender.FormattingEnabled = true;
-            cmbgender.Items.AddRange(new object[] { "性別", "男", "女" });
-            cmbgender.Location = new Point(651, 19);
-            cmbgender.Name = "cmbgender";
-            cmbgender.Size = new Size(51, 23);
-            cmbgender.TabIndex = 6;
-            // 
-            // Searchbtn
-            // 
-            Searchbtn.Font = new Font("Yu Gothic UI", 11F);
-            Searchbtn.Location = new Point(708, 14);
-            Searchbtn.Name = "Searchbtn";
-            Searchbtn.Size = new Size(81, 29);
-            Searchbtn.TabIndex = 7;
-            Searchbtn.Text = "検索";
-            Searchbtn.UseVisualStyleBackColor = true;
-            Searchbtn.Click += Searchbtn_Click;
+            Column8.Width = 115;
             // 
             // EmployeeInformation
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1073, 450);
+            ClientSize = new Size(1072, 450);
             Controls.Add(Searchbtn);
             Controls.Add(cmbgender);
             Controls.Add(Searchtxt);
