@@ -374,6 +374,7 @@
             // 
             // cmbRank
             // 
+            cmbRank.DropDownStyle = ComboBoxStyle.DropDownList;
             cmbRank.FormattingEnabled = true;
             cmbRank.Items.AddRange(new object[] { "選択して下さい", "★1：1100円", "★2：1200円", "★3：1300円", "★4：1400円", "★5：1500円" });
             cmbRank.Location = new Point(147, 301);

@@ -70,8 +70,10 @@ namespace AttendanceManagementSystem.Views
         /// <param name="e">イベント情報</param>
         private void btnTotalAmountPaid_Click_1(object sender, EventArgs e)
         {
+            bool salaryflag = false;
+
             //総支給額画面遷移
-            var totalAmountPaid = new TotalAmountPaid(_context);
+            var totalAmountPaid = new TotalAmountPaid(_context, _loginEmployeeId , salaryflag);
             totalAmountPaid.Show();
             Hide();
         }

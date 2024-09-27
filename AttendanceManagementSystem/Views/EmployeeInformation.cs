@@ -28,8 +28,8 @@ namespace AttendanceManagementSystem.Views
         public EmployeeInformation(AttendanceManagementDbContext context, int loginEmployeeId)
         {
             InitializeComponent();
-            _context = context;
-            _loginEmployeeId = loginEmployeeId;
+            _context = context; // DBコンテキスト
+            _loginEmployeeId = loginEmployeeId; // 従業員ID
         }
 
         #region ロード・表示
@@ -130,13 +130,16 @@ namespace AttendanceManagementSystem.Views
                 MessageBox.Show("従業員を選択してください。");
             }
         }
+
         #endregion
 
         #region DataGridViewイベント
 
+
         /// <summary>
         /// DataGridView反映イベント
         /// </summary>
+        /// <returns>従業員情報リスト</returns>
         List<EmployeeInformationViewModel> DateList()
         {
             List<EmployeeInformationViewModel> list = new List<EmployeeInformationViewModel>();

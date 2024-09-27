@@ -20,21 +20,27 @@ namespace AttendanceManagementSystem.Views
         private int selectYear;
 
         /// <summary>
+        /// ログイン従業員ID
+        /// </summary>
+        private readonly int _loginEmployeeId;
+
+        /// <summary>
         /// ユーザー閲覧
         /// </summary>
-        private int targetId;
+        private bool targetId;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
         /// <param name="id">ユーザー閲覧</param>
-        public TotalAmountPaid(AttendanceManagementDbContext context, int id = 0)
+        public TotalAmountPaid(AttendanceManagementDbContext context, int loginEmployeeId, bool salaryflag)
         {
             InitializeComponent();
             _context = context;
+            _loginEmployeeId = loginEmployeeId;
+            targetId = salaryflag;
             selectYear = DateTime.Now.Year;
-            targetId = id;
         }
 
         #region ロード・表示
@@ -49,10 +55,10 @@ namespace AttendanceManagementSystem.Views
             // 画面表記変更フラグ
             bool visibleflag = VisileEvent(targetId);
 
-            //画面表記変更イベントを実行し、表示状態を取得
+            // 画面表記変更イベントを実行し、表示状態を取得
             if (visibleflag)
             {
-                //給料画面表示
+                // 給料画面表示
                 SalaryConfirmation();
             }
             else
@@ -67,15 +73,15 @@ namespace AttendanceManagementSystem.Views
         /// </summary>
         /// <param name="visibleUpdate">フラグ固定値</param>
         /// <returns>画面遷移結果</returns>
-        private bool VisileEvent(int visibleTotal)
+        private bool VisileEvent(bool visibleTotal)
         {
-            //画面表記変更フラグ
+            // 画面表記変更フラグ
             bool visibleflag;
 
             // 画面表記変更フラグ分岐
-            if (visibleTotal == 0)
+            if (visibleTotal == false)
             {
-                // 総支給額集計ボタン押下時、総合集計表非表示
+                // 総支給額集計ボタン押下時、給料ラベル非表示
                 salaryConfirmationLabel.Visible = false;
 
                 visibleflag = false;
@@ -83,7 +89,7 @@ namespace AttendanceManagementSystem.Views
             }
             else
             {
-                // 給料確認ボタン押下時、総合集計表非表示
+                // 給料確認ボタン押下時、総支給表非表示
                 totallingLabel.Visible = false;
                 totalSalaryDgv.Visible = false;
                 monthlyTotalLabel.Visible = false;
@@ -102,16 +108,17 @@ namespace AttendanceManagementSystem.Views
         /// <param name="e">イベントデータ</param>
         private void TotalAmountPaid_FormClosing(object sender, FormClosingEventArgs e)
         {
-            //画面表記変更フラグ
-            int visibleflag = targetId;
+            // 画面表記変更フラグ
+            bool visibleflag = targetId;
 
-            if (visibleflag == 0)
+            if (visibleflag == false)
             {
-                var managementMenu = new ManagementMenu(_context, targetId);
+                var managementMenu = new ManagementMenu(_context, _loginEmployeeId);
                 managementMenu.Show();
             }
             return;
         }
+
         #endregion
 
         #region clickイベント
@@ -135,7 +142,7 @@ namespace AttendanceManagementSystem.Views
             yeardtp.Value = new DateTime(selectYear, 1, 1);
 
             // 個人の給与画面表示
-            if (targetId != 0)
+            if (targetId == true)
             {
                 SalaryConfirmation();
             }
@@ -154,25 +161,23 @@ namespace AttendanceManagementSystem.Views
         /// <param name="e">イベントデータ</param>
         private void btnLastyear_Click(object sender, EventArgs e)
         {
-            // 現在選択されている年から1年引く
+            // 前の年給与を表示
             int lastYear = yeardtp.Value.Year - 1;
 
-            selectYear = lastYear;
-
-            // DateTimePickerの年を1年前に設定
-            yeardtp.Value = new DateTime(selectYear, 1, 1);
-
-            // 個人の給与画面表示
-            if (targetId != 0)
+            // ボタン押下時、設定されている過去の年より過去は表示不可
+            if (lastYear >= yeardtp.MinDate.Year) 
             {
-                SalaryConfirmation();
-            }
-            else
-            {
-                // 給与 dataGridView 反映イベント
+                selectYear = lastYear;
+                yeardtp.Value = new DateTime(selectYear, 1, 1);
                 DateList(selectYear);
+
+                // 個人の給与画面表示
+                if (targetId == true)
+                {
+                    SalaryConfirmation();
+                }
+                return;
             }
-            return;
         }
 
         /// <summary>
@@ -193,13 +198,14 @@ namespace AttendanceManagementSystem.Views
                 DateList(selectYear);
 
                 // 個人の給与画面表示
-                if (targetId != 0)
+                if (targetId == true)
                 {
                     SalaryConfirmation();
                 }
                 return;
             }
         }
+
         #endregion
 
         #region dataGridView 反映
@@ -423,7 +429,7 @@ namespace AttendanceManagementSystem.Views
             List<TotalAmountPaidViewModel> result = DateList(selectYear);
 
             // ログインIDから従業員名を取得
-            var searchname = _context.Employees.Where(n => n.EmployeeId == targetId).Select(n => n.EmployeeName).ToList();
+            var searchname = _context.Employees.Where(n => n.EmployeeId == _loginEmployeeId).Select(n => n.EmployeeName).ToList();
 
             // 対象社員名を取得
             var targetname = searchname.First();
@@ -434,6 +440,7 @@ namespace AttendanceManagementSystem.Views
             // 給与 dataGridView を表示
             salaryDgv.DataSource = matchrecord;
         }
+
         #endregion
     }
 }

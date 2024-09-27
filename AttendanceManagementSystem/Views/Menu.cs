@@ -89,8 +89,10 @@ namespace AttendanceManagementSystem.Views
         /// <param name="e">イベント情報</param>
         private void btnSalaryManagement_Click(object sender, EventArgs e)
         {
+            bool salaryflag = true;
+
             // 給料画面へ遷移
-            var salary = new TotalAmountPaid(_context, _id);
+            var salary = new TotalAmountPaid(_context, _id , salaryflag);
             salary.Show();
         }
 

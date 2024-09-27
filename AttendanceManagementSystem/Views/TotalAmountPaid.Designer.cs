@@ -108,7 +108,7 @@
             yeardtp.Location = new Point(750, 70);
             yeardtp.Margin = new Padding(3, 2, 3, 2);
             yeardtp.MaxDate = new DateTime(2024, 9, 9, 0, 0, 0, 0);
-            yeardtp.MinDate = new DateTime(1850, 1, 1, 0, 0, 0, 0);
+            yeardtp.MinDate = new DateTime(1950, 1, 1, 0, 0, 0, 0);
             yeardtp.Name = "yeardtp";
             yeardtp.Size = new Size(61, 25);
             yeardtp.TabIndex = 4;

@@ -16,6 +16,7 @@ namespace AttendanceManagementSystem.Views
 
         // ErrorProviderのインスタンスを生成
         ErrorProvider errorProvider = new ErrorProvider();
+
         int _employeeid; // 従業員IDを保存
 
         /// <summary>
@@ -27,7 +28,7 @@ namespace AttendanceManagementSystem.Views
         {
             InitializeComponent();
             _context = context; // DBコンテキスト
-            _employeeid = employeeid;
+            _employeeid = employeeid; // 従業員ID
 
             // 現在の日付を最大の日付として設定
             dateTimePicker1.MaxDate = DateTime.Today;
@@ -64,7 +65,11 @@ namespace AttendanceManagementSystem.Views
 
             cmbRank.SelectedIndex = 0; // ランク初期表示
             cmbShift.SelectedIndex = 0; // シフト初期表示
+
+            // ランクの取得
+            InitializeRanks();
         }
+
         #endregion
 
         #region clickイベント
@@ -79,25 +84,27 @@ namespace AttendanceManagementSystem.Views
             // ErrorProviderをクリア
             errorProvider.Clear();
 
-            // ボタン押下時、空白エラーチェック
-            if (!InputCheck() | !RegistrationCheck() | !Passwordcheck())
+            bool isInputValid = InputCheck(); // 空白エラーチェック
+            bool isRegistrationValid = RegistrationCheck(); // ランクの選択チェック
+            bool isPasswordValid = Passwordcheck(); // パスワードチェック
+
+            // いずれかのチェックが失敗した場合、エラーメッセージを表示する
+            if (!isInputValid || !isRegistrationValid || !isPasswordValid)
             {
-                MessageBox.Show("必要な情報が入力がされていません");
+                MessageBox.Show("必要な情報が入力、選択されていません。");
                 return;
             }
-            else
-            {
-                // ユーザー登録処理
-                InsertDate();
 
-                // 追加したデータをコミット
-                _context.SaveChanges();
+            // ユーザー登録処理
+            InsertDate();
 
-                // データグリッドを更新して通知
-                MessageBox.Show("新しい従業員が追加されました。");
+            // 追加したデータをコミット
+            _context.SaveChanges();
 
-                this.Close();
-            }
+            // データグリッドを更新して通知
+            MessageBox.Show("新しい従業員が追加されました。");
+
+            this.Close();
         }
 
         /// <summary>
@@ -205,6 +212,9 @@ namespace AttendanceManagementSystem.Views
         /// </summary>
         private void InsertDate()
         {
+            // コンボボックスの選択されたランクIDを取得
+            int selectedRankId = (int)((dynamic)cmbRank.SelectedItem).Value;
+
             // 新しい従業員データの作成
             var newEmployee = new EmployeeModel
             {
@@ -216,14 +226,11 @@ namespace AttendanceManagementSystem.Views
                 Address = txtAddress.Text,
                 BuildingName = txtBuilding.Text,
                 BirthDate = dateTimePicker1.Value,
-                RankId = cmbRank.SelectedIndex,
-                ShiftId = cmbShift.SelectedIndex,
+                RankId = selectedRankId,
                 HireDate = DateTime.Now,
                 PermissionId = 2,
                 CreatedAt = DateTime.Now,
             };
-
-            var query = _context.Employees.AsQueryable();
 
             // 新しい従業員データを追加
             _context.Employees.Add(newEmployee);
@@ -247,6 +254,7 @@ namespace AttendanceManagementSystem.Views
             employee.BuildingName = txtBuilding.Text;
             employee.UpdatedAt = DateTime.Now;
         }
+
         #endregion
 
         #region 入力制限イベント
@@ -318,20 +326,24 @@ namespace AttendanceManagementSystem.Views
                     // エラーメッセージをクリア
                     errorProvider.SetError(txtPswrd, "");
                 }
+            }
 
-                // パスワード確認の合否
-                if (txtPswrd.Text != txtRepswrd.Text)
-                {
-                    errorProvider.SetError(txtRepswrd, "パスワードが同じではありません");
-                    flag = false;
-                }
-
+            // パスワード確認の合否
+            if (txtPswrd.Text != txtRepswrd.Text)
+            {
+                errorProvider.SetError(txtRepswrd, "パスワードが同じではありません");
+                flag = false;
+            }
+            else if (txtRepswrd.Text == "")
+            {
                 // パスワード入力されているか
-                if (txtRepswrd.Text == "")
-                {
-                    errorProvider.SetError(txtRepswrd, "パスワード入力して下さい");
-                    flag = false;
-                }
+                errorProvider.SetError(txtRepswrd, "パスワード入力して下さい");
+                flag = false;
+            }
+            else
+            {
+                // エラーメッセージをクリア
+                errorProvider.SetError(txtRepswrd, "");
             }
             return flag;
         }
@@ -379,6 +391,49 @@ namespace AttendanceManagementSystem.Views
                 e.Handled = true;
             }
         }
+
+        /// <summary>
+        /// コンボボックスランク取得
+        /// </summary>
+        private void InitializeRanks()
+        {
+            // データベースからランクIDを取得
+            var ranks = _context.Ranks.ToList();
+
+            // コンボボックスのアイテムをクリア
+            cmbRank.Items.Clear();
+
+            // ヘッダーアイテムを追加
+            cmbRank.Items.Add(new { Text = "選択して下さい", Value = 0 });
+
+            // ランクIDの表示テキストを設定
+            var rankNames = new Dictionary<int, string>
+            {
+                 { 1, "★1：1100円" },
+                 { 2, "★2：1200円" },
+                 { 3, "★3：1300円" },
+                 { 4, "★4：1400円" },
+                 { 5, "★5：1500円" }
+            };
+
+            // ランクをコンボボックスに追加
+            foreach (var rank in ranks)
+            {
+                if (rankNames.ContainsKey(rank.RankId))
+                {
+                    cmbRank.Items.Add(new { Text = rankNames[rank.RankId], Value = rank.RankId });
+                }
+            }
+
+            // デフォルトで最初のアイテムを選択する
+            if (cmbRank.Items.Count > 0)
+            {
+                cmbRank.DisplayMember = "Text";
+                cmbRank.ValueMember = "Value";
+                cmbRank.SelectedIndex = 0;
+            }
+        }
+
         #endregion
     }
 }
