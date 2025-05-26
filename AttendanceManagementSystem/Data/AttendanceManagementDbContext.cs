@@ -63,37 +63,37 @@ namespace AttendanceManagementSystem.Data
                 .HasKey(sm => new { sm.EmployeeId, sm.Year, sm.Month, sm.Day });
 
             // 権限マスタの初期データ
-            modelBuilder.Entity<PermissionModel>().HasData(
-                new PermissionModel { PermissionId = 1, PermissionName = "Admin", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
-                new PermissionModel { PermissionId = 2, PermissionName = "User", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+            modelBuilder.Entity<PermissionModel>().HasData(new PermissionModel { PermissionId = 1, PermissionName = "Admin", CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) },
+                new PermissionModel { PermissionId = 2, PermissionName = "User", CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) }
             );
+
 
             // ランクマスタの初期データ
             modelBuilder.Entity<RankModel>().HasData(
-                new RankModel { RankId = 1, HourlyPay = 1000, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
-                new RankModel { RankId = 2, HourlyPay = 1200, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+                new RankModel { RankId = 1, HourlyPay = 1000, CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) },
+                new RankModel { RankId = 2, HourlyPay = 1200, CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) }
             );
 
             // シフトマスタの初期データ
             modelBuilder.Entity<ShiftModel>().HasData(
-                new ShiftModel { ShiftId = 1, ShiftTypeName = "Morning", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
-                new ShiftModel { ShiftId = 2, ShiftTypeName = "Noon", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now },
-                new ShiftModel { ShiftId = 3, ShiftTypeName = "Evening", CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+                new ShiftModel { ShiftId = 1, ShiftTypeName = "Morning", CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) },
+                new ShiftModel { ShiftId = 2, ShiftTypeName = "Noon", CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) },
+                new ShiftModel { ShiftId = 3, ShiftTypeName = "Evening", CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) }
             );
 
             // 従業員テーブルの初期データ
             modelBuilder.Entity<EmployeeModel>().HasData(
-                new EmployeeModel { EmployeeId = 1, EmployeeName = "JohnDoe", Gender = 1, Password = "3627909a29c31381a071ec27f7c9ca97726182aed29a7ddd2e54353322cfb30abb9e3a6df2ac2c20fe23436311d678564d0c8d305930575f60e2d3d048184d79", PhoneNumber = "08012345678", PostCode = "1234567", Address = "Tokyo, Japan", BirthDate = new DateTime(1990, 1, 1), RankId = 1, ShiftId = 1, HireDate = new DateTime(2020, 1, 1), PermissionId = 1, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+                new EmployeeModel { EmployeeId = 1, EmployeeName = "JohnDoe", Gender = 1, Password = "3627909a29c31381a071ec27f7c9ca97726182aed29a7ddd2e54353322cfb30abb9e3a6df2ac2c20fe23436311d678564d0c8d305930575f60e2d3d048184d79", PhoneNumber = "08012345678", PostCode = "1234567", Address = "Tokyo, Japan", BirthDate = new DateTime(1990, 1, 1), RankId = 1, ShiftId = 1, HireDate = new DateTime(2020, 1, 1), PermissionId = 1, CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) }
             );
 
             // 勤怠テーブルの初期データ
             modelBuilder.Entity<AttendanceModel>().HasData(
-                new AttendanceModel { EmployeeId = 1, Year = 2024, Month = 8, Day = 9, WorkStartTime = new DateTime(2024, 8, 9, 9, 0, 0), WorkEndTime = new DateTime(2024, 8, 9, 18, 0, 0), BreakTime = new TimeSpan(1, 0, 0), CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+                new AttendanceModel { EmployeeId = 1, Year = 2024, Month = 8, Day = 9, WorkStartTime = new DateTime(2024, 8, 9, 9, 0, 0), WorkEndTime = new DateTime(2024, 8, 9, 18, 0, 0), BreakTime = new TimeSpan(1, 0, 0), CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) }
             );
 
             // シフト管理テーブルの初期データ
             modelBuilder.Entity<ShiftManagementModel>().HasData(
-                new ShiftManagementModel { EmployeeId = 1, Year = 2024, Month = 8, Day = 9, CreatedAt = DateTime.Now, UpdatedAt = DateTime.Now }
+                new ShiftManagementModel { EmployeeId = 1, Year = 2024, Month = 8, Day = 9, CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) }
             );
         }
     }
