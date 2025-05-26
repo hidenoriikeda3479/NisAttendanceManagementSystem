@@ -67,7 +67,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(267, 188);
             Controls.Add(btnSalaryList);
             Controls.Add(btnEmployeeList);
             Controls.Add(btnEmployeeRegistration);

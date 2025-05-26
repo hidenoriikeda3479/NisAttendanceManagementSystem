@@ -1,4 +1,5 @@
 using AttendanceManagementSystem.Data;
+using AttendanceManagementSystem.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,7 +26,7 @@ namespace AttendanceManagementSystem
             services.AddDbContext<AttendanceManagementDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            services.AddTransient<Login>();
+            services.AddTransient<ManagementMenu>();
 
             using (var serviceProvider = services.BuildServiceProvider())
             {
@@ -33,7 +34,7 @@ namespace AttendanceManagementSystem
                 Application.SetHighDpiMode(HighDpiMode.SystemAware);
                 Application.EnableVisualStyles();
                 Application.SetCompatibleTextRenderingDefault(false);
-                var mainForm = serviceProvider.GetRequiredService<Login>();
+                var mainForm = serviceProvider.GetRequiredService<ManagementMenu>();
                 Application.Run(mainForm);
             }
         }
