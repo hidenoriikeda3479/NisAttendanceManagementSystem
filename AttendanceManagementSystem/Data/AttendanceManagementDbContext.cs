@@ -26,6 +26,11 @@ namespace AttendanceManagementSystem.Data
         public DbSet<EmployeeModel> Employees { get; set; } = default!;
 
         /// <summary>
+        /// 部署マスタのDbSet
+        /// </summary>
+        public DbSet<DepartmentModel> department { get; set; } = default!;
+
+        /// <summary>
         /// 権限マスタのDbSet
         /// </summary>
         public DbSet<PermissionModel> Permissions { get; set; } = default!;
@@ -62,11 +67,15 @@ namespace AttendanceManagementSystem.Data
             modelBuilder.Entity<ShiftManagementModel>()
                 .HasKey(sm => new { sm.EmployeeId, sm.Year, sm.Month, sm.Day });
 
+            // 部署マスタの初期データ
+            modelBuilder.Entity<DepartmentModel>().HasData(new DepartmentModel { DepartmentId = 1, DepartmentName = "開発", CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) },
+                new DepartmentModel { DepartmentId = 2, DepartmentName = "総務", CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) }
+            );
+
             // 権限マスタの初期データ
             modelBuilder.Entity<PermissionModel>().HasData(new PermissionModel { PermissionId = 1, PermissionName = "Admin", CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) },
                 new PermissionModel { PermissionId = 2, PermissionName = "User", CreatedAt = new DateTime(2024, 8, 9, 9, 0, 0), UpdatedAt = new DateTime(2024, 8, 9, 9, 0, 0) }
             );
-
 
             // ランクマスタの初期データ
             modelBuilder.Entity<RankModel>().HasData(

@@ -78,6 +78,13 @@ namespace AttendanceManagementSystem.Models
         public DateTime BirthDate { get; set; }
 
         /// <summary>
+        /// 部署ID
+        /// </summary>
+        [Required]
+        [Column("department_id")]
+        public int DepartmentId { get; set; }
+
+        /// <summary>
         /// ランクID
         /// </summary>
         [Required]
