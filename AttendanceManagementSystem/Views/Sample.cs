@@ -53,6 +53,12 @@ namespace AttendanceManagementSystem.Views
                 query = query.Where(e => e.EmployeeName == txtSearchEmployeeName.Text);
             }
 
+            // 退社でフィルタリング
+            if (!string.IsNullOrEmpty(txtSearchEmployeeName.Text))
+            {
+                query = query.Where(e => e.ResignDate == new DateTime());
+            }
+
             // フィルタリング結果を表示
             dgvEmployees.DataSource = query.ToList();
         }
@@ -110,21 +116,18 @@ namespace AttendanceManagementSystem.Views
                 // IDで従業員を検索
                 var employee = _context.Employees.Single(n => n.EmployeeId == employeeId);
 
-                if (employee != null)
-                {
-                    // 従業員情報を固定値で更新
-                    employee.EmployeeName = txtEditEmployeeName.Text;
-                    employee.UpdatedAt = DateTime.Now;
+                // 従業員情報を固定値で更新
+                employee.EmployeeName = txtEditEmployeeName.Text;
+                employee.UpdatedAt = DateTime.Now;
 
-                    // 追加したデータをコミット
-                    _context.SaveChanges();
+                // 追加したデータをコミット
+                _context.SaveChanges();
 
-                    // データグリッドを更新して通知
-                    MessageBox.Show("従業員情報が更新されました。");
+                // データグリッドを更新して通知
+                MessageBox.Show("従業員情報が更新されました。");
 
-                    // データグリッド再取得
-                    dgvEmployees.DataSource = _context.Employees.ToList();
-                }
+                // データグリッド再取得
+                dgvEmployees.DataSource = _context.Employees.ToList();
             }
             else
             {

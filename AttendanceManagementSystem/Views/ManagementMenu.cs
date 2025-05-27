@@ -26,12 +26,19 @@ namespace AttendanceManagementSystem.Views
 
         private void btnEmployeeRegistration_Click(object sender, EventArgs e)
         {
-
+            // サンプル
+            //(new Sample(_context)).Show();
         }
 
+        /// <summary>
+        /// 検索条件一覧
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void btnEmployeeList_Click(object sender, EventArgs e)
         {
-
+            // 従業員の検索フォームへ画面遷移
+            (new EmployeeListForm(_context)).Show();
         }
 
         private void btnSalaryList_Click(object sender, EventArgs e)
