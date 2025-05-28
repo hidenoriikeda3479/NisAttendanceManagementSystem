@@ -44,10 +44,10 @@
             // dgvEmployees
             // 
             dgvEmployees.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvEmployees.Location = new Point(12, 62);
+            dgvEmployees.Location = new Point(25, 64);
             dgvEmployees.Name = "dgvEmployees";
             dgvEmployees.ReadOnly = true;
-            dgvEmployees.Size = new Size(786, 360);
+            dgvEmployees.Size = new Size(773, 334);
             dgvEmployees.TabIndex = 0;
             dgvEmployees.CellContentClick += dgvEmployees_CellContentClick;
             // 
@@ -63,7 +63,7 @@
             // lblBirthDate
             // 
             lblBirthDate.AutoSize = true;
-            lblBirthDate.Location = new Point(429, 18);
+            lblBirthDate.Location = new Point(431, 18);
             lblBirthDate.Name = "lblBirthDate";
             lblBirthDate.Size = new Size(55, 15);
             lblBirthDate.TabIndex = 2;
@@ -94,7 +94,7 @@
             // 
             // btnSearch
             // 
-            btnSearch.Location = new Point(642, 14);
+            btnSearch.Location = new Point(642, 10);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(75, 23);
             btnSearch.TabIndex = 7;
@@ -106,7 +106,7 @@
             // 
             dtpSearchBirthDate.Enabled = false;
             dtpSearchBirthDate.Format = DateTimePickerFormat.Short;
-            dtpSearchBirthDate.Location = new Point(511, 15);
+            dtpSearchBirthDate.Location = new Point(513, 12);
             dtpSearchBirthDate.Name = "dtpSearchBirthDate";
             dtpSearchBirthDate.Size = new Size(104, 23);
             dtpSearchBirthDate.TabIndex = 8;
@@ -114,7 +114,7 @@
             // chbBirthday
             // 
             chbBirthday.AutoSize = true;
-            chbBirthday.Location = new Point(490, 19);
+            chbBirthday.Location = new Point(492, 19);
             chbBirthday.Name = "chbBirthday";
             chbBirthday.Size = new Size(15, 14);
             chbBirthday.TabIndex = 9;
@@ -123,7 +123,7 @@
             // 
             // AddButton
             // 
-            AddButton.Location = new Point(723, 14);
+            AddButton.Location = new Point(723, 10);
             AddButton.Name = "AddButton";
             AddButton.Size = new Size(75, 23);
             AddButton.TabIndex = 10;
@@ -135,7 +135,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(823, 442);
+            ClientSize = new Size(823, 410);
             Controls.Add(AddButton);
             Controls.Add(chbBirthday);
             Controls.Add(dtpSearchBirthDate);

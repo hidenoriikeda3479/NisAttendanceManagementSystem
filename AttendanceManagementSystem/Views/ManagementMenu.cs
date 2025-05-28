@@ -18,6 +18,10 @@ namespace AttendanceManagementSystem.Views
         /// </summary>
         private readonly AttendanceManagementDbContext _context;
 
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="context">DBコンテキスト</param>
         public ManagementMenu(AttendanceManagementDbContext context)
         {
             InitializeComponent();
@@ -31,7 +35,7 @@ namespace AttendanceManagementSystem.Views
         }
 
         /// <summary>
-        /// 検索条件一覧
+        /// 就業院検索条件一覧
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -41,9 +45,16 @@ namespace AttendanceManagementSystem.Views
             (new EmployeeListForm(_context)).Show();
         }
 
-        private void btnSalaryList_Click(object sender, EventArgs e)
+        /// <summary>
+        /// 部署検索条件一覧
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnDepartment_Click(object sender, EventArgs e)
         {
-
+            // 部署のフォームへ画面遷移
+            DepartmentListForm departmentListForm = new DepartmentListForm(_context);
+            departmentListForm.Show();
         }
     }
 }

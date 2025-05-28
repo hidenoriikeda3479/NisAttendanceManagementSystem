@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AttendanceManagementSystem.Data;
+using AttendanceManagementSystem.Views;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -46,6 +47,9 @@ namespace AttendanceManagementSystem
 
             // カラムにボタン追加
             ModifyButton();
+
+            // カラム名の変更
+            ChangingName();
         }
 
         /// <summary>
@@ -125,7 +129,7 @@ namespace AttendanceManagementSystem
         /// </summary>
         private void CheckedBirthday()
         {
-
+            // チェンジイベント
             dtpSearchBirthDate.Enabled = chbBirthday.Checked;
         }
 
@@ -205,7 +209,66 @@ namespace AttendanceManagementSystem
         private void ShowEmployeeEditFome()
         {
             // 従業員の登録フォームへ画面遷移
-            (new AddEmployeeForm(_context)).Show();
+            AddEmployeeForm addEmployeeForm = new AddEmployeeForm(_context);
+            addEmployeeForm.Show();
+        }
+
+        /// <summary>
+        /// 従業員のカラム名の変更
+        /// </summary>
+        private void ChangingName()
+        {
+            // カラムの表示名の変更
+            var cgId = dgvEmployees.Columns["EmployeeId"];
+            cgId.HeaderText = "ID";
+
+            var cgName = dgvEmployees.Columns["EmployeeName"];
+            cgName.HeaderText = "従業員名";
+
+            var cgGender = dgvEmployees.Columns["Gender"];
+            cgGender.HeaderText = "性別";
+
+            var cgPassword = dgvEmployees.Columns["Password"];
+            cgPassword.HeaderText = "パスワード";
+
+            var cgPhoneNumber = dgvEmployees.Columns["PhoneNumber"];
+            cgPhoneNumber.HeaderText = "電話番号";
+
+            var cgPostCode = dgvEmployees.Columns["PostCode"];
+            cgPostCode.HeaderText = "郵便番号";
+
+            var cgAddress = dgvEmployees.Columns["Address"];
+            cgAddress.HeaderText = "住所";
+
+            var cgBuildingName = dgvEmployees.Columns["BuildingName"];
+            cgBuildingName.HeaderText = "建物名";
+
+            var cgBirthDate = dgvEmployees.Columns["BirthDate"];
+            cgBirthDate.HeaderText = "生年月日";
+
+            var cgDepartmentId = dgvEmployees.Columns["DepartmentId"];
+            cgDepartmentId.HeaderText = "部署ID";
+
+            var cgRankId = dgvEmployees.Columns["RankId"];
+            cgRankId.HeaderText = "ランク情報";
+
+            var cgShiftId = dgvEmployees.Columns["ShiftId"];
+            cgShiftId.HeaderText = "シフト情報";
+
+            var cgHireDate = dgvEmployees.Columns["HireDate"];
+            cgHireDate.HeaderText = "入社日";
+
+            var cgResignDate = dgvEmployees.Columns["ResignDate"];
+            cgResignDate.HeaderText = "退社日";
+
+            var cgPermissionId = dgvEmployees.Columns["PermissionId"];
+            cgPermissionId.HeaderText = "権限";
+
+            var cgDepartment = dgvEmployees.Columns["CreatedAt"];
+            cgDepartment.HeaderText = "作成日";
+
+            var cgTitle = dgvEmployees.Columns["UpdatedAt"];
+            cgTitle.HeaderText = "更新日";
         }
     }
 }
