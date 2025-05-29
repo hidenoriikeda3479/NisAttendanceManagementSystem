@@ -22,7 +22,7 @@ namespace AttendanceManagementSystem.Views
         private readonly AttendanceManagementDbContext _context;
 
         /// <summary>
-        /// 部署ID
+        /// 部署IDを格納:する変数
         /// </summary>
         int departmentId;
 

@@ -29,7 +29,7 @@ namespace AttendanceManagementSystem
         private readonly AttendanceManagementDbContext _context;
 
         /// <summary>
-        /// 従業員ID
+        /// 従業員IDを格納する変数
         /// </summary>
         int employeeId;
 

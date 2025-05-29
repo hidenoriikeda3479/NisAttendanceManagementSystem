@@ -250,7 +250,7 @@ namespace AttendanceManagementSystem
             cgDepartmentId.HeaderText = "部署ID";
 
             var cgRankId = dgvEmployees.Columns["RankId"];
-            cgRankId.HeaderText = "ランク情報";
+            cgRankId.HeaderText = "時給";
 
             var cgShiftId = dgvEmployees.Columns["ShiftId"];
             cgShiftId.HeaderText = "シフト情報";
