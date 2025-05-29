@@ -11,7 +11,9 @@ using AttendanceManagementSystem.Data;
 
 namespace AttendanceManagementSystem.Views
 {
-
+    /// <summary>
+    /// 部署編集画面
+    /// </summary>
     public partial class EditDepartmentForm : Form
     {
         /// <summary>
@@ -20,7 +22,7 @@ namespace AttendanceManagementSystem.Views
         private readonly AttendanceManagementDbContext _context;
 
         /// <summary>
-        /// 従業員ID
+        /// 部署ID
         /// </summary>
         int departmentId;
 
@@ -28,7 +30,7 @@ namespace AttendanceManagementSystem.Views
         /// コンストラクタ
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
-        /// <param name="employee">従業員ID</param>
+        /// <param name="employee">部署ID</param>
         public EditDepartmentForm(AttendanceManagementDbContext context, int department)
         {
             InitializeComponent();
@@ -44,7 +46,7 @@ namespace AttendanceManagementSystem.Views
         private void EditDepartmentForm_Load(object sender, EventArgs e)
         {
             // 取得データ表示
-            ShowEmployee();
+            ShowDepartment();
         }
 
         /// <summary>
@@ -55,7 +57,7 @@ namespace AttendanceManagementSystem.Views
         private void btnEditDepartment_Click(object sender, EventArgs e)
         {
             // 空白のチェック
-            if (!SpaceDepartment())
+            if (!CheckDepartment())
             {
                 // 空白がある場合、処理を停止
                 return;
@@ -74,14 +76,14 @@ namespace AttendanceManagementSystem.Views
             var department = _context.department.Single(a => a.DepartmentId == departmentId);
 
             // 部署情報を固定値で更新
-            department.DepartmentName = txtEditingDepartment.Text; // 従業員名
+            department.DepartmentName = txtEditingDepartment.Text; // 部署名
             department.UpdatedAt = DateTime.Now;                   // 更新日
 
             // 追加したデータをコミット
             _context.SaveChanges();
 
             // データグリッドを更新して通知
-            MessageBox.Show("従業員情報が更新されました。");
+            MessageBox.Show("部署名が変更されました。");
 
             // 部署編集画面を閉じる
             this.Close();
@@ -90,7 +92,7 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// 部署の取得データ表示処理
         /// </summary>
-        private void ShowEmployee()
+        private void ShowDepartment()
         {
             var department = _context.department.Single(a => a.DepartmentId == departmentId);
             txtEditingDepartment.Text = department.DepartmentName;
@@ -99,7 +101,7 @@ namespace AttendanceManagementSystem.Views
         /// <summary>
         /// 部署入力チェック処理
         /// </summary>
-        private bool SpaceDepartment()
+        private bool CheckDepartment()
         {
             // 部署名のテキストボックスが空白の場合
             if (string.IsNullOrEmpty(txtEditingDepartment.Text))

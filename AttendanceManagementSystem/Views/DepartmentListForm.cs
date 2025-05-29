@@ -12,6 +12,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AttendanceManagementSystem.Views
 {
+    /// <summary>
+    /// 部署一覧画面
+    /// </summary>
     public partial class DepartmentListForm : Form
     {
         /// <summary>
@@ -30,35 +33,35 @@ namespace AttendanceManagementSystem.Views
         }
 
         /// <summary>
-        /// フォームロード処理
+        /// フォームの初期処理
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void DepartmentListForm_Load(object sender, EventArgs e)
         {
-            // 部署情報の表示
+            // 部署情報のすべて表示
             GetDepartment();
 
-            // カラムにボタン追加
+            // カラムにボタンを追加
             ModifyButton();
 
             // カラム名の変更
-            ChangingName();
+            SetHeaderColumn();
         }
 
         /// <summary>
-        /// 検索ボタン押下処理
+        /// 検索ボタン押下
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            // 部署検索
+            // 部署名の検索処理
             FindDepartment();
         }
 
         /// <summary>
-        /// データグリップビューにあるボタン押下処理
+        /// データグリップビューにあるカラムボタン押下処理
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -66,17 +69,17 @@ namespace AttendanceManagementSystem.Views
         {
             DataGridView btnClick = (DataGridView)sender;
 
-            // 編集ボタンががクリックされた場合(編集ボタン)
-            if (btnClick.Columns[e.ColumnIndex].Name == "編集")
+            // 「editButton」ボタンががクリックされた場合
+            if (btnClick.Columns[e.ColumnIndex].Name == "editButton")
             {
-                // 選択された従業員のIDを取得
+                // 編集ボタンを押した行からデータを取得し画面遷移先に受け渡す
                 int departmentId = (int)dgvDepartment.Rows[e.RowIndex].Cells["DepartmentId"].Value;
                 EditDepartmentForm updateDepartment = new EditDepartmentForm(_context, departmentId);
                 updateDepartment.Show();
             }
 
-            // 削除ボタンがクリックされた場合(クリアボタン)
-            if (btnClick.Columns[e.ColumnIndex].Name == "削除")
+            // 「clearButton」ボタンがクリックされた場合
+            if (btnClick.Columns[e.ColumnIndex].Name == "clearButton")
             {
                 // 選択された従業員のIDを取得
                 int dmployeeId = (int)dgvDepartment.Rows[e.RowIndex].Cells["DepartmentId"].Value;
@@ -99,14 +102,14 @@ namespace AttendanceManagementSystem.Views
         }
 
         /// <summary>
-        /// 部署登録ボタン押下処理
+        /// 新規部署名の登録ボタン
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void AddButton_Click(object sender, EventArgs e)
         {
-            // 部署登録画面
-            ShowDepartmentAddForm();
+            // 部署登録画面へ移動する処理
+            ShowDepartmentEditFome();
         }
 
         /// <summary>
@@ -135,7 +138,7 @@ namespace AttendanceManagementSystem.Views
             // DataGridViewButtonColumnの作成
             // 編集ボタン
             DataGridViewButtonColumn Update1 = new DataGridViewButtonColumn();
-            Update1.Name = "編集";
+            Update1.Name = "editButton";
 
             // 全てのボタンに「編集」と表示
             Update1.UseColumnTextForButtonValue = true;
@@ -146,9 +149,9 @@ namespace AttendanceManagementSystem.Views
 
             // 削除ボタン
             DataGridViewButtonColumn Update2 = new DataGridViewButtonColumn();
-            Update2.Name = "削除";
+            Update2.Name = "clearButton";
 
-            // 全てのボタンに「編集」と表示
+            // 全てのボタンに「削除」と表示
             Update2.UseColumnTextForButtonValue = true;
             Update2.Text = "削除";
 
@@ -160,7 +163,7 @@ namespace AttendanceManagementSystem.Views
         }
 
         /// <summary>
-        /// フォームロード時に部署のデータを表示
+        /// フォームロード時に部署のデータをすべて表示
         /// </summary>
         private void GetDepartment()
         {
@@ -169,9 +172,9 @@ namespace AttendanceManagementSystem.Views
         }
 
         /// <summary>
-        /// 部署登録画面へ画面遷移
+        /// 新規部署名の登録画面へ画面遷移する処理
         /// </summary>
-        private void ShowDepartmentAddForm()
+        private void ShowDepartmentEditFome()
         {
             // 部署新規登録フォームへ画面遷移する処理
             DepartmentScreenForm departmentScreenForm = new DepartmentScreenForm(_context);
@@ -179,9 +182,9 @@ namespace AttendanceManagementSystem.Views
         }
 
         /// <summary>
-        /// 部署のカラム名の変更
+        /// 部署のカラム名の変更する処理
         /// </summary>
-        private void ChangingName()
+        private void SetHeaderColumn()
         {
             // カラムの表示名の変更
             var cgId = dgvDepartment.Columns["DepartmentId"];
@@ -195,6 +198,12 @@ namespace AttendanceManagementSystem.Views
 
             var cgTitle = dgvDepartment.Columns["UpdatedAt"];
             cgTitle.HeaderText = "更新日";
+
+            var cgEditButton = dgvDepartment.Columns["editButton"];
+            cgEditButton.HeaderText = "編集";
+
+            var cgClearButton = dgvDepartment.Columns["clearButton"];
+            cgClearButton.HeaderText = "削除";
         }
     }
 }

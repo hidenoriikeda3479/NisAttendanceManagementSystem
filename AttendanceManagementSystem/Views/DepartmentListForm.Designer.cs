@@ -41,6 +41,7 @@
             dgvDepartment.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvDepartment.Location = new Point(11, 60);
             dgvDepartment.Name = "dgvDepartment";
+            dgvDepartment.ReadOnly = true;
             dgvDepartment.Size = new Size(449, 218);
             dgvDepartment.TabIndex = 0;
             dgvDepartment.CellContentClick += dgbDepartment_CellContentClick;

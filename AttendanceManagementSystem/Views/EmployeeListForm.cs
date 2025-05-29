@@ -49,7 +49,7 @@ namespace AttendanceManagementSystem
             ModifyButton();
 
             // カラム名の変更
-            ChangingName();
+            SetHeaderColumn();
         }
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace AttendanceManagementSystem
         /// <param name="e"></param>
         private void chbBirthday_CheckedChanged(object sender, EventArgs e)
         {
-            // 生年月日の表示
+            // 生年月日チェックボックス表示確認
             CheckedBirthday();
         }
 
@@ -82,7 +82,7 @@ namespace AttendanceManagementSystem
         private void AddButton_Click(object sender, EventArgs e)
         {
             // 従業員登録画面
-            ShowEmployeeEditFome();
+            ShowEmployeeEntryForm();
         }
 
         /// <summary>
@@ -125,11 +125,11 @@ namespace AttendanceManagementSystem
         }
 
         /// <summary>
-        /// 生年月日の入力チェックボックスのチェンジイベント
+        /// 生年月日入力チェックボックスの変更処理
         /// </summary>
         private void CheckedBirthday()
         {
-            // チェンジイベント
+            // 誕生日の入力欄が有効か無効の確認
             dtpSearchBirthDate.Enabled = chbBirthday.Checked;
         }
 
@@ -142,17 +142,17 @@ namespace AttendanceManagementSystem
         {
             DataGridView btnClick = (DataGridView)sender;
 
-            //「Button1」列がクリックされた場合(編集ボタン)
-            if (btnClick.Columns[e.ColumnIndex].Name == "編集")
+            // 編集ボタンがクリックされた場合
+            if (btnClick.Columns[e.ColumnIndex].Name == "editButton")
             {
-                // 選択された従業員のIDを取得
+                // 編集ボタンを押した行からデータを取得し画面遷移先に受け渡す
                 int employeeId = (int)dgvEmployees.Rows[e.RowIndex].Cells["EmployeeId"].Value;
                 UpdateEmployeeForm updateEmployee = new UpdateEmployeeForm(_context, employeeId);
                 updateEmployee.Show();
             }
 
-            //「Button2の行がクリックされた場合(クリアボタン)
-            if (btnClick.Columns[e.ColumnIndex].Name == "削除")
+            // 削除ボタンがクリックされた場合
+            if (btnClick.Columns[e.ColumnIndex].Name == "clearButton")
             {
                 // 選択された従業員のIDを取得
                 int employeeId = (int)dgvEmployees.Rows[e.RowIndex].Cells["EmployeeId"].Value;
@@ -182,7 +182,7 @@ namespace AttendanceManagementSystem
             // DataGridViewButtonColumnの作成
             // 編集ボタン
             DataGridViewButtonColumn Update1 = new DataGridViewButtonColumn();
-            Update1.Name = "編集";
+            Update1.Name = "editButton";
 
             // 全てのボタンに「編集」と表示
             Update1.UseColumnTextForButtonValue = true;
@@ -193,9 +193,9 @@ namespace AttendanceManagementSystem
 
             // 削除ボタン
             DataGridViewButtonColumn Update2 = new DataGridViewButtonColumn();
-            Update2.Name = "削除";
+            Update2.Name = "clearButton";
 
-            // 全てのボタンに「編集」と表示
+            // 全てのボタンに「削除」と表示
             Update2.UseColumnTextForButtonValue = true;
             Update2.Text = "削除";
 
@@ -206,7 +206,7 @@ namespace AttendanceManagementSystem
         /// <summary>
         /// 従業員登録画面へ画面遷移
         /// </summary>
-        private void ShowEmployeeEditFome()
+        private void ShowEmployeeEntryForm()
         {
             // 従業員の登録フォームへ画面遷移
             AddEmployeeForm addEmployeeForm = new AddEmployeeForm(_context);
@@ -216,7 +216,7 @@ namespace AttendanceManagementSystem
         /// <summary>
         /// 従業員のカラム名の変更
         /// </summary>
-        private void ChangingName()
+        private void SetHeaderColumn()
         {
             // カラムの表示名の変更
             var cgId = dgvEmployees.Columns["EmployeeId"];
@@ -269,6 +269,12 @@ namespace AttendanceManagementSystem
 
             var cgTitle = dgvEmployees.Columns["UpdatedAt"];
             cgTitle.HeaderText = "更新日";
+
+            var cgEditButton = dgvEmployees.Columns["editButton"];
+            cgEditButton.HeaderText = "編集";
+
+            var cgClearButton = dgvEmployees.Columns["clearButton"];
+            cgClearButton.HeaderText = "削除";
         }
     }
 }

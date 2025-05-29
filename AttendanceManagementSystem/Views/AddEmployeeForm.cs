@@ -44,7 +44,7 @@ namespace AttendanceManagementSystem
         }
 
         /// <summary>
-        /// 登録ボタン押下処理
+        /// 従業員登録ボタン押下処理
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -108,7 +108,7 @@ namespace AttendanceManagementSystem
             }
 
             // 性別が未入力の場合
-            if (string.IsNullOrEmpty(cbGender.Text))
+            if (cbGender.SelectedIndex == -1)
             {
                 MessageBox.Show("性別の入力がありません。記載してください");
                 return false;
@@ -149,17 +149,17 @@ namespace AttendanceManagementSystem
                 return false;
             }
 
-            // ランクIDが未入力の場合
-            if (string.IsNullOrEmpty(cobRank.Text))
+            // 時給が未入力の場合
+            if (cobRank.SelectedValue == null || cobRank.SelectedIndex == -1)
             {
-                MessageBox.Show("建物名を選択してください");
+                MessageBox.Show("時給を選択してください");
                 return false;
             }
 
-            // 権限IDが未入力の場合
-            if (string.IsNullOrEmpty(cbxAuthorized.Text))
+            // 権限が未入力の場合
+            if (cbxAuthorized.SelectedValue == null || cbxAuthorized.SelectedIndex == -1)
             {
-                MessageBox.Show("建物名を選択してください");
+                MessageBox.Show("権限を選択してください");
                 return false;
             }
             return true;
@@ -170,7 +170,7 @@ namespace AttendanceManagementSystem
         /// </summary>
         private void AddEmployee()
         {
-            // ランク情報
+            // Ranksテーブルを取得し、コンボボックスに設定
             cobRank.DataSource = _context.Ranks.ToList();
 
             // 画面に表示する項目を設定
@@ -180,7 +180,7 @@ namespace AttendanceManagementSystem
             this.cobRank.ValueMember = "RankId";
 
 
-            //　権限情報
+            //　Permissionsテーブルを取得し、コンボボックスに設定
             cbxAuthorized.DataSource = _context.Permissions.ToList();
 
             // 画面に表示する項目を設定

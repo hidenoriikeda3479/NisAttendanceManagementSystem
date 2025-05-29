@@ -17,7 +17,9 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace AttendanceManagementSystem
 {
-
+    /// <summary>
+    /// 従業員編集画面
+    /// </summary>
     public partial class UpdateEmployeeForm : Form
     {
         /// <summary>

@@ -11,6 +11,9 @@ using System.Windows.Forms;
 
 namespace AttendanceManagementSystem.Views
 {
+    /// <summary>
+    /// 初期選択画面
+    /// </summary>
     public partial class ManagementMenu : Form
     {
         /// <summary>

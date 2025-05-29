@@ -12,6 +12,9 @@ using AttendanceManagementSystem.Models;
 
 namespace AttendanceManagementSystem.Views
 {
+    /// <summary>
+    /// 部署登録画面
+    /// </summary>
     public partial class DepartmentScreenForm : Form
     {
         /// <summary>
@@ -30,14 +33,14 @@ namespace AttendanceManagementSystem.Views
         }
 
         /// <summary>
-        /// 登録ボタン押下処理
+        /// 部署登録ボタン押下
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnRegisterDepartment_Click(object sender, EventArgs e)
         {
             // 空白のチェック
-            if (!SpaceDepartment())
+            if (!CheckDepartment())
             {
                 // 空白がある場合、処理を停止
                 return;
@@ -76,7 +79,7 @@ namespace AttendanceManagementSystem.Views
         /// テキストボックスが空白の場合
         /// </summary>
         /// <returns></returns>
-        private bool SpaceDepartment()
+        private bool CheckDepartment()
         {
             if (string.IsNullOrEmpty(txtRegisterDepartment.Text))
             {
