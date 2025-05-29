@@ -59,7 +59,7 @@ namespace AttendanceManagementSystem
         /// <param name="e"></param>
         private void getEmployeeButton_Click(object sender, EventArgs e)
         {
-            // 従業員検索
+            // 従業員の検索処理
             FindEmployee();
         }
 
@@ -129,7 +129,7 @@ namespace AttendanceManagementSystem
         /// </summary>
         private void CheckedBirthday()
         {
-            // 誕生日の入力欄が有効か無効の確認
+            // 誕生日チェックボックスがチェックの時
             dtpSearchBirthDate.Enabled = chbBirthday.Checked;
         }
 

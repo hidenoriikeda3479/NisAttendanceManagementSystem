@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using AttendanceManagementSystem.Data;
 using AttendanceManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
@@ -45,7 +46,7 @@ namespace AttendanceManagementSystem
         }
 
         /// <summary>
-        /// フォームロード
+        /// フォームの初期処理
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -86,7 +87,7 @@ namespace AttendanceManagementSystem
             }
 
             // 性別が未入力の場合
-            if (string.IsNullOrEmpty(cbGender.Text))
+            if (cbGender.SelectedIndex == -1)
             {
                 MessageBox.Show("性別の入力がありません。記載してください");
                 return false;

@@ -51,7 +51,7 @@ namespace AttendanceManagementSystem.Views
         }
 
         /// <summary>
-        /// 部署登録
+        /// 部署名の編集をする処理と作成日の適用処理
         /// </summary>
         private void RegisterDepartment()
         {

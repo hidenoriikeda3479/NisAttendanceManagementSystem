@@ -33,14 +33,14 @@ namespace AttendanceManagementSystem
         }
 
         /// <summary>
-        /// フォームロード処理
+        /// フォームの初期処理
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void AddEmployeeForm_Load(object sender, EventArgs e)
         {
             // コンボボックス値の設定
-            AddEmployee();
+            AddComboboxItem();
         }
 
         /// <summary>
@@ -57,12 +57,12 @@ namespace AttendanceManagementSystem
                 return;
             }
 
-            // 従業員登録
+            // 従業員の新規登録
             RegisterEmployee();
         }
 
         /// <summary>
-        /// 従業員登録情報の登録
+        /// 新規従業員情報の登録
         /// </summary>
         private void RegisterEmployee()
         {
@@ -150,14 +150,14 @@ namespace AttendanceManagementSystem
             }
 
             // 時給が未入力の場合
-            if (cobRank.SelectedValue == null || cobRank.SelectedIndex == -1)
+            if (cobRank.SelectedIndex == -1)
             {
                 MessageBox.Show("時給を選択してください");
                 return false;
             }
 
             // 権限が未入力の場合
-            if (cbxAuthorized.SelectedValue == null || cbxAuthorized.SelectedIndex == -1)
+            if (cbxAuthorized.SelectedIndex == -1)
             {
                 MessageBox.Show("権限を選択してください");
                 return false;
@@ -168,7 +168,7 @@ namespace AttendanceManagementSystem
         /// <summary>
         /// コンボボックスに取得した値の設定
         /// </summary>
-        private void AddEmployee()
+        private void AddComboboxItem()
         {
             // Ranksテーブルを取得し、コンボボックスに設定
             cobRank.DataSource = _context.Ranks.ToList();

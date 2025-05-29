@@ -50,7 +50,7 @@ namespace AttendanceManagementSystem.Views
         }
 
         /// <summary>
-        /// 検索ボタン押下
+        /// 部署の検索ボタン押下
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>

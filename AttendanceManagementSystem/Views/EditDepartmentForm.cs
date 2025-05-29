@@ -30,7 +30,7 @@ namespace AttendanceManagementSystem.Views
         /// コンストラクタ
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
-        /// <param name="employee">部署ID</param>
+        /// <param name="department">部署ID</param>
         public EditDepartmentForm(AttendanceManagementDbContext context, int department)
         {
             InitializeComponent();
@@ -50,7 +50,7 @@ namespace AttendanceManagementSystem.Views
         }
 
         /// <summary>
-        /// 部署編集ボタン押下処理
+        /// 部署の編集ボタン押下
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -63,19 +63,19 @@ namespace AttendanceManagementSystem.Views
                 return;
             }
 
-            // 部署編集
+            // 部署名の編集をする処理
             EditDepartment();
         }
 
         /// <summary>
-        /// 部署名の編集処理
+        /// 部署名の編集をする処理と更新日の適用処理
         /// </summary>
         private void EditDepartment()
         {
             // IDで部署を検索
             var department = _context.department.Single(a => a.DepartmentId == departmentId);
 
-            // 部署情報を固定値で更新
+            // 部署情報の更新
             department.DepartmentName = txtEditingDepartment.Text; // 部署名
             department.UpdatedAt = DateTime.Now;                   // 更新日
 
