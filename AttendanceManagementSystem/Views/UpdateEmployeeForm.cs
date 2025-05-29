@@ -11,13 +11,16 @@ using System.Windows.Forms;
 using AttendanceManagementSystem.Data;
 using AttendanceManagementSystem.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 namespace AttendanceManagementSystem
 {
-
+    /// <summary>
+    /// 従業員編集画面
+    /// </summary>
     public partial class UpdateEmployeeForm : Form
     {
         /// <summary>
@@ -26,7 +29,7 @@ namespace AttendanceManagementSystem
         private readonly AttendanceManagementDbContext _context;
 
         /// <summary>
-        /// 従業員ID
+        /// 従業員IDを格納する変数
         /// </summary>
         int employeeId;
 
@@ -43,7 +46,7 @@ namespace AttendanceManagementSystem
         }
 
         /// <summary>
-        /// フォームロード
+        /// フォームの初期処理
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
@@ -77,49 +80,49 @@ namespace AttendanceManagementSystem
         private bool CheckEmployee()
         {
             // 従業員名が未入力の場合
-            if (!string.IsNullOrEmpty(txtEmployeeName.Text))
+            if (string.IsNullOrEmpty(txtEmployeeName.Text))
                 {
                 MessageBox.Show("従業員名のの入力がありません。記載してください");
                 return false;
             }
 
             // 性別が未入力の場合
-            if (!string.IsNullOrEmpty(cbGender.Text))
+            if (cbGender.SelectedIndex == -1)
             {
                 MessageBox.Show("性別の入力がありません。記載してください");
                 return false;
             }
 
             // パスワードが未入力の場合
-            if (!string.IsNullOrEmpty(txbPass.Text))
+            if (string.IsNullOrEmpty(txbPass.Text))
             {
                 MessageBox.Show("パスワードを選択してください");
                 return false;
             }
 
             // 電話番号が未入力の場合
-            if (!string.IsNullOrEmpty(txtSearchContactNumber.Text))
+            if (string.IsNullOrEmpty(txtSearchContactNumber.Text))
             {
                 MessageBox.Show("電話番号を選択してください");
                 return false;
             }
 
             // 郵便番号が未入力の場合
-            if (!string.IsNullOrEmpty(txtPhoneNumber.Text))
+            if (string.IsNullOrEmpty(txtPhoneNumber.Text))
             {
                 MessageBox.Show("郵便番号を選択してください");
                 return false;
             }
 
             // 住所が未入力の場合
-            if (!string.IsNullOrEmpty(txtMailingAddress.Text))
+            if (string.IsNullOrEmpty(txtMailingAddress.Text))
             {
                 MessageBox.Show("住所を選択してください");
                 return false;
             }
 
             // 建物名が未入力の場合
-            if (!string.IsNullOrEmpty(txtBuildingName.Text))
+            if (string.IsNullOrEmpty(txtBuildingName.Text))
             {
                 MessageBox.Show("建物名を選択してください");
                 return false;

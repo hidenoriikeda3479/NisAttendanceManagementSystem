@@ -28,24 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            btnEmployeeRegistration = new Button();
             btnEmployeeList = new Button();
-            btnSalaryList = new Button();
+            btnDepartment = new Button();
             SuspendLayout();
-            // 
-            // btnEmployeeRegistration
-            // 
-            btnEmployeeRegistration.Location = new Point(12, 12);
-            btnEmployeeRegistration.Name = "btnEmployeeRegistration";
-            btnEmployeeRegistration.Size = new Size(75, 23);
-            btnEmployeeRegistration.TabIndex = 0;
-            btnEmployeeRegistration.Text = "従業員登録";
-            btnEmployeeRegistration.UseVisualStyleBackColor = true;
-            btnEmployeeRegistration.Click += btnEmployeeRegistration_Click;
             // 
             // btnEmployeeList
             // 
-            btnEmployeeList.Location = new Point(12, 41);
+            btnEmployeeList.Location = new Point(12, 28);
             btnEmployeeList.Name = "btnEmployeeList";
             btnEmployeeList.Size = new Size(75, 23);
             btnEmployeeList.TabIndex = 1;
@@ -53,33 +42,30 @@
             btnEmployeeList.UseVisualStyleBackColor = true;
             btnEmployeeList.Click += btnEmployeeList_Click;
             // 
-            // btnSalaryList
+            // btnDepartment
             // 
-            btnSalaryList.Location = new Point(12, 70);
-            btnSalaryList.Name = "btnSalaryList";
-            btnSalaryList.Size = new Size(75, 23);
-            btnSalaryList.TabIndex = 2;
-            btnSalaryList.Text = "給与一覧";
-            btnSalaryList.UseVisualStyleBackColor = true;
-            btnSalaryList.Click += btnSalaryList_Click;
+            btnDepartment.Location = new Point(12, 66);
+            btnDepartment.Name = "btnDepartment";
+            btnDepartment.Size = new Size(75, 23);
+            btnDepartment.TabIndex = 2;
+            btnDepartment.Text = "部署一覧";
+            btnDepartment.UseVisualStyleBackColor = true;
+            btnDepartment.Click += btnDepartment_Click;
             // 
             // ManagementMenu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(267, 188);
-            Controls.Add(btnSalaryList);
+            ClientSize = new Size(213, 168);
+            Controls.Add(btnDepartment);
             Controls.Add(btnEmployeeList);
-            Controls.Add(btnEmployeeRegistration);
             Name = "ManagementMenu";
             Text = "ManagementMenu";
             ResumeLayout(false);
         }
 
         #endregion
-
-        private Button btnEmployeeRegistration;
         private Button btnEmployeeList;
-        private Button btnSalaryList;
+        private Button btnDepartment;
     }
 }

@@ -33,25 +33,36 @@ namespace AttendanceManagementSystem
         }
 
         /// <summary>
-        /// 登録ボタン押下処理
+        /// フォームの初期処理
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void AddEmployeeForm_Load(object sender, EventArgs e)
+        {
+            // コンボボックス値の設定
+            AddComboboxItem();
+        }
+
+        /// <summary>
+        /// 従業員登録ボタン押下処理
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
         private void btnRegister_Click(object sender, EventArgs e)
         {
             // 空白のチェック
-            if (!CheckEmployee()) 
+            if (!CheckEmployee())
             {
                 // 空白がある場合、処理を停止
                 return;
             }
 
-            // 従業員登録
+            // 従業員の新規登録
             RegisterEmployee();
         }
 
         /// <summary>
-        /// 従業員登録情報の登録
+        /// 新規従業員情報の登録
         /// </summary>
         private void RegisterEmployee()
         {
@@ -67,6 +78,8 @@ namespace AttendanceManagementSystem
                 BuildingName = txtBuildingName.Text,        // 建物名
                 BirthDate = dtpSearchBirthDate.Value,       // 生年月日
                 CreatedAt = DateTime.Now,                   // 作成日
+                RankId = (int)cobRank.SelectedValue,        // 従業員名
+                PermissionId = (int)cbxAuthorized.SelectedValue,        // 従業員名
             };
 
             // 新しい従業員データを追加
@@ -88,54 +101,93 @@ namespace AttendanceManagementSystem
         private bool CheckEmployee()
         {
             // 従業員名が未入力の場合
-            if (!string.IsNullOrEmpty(txtEmployeeName.Text))
+            if (string.IsNullOrEmpty(txtEmployeeName.Text))
             {
                 MessageBox.Show("従業員名のの入力がありません。記載してください");
                 return false;
             }
 
             // 性別が未入力の場合
-            if (!string.IsNullOrEmpty(cbGender.Text))
+            if (cbGender.SelectedIndex == -1)
             {
                 MessageBox.Show("性別の入力がありません。記載してください");
                 return false;
             }
 
             // パスワードが未入力の場合
-            if (!string.IsNullOrEmpty(txbPass.Text))
+            if (string.IsNullOrEmpty(txbPass.Text))
             {
                 MessageBox.Show("パスワードを選択してください");
                 return false;
             }
 
             // 電話番号が未入力の場合
-            if (!string.IsNullOrEmpty(txtSearchContactNumber.Text))
+            if (string.IsNullOrEmpty(txtSearchContactNumber.Text))
             {
                 MessageBox.Show("電話番号を選択してください");
                 return false;
             }
 
             // 郵便番号が未入力の場合
-            if (!string.IsNullOrEmpty(txtPhoneNumber.Text))
+            if (string.IsNullOrEmpty(txtPhoneNumber.Text))
             {
                 MessageBox.Show("郵便番号を選択してください");
                 return false;
             }
 
             // 住所が未入力の場合
-            if (!string.IsNullOrEmpty(txtMailingAddress.Text))
+            if (string.IsNullOrEmpty(txtMailingAddress.Text))
             {
                 MessageBox.Show("住所を選択してください");
                 return false;
             }
 
             // 建物名が未入力の場合
-            if (!string.IsNullOrEmpty(txtBuildingName.Text))
+            if (string.IsNullOrEmpty(txtBuildingName.Text))
             {
                 MessageBox.Show("建物名を選択してください");
                 return false;
             }
+
+            // 時給が未入力の場合
+            if (cobRank.SelectedIndex == -1)
+            {
+                MessageBox.Show("時給を選択してください");
+                return false;
+            }
+
+            // 権限が未入力の場合
+            if (cbxAuthorized.SelectedIndex == -1)
+            {
+                MessageBox.Show("権限を選択してください");
+                return false;
+            }
             return true;
+        }
+
+        /// <summary>
+        /// コンボボックスに取得した値の設定
+        /// </summary>
+        private void AddComboboxItem()
+        {
+            // Ranksテーブルを取得し、コンボボックスに設定
+            cobRank.DataSource = _context.Ranks.ToList();
+
+            // 画面に表示する項目を設定
+            this.cobRank.DisplayMember = "HourlyPay";
+
+            // リンクさせるための値を設定
+            this.cobRank.ValueMember = "RankId";
+
+
+            //　Permissionsテーブルを取得し、コンボボックスに設定
+            cbxAuthorized.DataSource = _context.Permissions.ToList();
+
+            // 画面に表示する項目を設定
+            this.cbxAuthorized.DisplayMember = "PermissionName";
+
+            // リンクさせるための値を設定
+            this.cbxAuthorized.ValueMember = "PermissionId";
         }
     }
 }
