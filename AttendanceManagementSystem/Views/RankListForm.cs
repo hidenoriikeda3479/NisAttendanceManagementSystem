@@ -222,7 +222,7 @@ namespace AttendanceManagementSystem.Views
                 rank.HourlyPay = int.Parse(txtRank.Text);  // 時給名
                 rank.UpdatedAt = DateTime.Now;             // 更新日
 
-                // 権限が重複している文字列を排除する処理
+                // 時給が重複している文字列を排除する処理
                 var checkLinq = _context.Ranks.Select(c => c.HourlyPay).Distinct();
 
                 // 重複している文字れつがある場合、処理を停止
