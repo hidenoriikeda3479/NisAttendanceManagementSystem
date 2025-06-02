@@ -100,28 +100,28 @@ namespace AttendanceManagementSystem
         private void FindEmployee()
         {
             // 検索クエリの初期化
-            var queryClear = _context.Employees.AsQueryable();
+            var queryDelete = _context.Employees.AsQueryable();
 
             // 従業員名でフィルタリング
             if (!string.IsNullOrEmpty(txtSearchEmployeeName.Text))
             {
-                queryClear = queryClear.Where(a => a.EmployeeName.Contains(txtSearchEmployeeName.Text));
+                queryDelete = queryDelete.Where(a => a.EmployeeName.Contains(txtSearchEmployeeName.Text));
             }
 
             // 生年月日でフィルタリング
             if (chbBirthday.Checked)
             {
-                queryClear = queryClear.Where(b => b.BirthDate.Date == dtpSearchBirthDate.Value.Date);
+                queryDelete = queryDelete.Where(b => b.BirthDate.Date == dtpSearchBirthDate.Value.Date);
             }
 
             // 電話番号でフィルタリング
             if (!string.IsNullOrEmpty(txtSearchContactNumber.Text))
             {
-                queryClear = queryClear.Where(c => c.PhoneNumber == txtSearchContactNumber.Text);
+                queryDelete = queryDelete.Where(c => c.PhoneNumber == txtSearchContactNumber.Text);
             }
 
             // フィルタリングデータを表示
-            dgvEmployees.DataSource = queryClear.ToList();
+            dgvEmployees.DataSource = queryDelete.ToList();
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace AttendanceManagementSystem
             }
 
             // 削除ボタンがクリックされた場合
-            if (btnClick.Columns[e.ColumnIndex].Name == "clearButton")
+            if (btnClick.Columns[e.ColumnIndex].Name == "deleteButton")
             {
                 // 選択された従業員のIDを取得
                 int employeeId = (int)dgvEmployees.Rows[e.RowIndex].Cells["EmployeeId"].Value;
@@ -193,7 +193,7 @@ namespace AttendanceManagementSystem
 
             // 削除ボタン
             DataGridViewButtonColumn Update2 = new DataGridViewButtonColumn();
-            Update2.Name = "clearButton";
+            Update2.Name = "deleteButton";
 
             // 全てのボタンに「削除」と表示
             Update2.UseColumnTextForButtonValue = true;
@@ -273,8 +273,8 @@ namespace AttendanceManagementSystem
             var cgEditButton = dgvEmployees.Columns["editButton"];
             cgEditButton.HeaderText = "編集";
 
-            var cgClearButton = dgvEmployees.Columns["clearButton"];
-            cgClearButton.HeaderText = "削除";
+            var cgDeleteButton = dgvEmployees.Columns["deleteButton"];
+            cgDeleteButton.HeaderText = "削除";
         }
     }
 }
