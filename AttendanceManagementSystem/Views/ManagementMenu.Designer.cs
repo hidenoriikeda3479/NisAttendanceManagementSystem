@@ -70,7 +70,7 @@
             btnRank.Name = "btnRank";
             btnRank.Size = new Size(75, 23);
             btnRank.TabIndex = 4;
-            btnRank.Text = "給料一覧";
+            btnRank.Text = "時給一覧";
             btnRank.UseVisualStyleBackColor = true;
             btnRank.Click += btnRank_Click;
             // 

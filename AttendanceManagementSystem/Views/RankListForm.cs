@@ -134,18 +134,7 @@ namespace AttendanceManagementSystem.Views
             if (dgvRank.SelectedRows.Count > 0)
             {
                 // 選択された時給のIDを取得する
-                int rankId = (int)dgvRank.SelectedRows[0].Cells["RankId"].Value;
-
-                // IDで時給を検索
-                var rank = _context.Ranks.Where(a => a.RankId == rankId).Select(a => a.HourlyPay).SingleOrDefault();
-
-                // オブジェクトを文字列に変換し、テキストボックスに表示する
-                txtRank.Text = Convert.ToString(rank);
-            }
-
-            else
-            {
-                return;
+                txtRank.Text = dgvRank.SelectedRows[0].Cells["HourlyPay"].Value.ToString();
             }
         }
 
@@ -216,17 +205,17 @@ namespace AttendanceManagementSystem.Views
                 rankId = (int)dgvRank.SelectedRows[0].Cells["RankId"].Value;
 
                 // IDで時給を検索
-                var rank = _context.Ranks.Single(a => a.RankId == rankId);
+                var editRank = _context.Ranks.Single(a => a.RankId == rankId);
 
                 // 時給情報を固定値で更新
-                rank.HourlyPay = int.Parse(txtRank.Text);  // 時給名
-                rank.UpdatedAt = DateTime.Now;             // 更新日
+                editRank.HourlyPay = int.Parse(txtRank.Text);  // 時給名
+                editRank.UpdatedAt = DateTime.Now;             // 更新日
 
                 // 時給が重複している文字列を排除する処理
-                var checkLinq = _context.Ranks.Select(c => c.HourlyPay).Distinct();
+                var checkList = _context.Ranks.Select(c => c.HourlyPay);
 
                 // 重複している文字れつがある場合、処理を停止
-                if (checkLinq.Contains(rank.HourlyPay))
+                if (checkList.Contains(editRank.HourlyPay))
                 {
                     MessageBox.Show("すでに同じ時給があります");
                     return;
@@ -267,7 +256,7 @@ namespace AttendanceManagementSystem.Views
                     int RankId = (int)dgvRank.SelectedRows[0].Cells["RankId"].Value;
 
                     // IDで時給を検索
-                    var rank = _context.Ranks.First(n => n.RankId == RankId);
+                    var rank = _context.Ranks.Single(n => n.RankId == RankId);
 
                     // 選択した行の削除
                     _context.Ranks.Remove(rank);
@@ -287,11 +276,10 @@ namespace AttendanceManagementSystem.Views
                 {
                     return;
                 }
-
-                // 削除する時給が選択されてない場合、メッセージを表示   
             }
             else
             {
+                // 削除する時給が選択されてない場合、メッセージを表示   
                 MessageBox.Show("削除する時給を選択してください。");
             }
         }
@@ -316,7 +304,7 @@ namespace AttendanceManagementSystem.Views
         }
 
         /// <summary>
-        /// 空白以外かつ、時給の入力が数字以外の場合に停止する処理
+        /// 空白以外かつ、時給の入力が数字以外の場合処理を終了
         /// </summary>
         /// <returns></returns>
         private bool CheckNumberRank()

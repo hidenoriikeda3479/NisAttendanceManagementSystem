@@ -12,6 +12,7 @@ using AttendanceManagementSystem.Models;
 using Google.Apis.Drive.v2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
@@ -124,18 +125,7 @@ namespace AttendanceManagementSystem.Views
             if (dgvPermission.SelectedRows.Count > 0)
             {
                 // 選択された権限のIDを取得する
-                int PermissionId = (int)dgvPermission.SelectedRows[0].Cells["PermissionId"].Value;
-
-                // IDで権限を検索
-                var permission = _context.Permissions.Where(n => n.PermissionId == PermissionId).Select(n => n.PermissionName).FirstOrDefault();
-
-                // オブジェクトを文字列に変換し、テキストボックスに表示する
-                txtPermission.Text = Convert.ToString(permission);
-            }
-
-            else
-            {
-                return;
+                txtPermission.Text = dgvPermission.SelectedRows[0].Cells["PermissionName"].Value.ToString();
             }
         }
 
@@ -206,17 +196,17 @@ namespace AttendanceManagementSystem.Views
                 permissionId = (int)dgvPermission.SelectedRows[0].Cells["PermissionId"].Value;
 
                 // IDで権限を検索
-                var permission = _context.Permissions.Single(a => a.PermissionId == permissionId);
+                var editPermission = _context.Permissions.Single(a => a.PermissionId == permissionId);
 
                 // 権限情報を固定値で更新
-                permission.PermissionName = txtPermission.Text;  // 権限名
-                permission.UpdatedAt = DateTime.Now;             // 更新日
+                editPermission.PermissionName = txtPermission.Text;  // 権限名
+                editPermission.UpdatedAt = DateTime.Now;             // 更新日
 
                 // 権限が同じ文字列の場合排除する処理
-                var checkLinq = _context.Permissions.Select(c => c.PermissionName).Distinct();
+                var checkList = _context.Permissions.Select(c => c.PermissionName);
 
                 // 同じ文字列がある場合、処理を停止
-                if (checkLinq.Contains(permission.PermissionName))
+                if (checkList.Contains(editPermission.PermissionName))
                 {
                     MessageBox.Show("すでに同じ権限があります");
                     return;
@@ -257,7 +247,7 @@ namespace AttendanceManagementSystem.Views
                     int PermissionId = (int)dgvPermission.SelectedRows[0].Cells["PermissionId"].Value;
 
                     // IDで権限を検索
-                    var permission = _context.Permissions.First(n => n.PermissionId == PermissionId);
+                    var permission = _context.Permissions.Single(n => n.PermissionId == PermissionId);
 
                     // 選択した行の削除
                     _context.Permissions.Remove(permission);
@@ -277,11 +267,10 @@ namespace AttendanceManagementSystem.Views
                 {
                     return;
                 }
-
-                // 削除する権限が選択されてない場合、メッセージを表示   
             }
             else
             {
+                // 削除する権限が選択されてない場合、メッセージを表示 
                 MessageBox.Show("削除する権限を選択してください。");
             }
         }
