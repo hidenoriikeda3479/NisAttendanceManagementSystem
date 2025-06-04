@@ -10,6 +10,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using AttendanceManagementSystem.Data;
 using AttendanceManagementSystem.Models;
+using Google.Apis.Drive.v2.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -38,7 +39,7 @@ namespace AttendanceManagementSystem
         /// </summary>
         /// <param name="context">DBコンテキスト</param>
         /// <param name="employee">従業員ID</param>
-        public UpdateEmployeeForm(AttendanceManagementDbContext context , int employee)
+        public UpdateEmployeeForm(AttendanceManagementDbContext context, int employee)
         {
             InitializeComponent();
             _context = context;
@@ -54,6 +55,9 @@ namespace AttendanceManagementSystem
         {
             // 取得の表示設定
             GetEmployee();
+
+            // コンボボックス値の設定
+            AddComboboxItem();
         }
 
         /// <summary>
@@ -81,7 +85,7 @@ namespace AttendanceManagementSystem
         {
             // 従業員名が未入力の場合
             if (string.IsNullOrEmpty(txtEmployeeName.Text))
-                {
+            {
                 MessageBox.Show("従業員名のの入力がありません。記載してください");
                 return false;
             }
@@ -127,6 +131,27 @@ namespace AttendanceManagementSystem
                 MessageBox.Show("建物名を選択してください");
                 return false;
             }
+
+            // 時給が未入力の場合
+            if (cobRank.SelectedIndex == -1)
+            {
+                MessageBox.Show("時給を選択してください");
+                return false;
+            }
+
+            // 権限が未入力の場合
+            if (cobAuthorized.SelectedIndex == -1)
+            {
+                MessageBox.Show("権限を選択してください");
+                return false;
+            }
+
+            // 部署が未入力の場合
+            if (cobDepartment.SelectedIndex == -1)
+            {
+                MessageBox.Show("部署を選択してください");
+                return false;
+            }
             return true;
         }
 
@@ -145,6 +170,9 @@ namespace AttendanceManagementSystem
             txtMailingAddress.Text = employee.Address;           // 住所
             txtBuildingName.Text = employee.BuildingName;        // 建物名
             dtpSearchBirthDate.Value = employee.BirthDate;       // 生年月日
+            cbGender.SelectedValue = employee.RankId;            // 時給
+            cbGender.SelectedValue = employee.PermissionId;      // 権限
+            cbGender.SelectedValue = employee.DepartmentId;      // 部署
         }
 
         /// <summary>
@@ -156,15 +184,18 @@ namespace AttendanceManagementSystem
             var employee = _context.Employees.Single(a => a.EmployeeId == employeeId);
 
             // 従業員情報を固定値で更新
-            employee.EmployeeName = txtEmployeeName.Text;        // 従業員名
-            employee.Gender = cbGender.SelectedIndex;            // 性別
-            employee.PhoneNumber = txtSearchContactNumber.Text;  // 電話番号
-            employee.Password = txbPass.Text;                    //パスワード
-            employee.PostCode = txtPhoneNumber.Text;             // 郵便番号
-            employee.Address = txtMailingAddress.Text;           // 住所
-            employee.BuildingName = txtBuildingName.Text;        // 建物名
-            employee.BirthDate = dtpSearchBirthDate.Value;       // 生年月日
-            employee.UpdatedAt = DateTime.Now;                   // 更新日
+            employee.EmployeeName = txtEmployeeName.Text;              // 従業員名
+            employee.Gender = cbGender.SelectedIndex;                  // 性別
+            employee.PhoneNumber = txtSearchContactNumber.Text;        // 電話番号
+            employee.Password = txbPass.Text;                          //パスワード
+            employee.PostCode = txtPhoneNumber.Text;                   // 郵便番号
+            employee.Address = txtMailingAddress.Text;                 // 住所
+            employee.BuildingName = txtBuildingName.Text;              // 建物名
+            employee.BirthDate = dtpSearchBirthDate.Value;             // 生年月日
+            employee.RankId = (int)cobRank.SelectedValue;              // 時給
+            employee.PermissionId = (int)cobAuthorized.SelectedValue;  // 権限
+            employee.DepartmentId = (int)cobDepartment.SelectedValue;  // 部署
+            employee.UpdatedAt = DateTime.Now;                         // 更新日
 
             // 追加したデータをコミット
             _context.SaveChanges();
@@ -174,6 +205,39 @@ namespace AttendanceManagementSystem
 
             // 従業員編集画面を閉じる
             this.Close();
+        }
+
+        /// <summary>
+        /// コンボボックスに取得した値の設定
+        /// </summary>
+        private void AddComboboxItem()
+        {
+            // Ranksテーブルを取得し、コンボボックスに設定
+            cobRank.DataSource = _context.Ranks.ToList();
+
+            // 画面に表示する項目を設定
+            this.cobRank.DisplayMember = "HourlyPay";
+
+            // リンクさせるための値を設定
+            this.cobRank.ValueMember = "RankId";
+
+            //　Permissionsテーブルを取得し、コンボボックスに設定
+            cobAuthorized.DataSource = _context.Permissions.ToList();
+
+            // 画面に表示する項目を設定
+            this.cobAuthorized.DisplayMember = "PermissionName";
+
+            // リンクさせるための値を設定
+            this.cobAuthorized.ValueMember = "PermissionId";
+
+            //　departmentテーブルを取得し、コンボボックスに設定
+            cobDepartment.DataSource = _context.department.ToList();
+
+            // 画面に表示する項目を設定
+            this.cobDepartment.DisplayMember = "DepartmentName";
+
+            // リンクさせるための値を設定
+            this.cobDepartment.ValueMember = "DepartmentId";
         }
     }
 }

@@ -4,6 +4,8 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
+using System.Runtime.ConstrainedExecution;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -90,8 +92,39 @@ namespace AttendanceManagementSystem
         /// </summary>
         private void GetEmployee()
         {
-            // 従業員のデータを表示
-            dgvEmployees.DataSource = _context.Employees.ToList();
+            // 従業員のデータを表示かつ、部署IDを部署名へ設定、権限IDを権限名へ設定、時給IDを時給名へ設定
+            dgvEmployees.DataSource = _context.Employees
+             .Join(_context.department,
+                  emp => emp.DepartmentId,
+                  dept => dept.DepartmentId,
+                  (emp, dept) => new { emp, dept })
+             .Join(_context.Permissions,
+                  tmp => tmp.emp.PermissionId,
+                  per => per.PermissionId,
+                  (tmp, per) => new { tmp.emp, tmp.dept, per })
+             .Join(_context.Ranks,
+                  tmp => tmp.emp.RankId,
+                  rnk => rnk.RankId,
+                  (tmp, rnk) => new
+                  {
+                      tmp.emp.EmployeeId,       // 従業員ID
+                      tmp.emp.EmployeeName,     // 従業員名
+                      tmp.emp.Gender,　　　　　 // 性別
+                      tmp.emp.Password,         // パスワード
+                      tmp.emp.PhoneNumber,      // 電話番号
+                      tmp.emp.PostCode,         // 郵便番号
+                      tmp.emp.Address,          // 住所
+                      tmp.emp.BuildingName,     // 建物名
+                      tmp.emp.BirthDate,        // 生年月日
+                      tmp.dept.DepartmentName,  // 部署
+                      rnk.HourlyPay,            // 時給
+                      tmp.emp.HireDate,         // 入社日
+                      tmp.emp.ResignDate,       // 退社日
+                      tmp.per.PermissionName,   // 権限
+                      tmp.emp.CreatedAt,        // 作成日時
+                      tmp.emp.UpdatedAt,        // 更新日
+                  })
+             .ToList();
         }
 
         /// <summary>
@@ -100,7 +133,38 @@ namespace AttendanceManagementSystem
         private void FindEmployee()
         {
             // 検索クエリの初期化
-            var queryDelete = _context.Employees.AsQueryable();
+            var queryDelete = _context.Employees
+                .Join(_context.department,
+                      emp => emp.DepartmentId,
+                      dept => dept.DepartmentId,
+                      (emp, dept) => new { emp, dept })
+                .Join(_context.Permissions,
+                      tmp => tmp.emp.PermissionId,
+                      per => per.PermissionId,
+                      (tmp, per) => new { tmp.emp, tmp.dept, per })
+                .Join(_context.Ranks,
+                      tmp => tmp.emp.RankId,
+                      rnk => rnk.RankId,
+                      (tmp, rnk) => new
+                      {
+                          tmp.emp.EmployeeId,       // 従業員ID
+                          tmp.emp.EmployeeName,     // 従業員名
+                          tmp.emp.Gender,           // 性別
+                          tmp.emp.Password,         // パスワード
+                          tmp.emp.PhoneNumber,      // 電話番号
+                          tmp.emp.PostCode,         // 郵便番号
+                          tmp.emp.Address,          // 住所
+                          tmp.emp.BuildingName,     // 建物名
+                          tmp.emp.BirthDate,        // 生年月日
+                          tmp.dept.DepartmentName,  // 部署
+                          rnk.HourlyPay,            // 時給
+                          tmp.emp.HireDate,         // 入社日
+                          tmp.emp.ResignDate,       // 退社日
+                          tmp.per.PermissionName,   // 権限
+                          tmp.emp.CreatedAt,        // 作成日時
+                          tmp.emp.UpdatedAt,        // 更新日
+                      })
+                .AsQueryable();
 
             // 従業員名でフィルタリング
             if (!string.IsNullOrEmpty(txtSearchEmployeeName.Text))
@@ -170,7 +234,7 @@ namespace AttendanceManagementSystem
                 MessageBox.Show("削除されました。");
 
                 // データグリッド再取得
-                dgvEmployees.DataSource = _context.Employees.ToList();
+                GetEmployee();
             }
         }
 
@@ -201,6 +265,9 @@ namespace AttendanceManagementSystem
 
             // DataGridViewに追加
             dgvEmployees.Columns.Add(Update2);
+
+            // すべての列の幅を自動で調整する
+            dgvEmployees.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
         }
 
         /// <summary>
@@ -219,62 +286,41 @@ namespace AttendanceManagementSystem
         private void SetHeaderColumn()
         {
             // カラムの表示名の変更
-            var cgId = dgvEmployees.Columns["EmployeeId"];
-            cgId.HeaderText = "ID";
+            dgvEmployees.Columns["EmployeeId"].HeaderText = "ID";
 
-            var cgName = dgvEmployees.Columns["EmployeeName"];
-            cgName.HeaderText = "従業員名";
+            dgvEmployees.Columns["EmployeeName"].HeaderText = "従業員名";
 
-            var cgGender = dgvEmployees.Columns["Gender"];
-            cgGender.HeaderText = "性別";
+            dgvEmployees.Columns["Gender"].HeaderText = "性別";
 
-            var cgPassword = dgvEmployees.Columns["Password"];
-            cgPassword.HeaderText = "パスワード";
+            dgvEmployees.Columns["Password"].HeaderText = "パスワード";
 
-            var cgPhoneNumber = dgvEmployees.Columns["PhoneNumber"];
-            cgPhoneNumber.HeaderText = "電話番号";
+            dgvEmployees.Columns["PhoneNumber"].HeaderText = "電話番号";
 
-            var cgPostCode = dgvEmployees.Columns["PostCode"];
-            cgPostCode.HeaderText = "郵便番号";
+            dgvEmployees.Columns["PostCode"].HeaderText = "郵便番号";
 
-            var cgAddress = dgvEmployees.Columns["Address"];
-            cgAddress.HeaderText = "住所";
+            dgvEmployees.Columns["Address"].HeaderText = "住所";
 
-            var cgBuildingName = dgvEmployees.Columns["BuildingName"];
-            cgBuildingName.HeaderText = "建物名";
+            dgvEmployees.Columns["BuildingName"].HeaderText = "建物名";
 
-            var cgBirthDate = dgvEmployees.Columns["BirthDate"];
-            cgBirthDate.HeaderText = "生年月日";
+            dgvEmployees.Columns["BirthDate"].HeaderText = "生年月日";
 
-            var cgDepartmentId = dgvEmployees.Columns["DepartmentId"];
-            cgDepartmentId.HeaderText = "部署ID";
+            dgvEmployees.Columns["DepartmentName"].HeaderText = "部署";
 
-            var cgRankId = dgvEmployees.Columns["RankId"];
-            cgRankId.HeaderText = "時給";
+            dgvEmployees.Columns["HourlyPay"].HeaderText = "時給";
 
-            var cgShiftId = dgvEmployees.Columns["ShiftId"];
-            cgShiftId.HeaderText = "シフト情報";
+            dgvEmployees.Columns["HireDate"].HeaderText = "入社日";
 
-            var cgHireDate = dgvEmployees.Columns["HireDate"];
-            cgHireDate.HeaderText = "入社日";
+            dgvEmployees.Columns["ResignDate"].HeaderText = "退社日";
 
-            var cgResignDate = dgvEmployees.Columns["ResignDate"];
-            cgResignDate.HeaderText = "退社日";
+            dgvEmployees.Columns["PermissionName"].HeaderText = "権限";
 
-            var cgPermissionId = dgvEmployees.Columns["PermissionId"];
-            cgPermissionId.HeaderText = "権限";
+            dgvEmployees.Columns["CreatedAt"].HeaderText = "作成日";
 
-            var cgDepartment = dgvEmployees.Columns["CreatedAt"];
-            cgDepartment.HeaderText = "作成日";
+            dgvEmployees.Columns["UpdatedAt"].HeaderText = "更新日";
 
-            var cgTitle = dgvEmployees.Columns["UpdatedAt"];
-            cgTitle.HeaderText = "更新日";
+            dgvEmployees.Columns["editButton"].HeaderText = "編集";
 
-            var cgEditButton = dgvEmployees.Columns["editButton"];
-            cgEditButton.HeaderText = "編集";
-
-            var cgDeleteButton = dgvEmployees.Columns["deleteButton"];
-            cgDeleteButton.HeaderText = "削除";
+            dgvEmployees.Columns["deleteButton"].HeaderText = "削除";
         }
     }
 }

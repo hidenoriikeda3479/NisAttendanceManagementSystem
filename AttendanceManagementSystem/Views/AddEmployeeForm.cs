@@ -69,17 +69,18 @@ namespace AttendanceManagementSystem
             // 新しい従業員データの作成
             var newEmployeeData = new EmployeeModel
             {
-                EmployeeName = txtEmployeeName.Text,        // 従業員名
-                Gender = cbGender.SelectedIndex,            // 性別
-                PhoneNumber = txtSearchContactNumber.Text,  // 電話番号
-                Password = txbPass.Text,                    // パスワード
-                PostCode = txtPhoneNumber.Text,             // 郵便番号
-                Address = txtMailingAddress.Text,           // 住所
-                BuildingName = txtBuildingName.Text,        // 建物名
-                BirthDate = dtpSearchBirthDate.Value,       // 生年月日
-                CreatedAt = DateTime.Now,                   // 作成日
-                RankId = (int)cobRank.SelectedValue,        // 従業員名
-                PermissionId = (int)cbxAuthorized.SelectedValue,        // 従業員名
+                EmployeeName = txtEmployeeName.Text,              // 従業員名
+                Gender = cbGender.SelectedIndex,                  // 性別
+                PhoneNumber = txtSearchContactNumber.Text,        // 電話番号
+                Password = txbPass.Text,                          // パスワード
+                PostCode = txtPhoneNumber.Text,                   // 郵便番号
+                Address = txtMailingAddress.Text,                 // 住所
+                BuildingName = txtBuildingName.Text,              // 建物名
+                BirthDate = dtpSearchBirthDate.Value,             // 生年月日
+                CreatedAt = DateTime.Now,                         // 作成日
+                RankId = (int)cobRank.SelectedValue,              // 時給
+                PermissionId = (int)cobAuthorized.SelectedValue,  // 権限
+                DepartmentId = (int)cobDepartment.SelectedValue,  // 部署
             };
 
             // 新しい従業員データを追加
@@ -157,9 +158,16 @@ namespace AttendanceManagementSystem
             }
 
             // 権限が未入力の場合
-            if (cbxAuthorized.SelectedIndex == -1)
+            if (cobAuthorized.SelectedIndex == -1)
             {
                 MessageBox.Show("権限を選択してください");
+                return false;
+            }
+
+            // 部署が未入力の場合
+            if (cobDepartment.SelectedIndex == -1)
+            {
+                MessageBox.Show("部署を選択してください");
                 return false;
             }
             return true;
@@ -179,15 +187,23 @@ namespace AttendanceManagementSystem
             // リンクさせるための値を設定
             this.cobRank.ValueMember = "RankId";
 
-
             //　Permissionsテーブルを取得し、コンボボックスに設定
-            cbxAuthorized.DataSource = _context.Permissions.ToList();
+            cobAuthorized.DataSource = _context.Permissions.ToList();
 
             // 画面に表示する項目を設定
-            this.cbxAuthorized.DisplayMember = "PermissionName";
+            this.cobAuthorized.DisplayMember = "PermissionName";
 
             // リンクさせるための値を設定
-            this.cbxAuthorized.ValueMember = "PermissionId";
+            this.cobAuthorized.ValueMember = "PermissionId";
+
+            //　departmentテーブルを取得し、コンボボックスに設定
+            cobDepartment.DataSource = _context.department.ToList();
+
+            // 画面に表示する項目を設定
+            this.cobDepartment.DisplayMember = "DepartmentName";
+
+            // リンクさせるための値を設定
+            this.cobDepartment.ValueMember = "DepartmentId";
         }
     }
 }
