@@ -32,6 +32,7 @@
             btnDepartment = new Button();
             btnPermission = new Button();
             btnRank = new Button();
+            button1 = new Button();
             SuspendLayout();
             // 
             // btnEmployeeList
@@ -74,11 +75,22 @@
             btnRank.UseVisualStyleBackColor = true;
             btnRank.Click += btnRank_Click;
             // 
+            // button1
+            // 
+            button1.Location = new Point(108, 21);
+            button1.Name = "button1";
+            button1.Size = new Size(93, 23);
+            button1.TabIndex = 5;
+            button1.Text = "シフト管理一覧";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // ManagementMenu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(213, 168);
+            ClientSize = new Size(213, 183);
+            Controls.Add(button1);
             Controls.Add(btnRank);
             Controls.Add(btnPermission);
             Controls.Add(btnDepartment);
@@ -93,5 +105,6 @@
         private Button btnDepartment;
         private Button btnPermission;
         private Button btnRank;
+        private Button button1;
     }
 }

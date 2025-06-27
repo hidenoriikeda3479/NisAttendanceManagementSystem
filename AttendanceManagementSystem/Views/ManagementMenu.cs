@@ -83,5 +83,17 @@ namespace AttendanceManagementSystem.Views
             RankListForm rankListForm = new RankListForm(_context);
             rankListForm.Show();
         }
+
+        /// <summary>
+        /// シフト管理一覧
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // シフト管理のフォームへ画面遷移
+            ShiftManagementListForm shiftListForm = new ShiftManagementListForm(_context);
+            shiftListForm.Show();
+        }
     }
 }
