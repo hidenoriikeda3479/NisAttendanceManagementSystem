@@ -45,6 +45,12 @@
             lblGender = new Label();
             txtEmployeeName = new TextBox();
             lblEmployee = new Label();
+            cobDepartment = new ComboBox();
+            cobAuthorized = new ComboBox();
+            cobRank = new ComboBox();
+            lblDepartment = new Label();
+            lblAuthorized = new Label();
+            lblRank = new Label();
             SuspendLayout();
             // 
             // txbPass
@@ -74,7 +80,7 @@
             // 
             // btnRegister
             // 
-            btnRegister.Location = new Point(192, 285);
+            btnRegister.Location = new Point(208, 384);
             btnRegister.Name = "btnRegister";
             btnRegister.Size = new Size(75, 23);
             btnRegister.TabIndex = 31;
@@ -192,11 +198,69 @@
             lblEmployee.TabIndex = 18;
             lblEmployee.Text = "従業員名";
             // 
+            // cobDepartment
+            // 
+            cobDepartment.FormattingEnabled = true;
+            cobDepartment.Items.AddRange(new object[] { "管理者", "一般" });
+            cobDepartment.Location = new Point(94, 355);
+            cobDepartment.Name = "cobDepartment";
+            cobDepartment.Size = new Size(121, 23);
+            cobDepartment.TabIndex = 37;
+            // 
+            // cobAuthorized
+            // 
+            cobAuthorized.FormattingEnabled = true;
+            cobAuthorized.Location = new Point(94, 322);
+            cobAuthorized.Name = "cobAuthorized";
+            cobAuthorized.Size = new Size(121, 23);
+            cobAuthorized.TabIndex = 36;
+            // 
+            // cobRank
+            // 
+            cobRank.FormattingEnabled = true;
+            cobRank.Location = new Point(94, 283);
+            cobRank.Name = "cobRank";
+            cobRank.Size = new Size(121, 23);
+            cobRank.TabIndex = 35;
+            // 
+            // lblDepartment
+            // 
+            lblDepartment.AutoSize = true;
+            lblDepartment.Location = new Point(57, 358);
+            lblDepartment.Name = "lblDepartment";
+            lblDepartment.Size = new Size(31, 15);
+            lblDepartment.TabIndex = 40;
+            lblDepartment.Text = "部署";
+            // 
+            // lblAuthorized
+            // 
+            lblAuthorized.AutoSize = true;
+            lblAuthorized.Location = new Point(57, 325);
+            lblAuthorized.Name = "lblAuthorized";
+            lblAuthorized.Size = new Size(31, 15);
+            lblAuthorized.TabIndex = 39;
+            lblAuthorized.Text = "権限";
+            // 
+            // lblRank
+            // 
+            lblRank.AutoSize = true;
+            lblRank.Location = new Point(57, 286);
+            lblRank.Name = "lblRank";
+            lblRank.Size = new Size(31, 15);
+            lblRank.TabIndex = 38;
+            lblRank.Text = "時給";
+            // 
             // UpdateEmployeeForm
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(313, 333);
+            ClientSize = new Size(304, 433);
+            Controls.Add(lblDepartment);
+            Controls.Add(lblAuthorized);
+            Controls.Add(lblRank);
+            Controls.Add(cobDepartment);
+            Controls.Add(cobAuthorized);
+            Controls.Add(cobRank);
             Controls.Add(txbPass);
             Controls.Add(lblPass);
             Controls.Add(cbGender);
@@ -240,5 +304,11 @@
         private Label lblGender;
         private TextBox txtEmployeeName;
         private Label lblEmployee;
+        private ComboBox cobDepartment;
+        private ComboBox cobAuthorized;
+        private ComboBox cobRank;
+        private Label lblDepartment;
+        private Label lblAuthorized;
+        private Label lblRank;
     }
 }

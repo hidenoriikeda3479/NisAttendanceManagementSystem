@@ -78,8 +78,8 @@ namespace AttendanceManagementSystem.Views
                 updateDepartment.Show();
             }
 
-            // 「clearButton」ボタンがクリックされた場合
-            if (btnClick.Columns[e.ColumnIndex].Name == "clearButton")
+            // 「deleteButton」ボタンがクリックされた場合
+            if (btnClick.Columns[e.ColumnIndex].Name == "deleteButton")
             {
                 // 選択された従業員のIDを取得
                 int dmployeeId = (int)dgvDepartment.Rows[e.RowIndex].Cells["DepartmentId"].Value;
@@ -118,16 +118,16 @@ namespace AttendanceManagementSystem.Views
         private void FindDepartment()
         {
             // 検索クエリの初期化
-            var queryClear = _context.department.AsQueryable();
+            var queryDelete = _context.department.AsQueryable();
 
             // 部署名でフィルタリング
             if (!string.IsNullOrEmpty(txtDepartment.Text))
             {
-                queryClear = queryClear.Where(a => a.DepartmentName.Contains(txtDepartment.Text));
+                queryDelete = queryDelete.Where(a => a.DepartmentName.Contains(txtDepartment.Text));
             }
 
             // フィルタリングデータを表示
-            dgvDepartment.DataSource = queryClear.ToList();
+            dgvDepartment.DataSource = queryDelete.ToList();
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace AttendanceManagementSystem.Views
 
             // 削除ボタン
             DataGridViewButtonColumn Update2 = new DataGridViewButtonColumn();
-            Update2.Name = "clearButton";
+            Update2.Name = "deleteButton";
 
             // 全てのボタンに「削除」と表示
             Update2.UseColumnTextForButtonValue = true;
@@ -202,8 +202,8 @@ namespace AttendanceManagementSystem.Views
             var cgEditButton = dgvDepartment.Columns["editButton"];
             cgEditButton.HeaderText = "編集";
 
-            var cgClearButton = dgvDepartment.Columns["clearButton"];
-            cgClearButton.HeaderText = "削除";
+            var cgDeleteButton = dgvDepartment.Columns["deleteButton"];
+            cgDeleteButton.HeaderText = "削除";
         }
     }
 }

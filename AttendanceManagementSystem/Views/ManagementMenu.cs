@@ -59,5 +59,41 @@ namespace AttendanceManagementSystem.Views
             DepartmentListForm departmentListForm = new DepartmentListForm(_context);
             departmentListForm.Show();
         }
+
+        /// <summary>
+        /// 権限検索条件一覧
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnPermission_Click(object sender, EventArgs e)
+        {
+            // 権限のフォームへ画面遷移
+            PermissionListForm permissionListForm = new PermissionListForm(_context);
+            permissionListForm.Show();
+        }
+
+        /// <summary>
+        /// 時給検索条件一覧
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void btnRank_Click(object sender, EventArgs e)
+        {
+            // 時給のフォームへ画面遷移
+            RankListForm rankListForm = new RankListForm(_context);
+            rankListForm.Show();
+        }
+
+        /// <summary>
+        /// シフト管理一覧
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void button1_Click(object sender, EventArgs e)
+        {
+            // シフト管理のフォームへ画面遷移
+            ShiftManagementListForm shiftListForm = new ShiftManagementListForm(_context);
+            shiftListForm.Show();
+        }
     }
 }

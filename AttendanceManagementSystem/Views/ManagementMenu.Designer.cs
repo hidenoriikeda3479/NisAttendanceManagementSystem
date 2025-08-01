@@ -30,11 +30,14 @@
         {
             btnEmployeeList = new Button();
             btnDepartment = new Button();
+            btnPermission = new Button();
+            btnRank = new Button();
+            button1 = new Button();
             SuspendLayout();
             // 
             // btnEmployeeList
             // 
-            btnEmployeeList.Location = new Point(12, 28);
+            btnEmployeeList.Location = new Point(12, 21);
             btnEmployeeList.Name = "btnEmployeeList";
             btnEmployeeList.Size = new Size(75, 23);
             btnEmployeeList.TabIndex = 1;
@@ -44,7 +47,7 @@
             // 
             // btnDepartment
             // 
-            btnDepartment.Location = new Point(12, 66);
+            btnDepartment.Location = new Point(12, 50);
             btnDepartment.Name = "btnDepartment";
             btnDepartment.Size = new Size(75, 23);
             btnDepartment.TabIndex = 2;
@@ -52,11 +55,44 @@
             btnDepartment.UseVisualStyleBackColor = true;
             btnDepartment.Click += btnDepartment_Click;
             // 
+            // btnPermission
+            // 
+            btnPermission.Location = new Point(12, 79);
+            btnPermission.Name = "btnPermission";
+            btnPermission.Size = new Size(75, 23);
+            btnPermission.TabIndex = 3;
+            btnPermission.Text = "権限一覧";
+            btnPermission.UseVisualStyleBackColor = true;
+            btnPermission.Click += btnPermission_Click;
+            // 
+            // btnRank
+            // 
+            btnRank.Location = new Point(12, 108);
+            btnRank.Name = "btnRank";
+            btnRank.Size = new Size(75, 23);
+            btnRank.TabIndex = 4;
+            btnRank.Text = "時給一覧";
+            btnRank.UseVisualStyleBackColor = true;
+            btnRank.Click += btnRank_Click;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(108, 21);
+            button1.Name = "button1";
+            button1.Size = new Size(93, 23);
+            button1.TabIndex = 5;
+            button1.Text = "シフト管理一覧";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
             // ManagementMenu
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(213, 168);
+            ClientSize = new Size(213, 183);
+            Controls.Add(button1);
+            Controls.Add(btnRank);
+            Controls.Add(btnPermission);
             Controls.Add(btnDepartment);
             Controls.Add(btnEmployeeList);
             Name = "ManagementMenu";
@@ -67,5 +103,8 @@
         #endregion
         private Button btnEmployeeList;
         private Button btnDepartment;
+        private Button btnPermission;
+        private Button btnRank;
+        private Button button1;
     }
 }
